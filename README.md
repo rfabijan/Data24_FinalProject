@@ -1,3 +1,4 @@
+
 # Data24_FinalProject
 The repo for Data24 for their final project <br>
 
@@ -7,7 +8,7 @@ Link to Jira Board:<br/>
 ## Jira Board
 
 https://spartaglobal.atlassian.net/jira/software/projects/DATA24/boards/300/backlog
-
+<br><br>
 
 ##Roles:
 **Tia** – Scrum Master<br/>
@@ -23,12 +24,14 @@ https://spartaglobal.atlassian.net/jira/software/projects/DATA24/boards/300/back
 **09:30 – 09:50:** Sprint Planning<br/>
 **09:50 – 12:30:** Sprint<br/>
 **13:30 – 13:45:** Scrum Meeting/Standup<br/>
-**13:45 – 16:15:** Sprint<br/>
-**16:15 – 16:30:** Sprint Review<br/>
-**16:30 – 17:00:** Retrospective/review with Paula<br/>
+**13:45 – 16:15:** Sprint 2<br/>
+**16:15 – 16:30:** Sprint Review with Product Owners<br/>
+**16:30 – 17:00:** Retrospective<br/>
 
 
 ##Root File Structure:
 datafiles -> Contains a copy of all the raw data files
 pipeline -> Contains the app and test package
+
+
 
