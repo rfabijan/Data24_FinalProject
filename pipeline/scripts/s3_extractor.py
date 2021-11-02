@@ -2,6 +2,9 @@
 This script:
 1. Makes a local copy of all the S3 object files (in the 'data24-final-project' bucket)
 
+This script takes a long time to run.
+In most cases, you will not need to run it as the Git Repo contains the output of this file in the following directory:
+/datafiles
 """
 
 import boto3
@@ -14,6 +17,8 @@ resource = boto3.resource('s3')
 bucket = resource.Bucket('data24-final-project')
 objects = [obj.key for obj in bucket.objects.all()]  # All the files/objects in the S3 bucket
 
+save_to_dir = '../../datafiles'
+
 total_files = len(objects)
 current_count = 0
 
@@ -24,7 +29,7 @@ for obj in objects:
     try:
         filename = obj.replace('/', '-')
         filename = filename.replace(' ', '_')
-        local_path = f'../../datafiles/{filename}'
+        local_path = f'{save_to_dir}/{filename}'
         bucket.download_file(obj, local_path)
 
     # For when we can't download the file
