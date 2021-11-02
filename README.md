@@ -1,10 +1,11 @@
 # Data24_FinalProject
 The repo for Data24 for their final project <br>
 
-<<<<<<< HEAD
+
 Link to Jira Board:<br/>
 =======
 ## Jira Board
+
 https://spartaglobal.atlassian.net/jira/software/projects/DATA24/boards/300/backlog
 <br><br>
 
@@ -30,3 +31,4 @@ https://spartaglobal.atlassian.net/jira/software/projects/DATA24/boards/300/back
 ##Root File Structure:
 datafiles -> Contains a copy of all the raw data files
 pipeline -> Contains the app and test package
+
