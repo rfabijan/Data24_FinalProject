@@ -7,7 +7,7 @@ Link to Jira Board:<br/>
 ## Jira Board
 
 https://spartaglobal.atlassian.net/jira/software/projects/DATA24/boards/300/backlog
-<br><br>
+
 
 ##Roles:
 **Tia** – Scrum Master<br/>
