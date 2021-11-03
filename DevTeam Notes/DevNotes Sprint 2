@@ -1,0 +1,121 @@
+0. Connect to S3 
+1. Extract data from S3 - csv 
+	1.1 Combine a month and a day 
+	1.2 Concact CSV to JSON 
+2. convert CSV to JSON/DICT
+3. Create an unique key for each spartan 
+
+
+________________CSV APLICANTS___________________________________________________________________________________________
+{Unique_key: {Name, Gender, DOB, Email, City, Address, Postcode, Phone-number, Uni, Degree, Inv_date, Inv_by}}
+
+
+
+UNIQUE KEY
+
+"0_Name"
+"Name_Date"
+"Integer"
+
+{"Stillmann_Castano_22/08/2019": {...}}
+
+
+Name (str): str.title() - capitalize every letter in the string at the beggining of each word 
+
+
+Gender (str): Null = Null
+
+
+DOB (str): format: "dd-mm-yyyy" TO "yyyy-mm-dd"
+
+
+Email (str):
+(optional)[15:13] Matt Lyons
+Allowed characters: letters (a-z), numbers, underscores, periods, and dashes. An underscore, period, or dash must be followed by one or more letter or number.
+
+(optional)[15:13] Matt Lyons
+Allowed characters: letters, numbers, dashes. The last portion of the domain must be at least two characters, for example: .com, .org, .cc
+
+
+City (str):
+- Question: Is it in the UK  
+- Can be None value
+
+
+Address (str):
+- starts with the number
+- use api to verify (???)
+
+
+Postcode (str):
+- no spaces
+- capital letters and numbers
+
+
+Phone-number (str):
+- must be string
+- no spaces
+- no special characters (+ is OK)
+- RANGE: 11 if starts with 0, 13 if stars with +44
+
+
+Uni (str):
+- (very very optional)Uni API validator (????)  
+
+
+Degree (str):
+- if degeree in [1st, 2:1, 2:2, 3rd]
+- numpy.isnan() for NaN values
+
+
+Inv_date (int):
+- check if is below 31
+- can't be 0
+
+
+Month (str):
+- "mm yyyy"
+- fill missing values using file name
+- (?) transforming to a datetime  
+
+
+Inv_by(str):
+
+
+
+________________TXT___________________________________________________________________________________________
+{Unique_key: {Name, Academy, Date, DayOfTheWeek, Psychometrics, Presentation}}
+
+UNIQUE KEY
+"Number"
+{1: {...}}
+
+
+Name (str): title()
+
+Academy (str): if is in list of academies
+
+Date (str): 13 March 2019 TO yyyy-mm-dd
+
+DayOfTheWeek (str): pull from day from date
+
+Psychometrics/100 (int): scores - min is 0, max is 100
+
+Presentation/32 (int): 0-32
+
+
+
+
+
+________________CSV COURSE___________________________________________________________________________________________
+{Unique_key: {Name, Trainer, Week1:{Analytic, Independent, Determined, Professional, Studious, Imaginative}, Week2:{}, Week3:{}, .........}}
+
+UNIQUE KEY
+
+{"Stillmann_Castano_22/08/2019": {...}}
+
+
+
+
+________________JSON COURSE___________________________________________________________________________________________
+{Unique-key: {name, date, tech_self_score, strengths, weaknesses, self_development, geo_flex, financial_support_self, result, course_interest}}
