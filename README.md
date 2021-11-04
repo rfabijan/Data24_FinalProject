@@ -6,9 +6,11 @@ The repo for Data24 for their final project <br>
 Link to Jira Board:<br/>
 =======
 ## Jira Board
-
 https://spartaglobal.atlassian.net/jira/software/projects/DATA24/boards/300/backlog
 <br><br>
+
+## Diagrams
+[Click here](https://drive.google.com/drive/folders/1NK1fbrf5xRy99zEYOgc1MFEPsXAfAs0L?usp=sharing) to view the ERD and Class Diagrams.<br/>Alternatively, copy and paste:<br/>https://drive.google.com/drive/folders/1NK1fbrf5xRy99zEYOgc1MFEPsXAfAs0L?usp=sharing
 
 ##Roles:
 **Tia** – Scrum Master<br/>
