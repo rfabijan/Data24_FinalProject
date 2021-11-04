@@ -1,0 +1,46 @@
+GENERAL:
+- __S3_Client: connect to S3
+- @proerty getS3: returns S3 client
+- Bucket_name (config file?): points the client to the right place
+- get list of all names of a file type in s3 bucket <--- function in itself, takes in file extenstion, returns list (i for i in s3_resource.Bucket("Name") objects.all if i.get()["ContentType"] == csv)
+	^^ link for the above https://dashbird.io/blog/aws-s3-python-tricks/
+- @property file_extensions [] - iterables that we use to pull all data
+
+CSV
+- pull as DF
+- DF.toDict() to get it as a dictionary
+------------------------cleaning---------------------------------
+- using cleaned data to append output dictionary
+- generate dictionary key
+- getter for output dictionary
+
+JSON
+- pull as dict
+------------------------cleaning----------------------------------
+- generating key
+- adding to output dictionary
+- party 
+
+
+TXT
+- pull as raw text :( 
+- Separate into list with "\n" as the separator(?)
+	- treat each element in list separately
+	- list[0] is the date - holder variable for date
+	- list[1] is the academy - holder string
+	- list[2] is blank
+	- list[3:] is names and such
+	for i in range (3, len(list)+1, 1):
+		list[i]......
+		numbers, other numbers, more numbers defined using index("-")?
+		first_name = substring(numbers).title()
+		second_name = substring(other numbers).title()
+		psychometrics = int(substring based on "Psychometrics: ") 
+		presentation = int(substring based on "Presentation: ")
+		
+		
+
+
+OR
+- convert to pandas DF
+- DF to dict?
