@@ -82,7 +82,6 @@ class S3ParentClass:
 
 
 if __name__ == '__main__':
-
     test_p_class = S3ParentClass()
 
     pprint.pprint(test_p_class.get_talent_csv)
