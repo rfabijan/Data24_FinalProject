@@ -10,37 +10,37 @@ class S3ParentClass:
         self.__resource = b3.resource('s3')
         self.__bucket_name = conf.BUCKET_NAME
         self.__all_files = self.populate_all_files()
-        self.__academy_csv = self.get_all_files[0]
-        self.__talent_csv = self.get_all_files[1]
-        self.__talent_json = self.get_all_files[2]
-        self.__talent_txt = self.get_all_files[3]
+        self.__academy_csv = self.all_files[0]
+        self.__talent_csv = self.all_files[1]
+        self.__talent_json = self.all_files[2]
+        self.__talent_txt = self.all_files[3]
 
     @property
-    def get_all_files(self):
+    def all_files(self):
         return self.__all_files
 
     @property
-    def get_academy_csv(self):
+    def academy_csv(self):
         return self.__academy_csv
 
     @property
-    def get_talent_csv(self):
+    def talent_csv(self):
         return self.__talent_csv
 
     @property
-    def get_talent_json(self):
+    def talent_json(self):
         return self.__talent_json
 
     @property
-    def get_talent_txt(self):
+    def talent_txt(self):
         return self.__talent_txt
 
     @property
-    def get_client(self):
+    def client(self):
         return self.__client
 
     @property
-    def get_resource(self):
+    def resource(self):
         return self.__resource
 
     @property
@@ -55,7 +55,7 @@ class S3ParentClass:
         academy_csv_list = []
         error_list = []
 
-        paginator = self.get_client.get_paginator('list_objects_v2')
+        paginator = self.client.get_paginator('list_objects_v2')
         pages = paginator.paginate(Bucket=self.bucket_name)
 
         for page in pages:
@@ -84,4 +84,4 @@ class S3ParentClass:
 if __name__ == '__main__':
     test_p_class = S3ParentClass()
 
-    pprint.pprint(test_p_class.get_talent_csv)
+    pprint.pprint(test_p_class.talent_csv)
