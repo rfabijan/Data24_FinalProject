@@ -24,7 +24,7 @@ https://spartaglobal.atlassian.net/jira/software/projects/DATA24/boards/300/back
 **09:30 – 09:50:** Sprint Planning<br/>
 **09:50 – 12:30:** Sprint<br/>
 **13:30 – 13:45:** Scrum Meeting/Standup<br/>
-**13:45 – 16:15:** Sprint 2<br/>
+**13:45 – 16:15:** Sprint<br/>
 **16:15 – 16:30:** Sprint Review with Product Owners<br/>
 **16:30 – 17:00:** Retrospective<br/>
 
