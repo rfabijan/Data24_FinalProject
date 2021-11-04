@@ -8,7 +8,7 @@ class S3ParentClass:
     def __init__(self):
         self.__client = b3.client('s3')
         self.__resource = b3.resource('s3')
-        self.__bucket_name = conf.BUCKET_NAME  # Changed to be in a config later
+        self.__bucket_name = conf.BUCKET_NAME
         self.__all_files = self.populate_all_files()
         self.__academy_csv = self.get_all_files[0]
         self.__talent_csv = self.get_all_files[1]
@@ -36,10 +36,6 @@ class S3ParentClass:
         return self.__talent_txt
 
     @property
-    def get_txt_list(self):
-        return self.__talent_txt
-
-    @property
     def get_client(self):
         return self.__client
 
@@ -52,6 +48,7 @@ class S3ParentClass:
         return self.__bucket_name
 
     def populate_all_files(self):
+
         talent_csv_list = []
         talent_json_list = []
         talent_txt_list = []
@@ -62,22 +59,30 @@ class S3ParentClass:
         pages = paginator.paginate(Bucket=self.bucket_name)
 
         for page in pages:
+
             for i in page["Contents"]:
                 key = i["Key"]
+
                 if key.startswith("Academy"):
                     academy_csv_list.append(key)
+
                 elif key.startswith("Talent") and key.endswith(".csv"):
                     talent_csv_list.append(key)
+
                 elif key.startswith("Talent") and key.endswith(".json"):
                     talent_json_list.append(key)
+
                 elif key.startswith("Talent") and key.endswith(".txt"):
                     talent_txt_list.append(key)
+
                 else:
                     print(f"Key {key} does not fit any criteria, it has been added to the end of the output")
                     error_list.append(key)
         return [academy_csv_list, talent_csv_list, talent_json_list, talent_txt_list, error_list]
 
 
-test_p_class = S3ParentClass()
+if __name__ == '__main__':
 
-pprint.pprint(test_p_class.populate_all_files())
+    test_p_class = S3ParentClass()
+
+    pprint.pprint(test_p_class.get_talent_csv)

@@ -1,19 +1,17 @@
-import DevTestS3Class as s3c
+import PrototypeS3Class as s3c
 
 
 class TxtExtractor(s3c.S3ParentClass):
     def __init__(self):
         super().__init__()
-        self.keys = self.get_talent_txt
-        self.__object = functiongoeshere.exe
-
-
+        self.__keys = self.get_talent_txt
+        self.__SpartaDayDict = {}
 
     @property
-    def get_object(self):
-        return self.__object
+    def get_keys(self):
+        return self.__keys
 
-    def pull_something_please(self):
+    def pull_single_txt(self, key: str):
         text_str = self.get_object["Body"].read().decode("utf-8")
         return text_str.split('\n')
 
@@ -21,5 +19,3 @@ class TxtExtractor(s3c.S3ParentClass):
         self.get_client.get_object(Bucket=self.bucket_name, Key=key)
 
 testTxt = TxtExtractor()
-
-print(testTxt.pull_something_please())
