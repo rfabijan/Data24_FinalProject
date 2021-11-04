@@ -6,13 +6,13 @@ from pipeline.app.transform import cleaning_talent_sparta_day as clean
 def test_clean_psychometrics():
     new_value = clean.clean_psychometrics("Psychometrics: 54/100")
     assert clean.clean_psychometrics("Psychometrics: 54/100") == 0.54
-    assert type(new_value) is int or float
+    assert type(new_value) is float
 
 
 def test_clean_presentation():
     new_value = clean.clean_presentation("Presentation: 12/32")
-    assert clean.clean_presentation("Presentation: 12/32") == 37.5
-    assert type(new_value) is int or float
+    assert clean.clean_presentation("Presentation: 12/32") == 0.375
+    assert type(new_value) is float
 
 
 def test_clean_name():
@@ -28,7 +28,7 @@ def test_clean_academy():
 
 
 def test_clean_date():
-    new_value = clean.clean_date("Wednesday 1 May 2019")
-    assert clean.clean_date("Wednesday 1 May 2019") == datetime.datetime(2019, 5, 1)
+    new_value = clean.clean_date("1 May 2019")
+    assert clean.clean_date("1 May 2019") == datetime.datetime(2019, 5, 1)
     assert type(new_value) is datetime.datetime
 
