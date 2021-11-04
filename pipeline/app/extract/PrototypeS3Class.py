@@ -82,7 +82,11 @@ class S3ParentClass:
 
 
 if __name__ == '__main__':
+    t = S3ParentClass()
+    x = t.get_resource
+    pprint.pprint(x.get_available_subresources())
+    pprint.pprint(x.Bucket('data24-final-project').get_available_subresources())
 
-    test_p_class = S3ParentClass()
-
-    pprint.pprint(test_p_class.get_talent_csv)
+    # test_p_class = S3ParentClass()
+    #
+    # pprint.pprint(test_p_class.get_talent_csv)
