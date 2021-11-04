@@ -50,7 +50,7 @@ def save_csv_file(dataframe):
 
 
 def put_object(str_buffer, client, csv_file):
-    client.get_client().put_object(Body=str_buffer.getvalue(), Bucket=client.get_bucket_name(),
+    client.get_client().put_object(Body=str_buffer.getvalue(), Bucket=client.bucket_name(),
                                    Key=f"Data100/fish/Robert.csv")
 
 
