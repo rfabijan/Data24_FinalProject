@@ -6,7 +6,7 @@ def clean_name(name):
 def clean_psychometrics(score):
     pass
 
-# str as input (presentation score), output(int or float) only the score as fraction of the value (12/32) would output 37.5
+# str as input (presentation score), output(int or float) only the score as float so (12/32) would output 0.375
 def clean_presentation(score):
     pass
 
@@ -14,6 +14,6 @@ def clean_presentation(score):
 def clean_academy(academy):
     pass
 
-# str as input(date), output date in a python date format("Wednesday 1 May 2019") would return (2019, 5, 1)
+# str as input(date), output date in a python date format("1 May 2019") would return (2019, 5, 1)
 def clean_date(date):
     pass
