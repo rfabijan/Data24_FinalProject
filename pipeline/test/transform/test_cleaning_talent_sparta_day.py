@@ -29,6 +29,6 @@ def test_clean_academy():
 
 def test_clean_date():
     new_value = clean.clean_date("Wednesday 1 May 2019")
-    assert type(new_value) is datetime.date
-
+    assert clean.clean_date("Wednesday 1 May 2019") == datetime.datetime(2019, 5, 1)
+    assert type(new_value) is datetime.datetime
 
