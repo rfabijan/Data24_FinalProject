@@ -1,8 +1,8 @@
-def clean_id(id):
+def clean_id(id: str) -> int:
     pass
 
 
-def clean_name(name):
+def clean_name(name) -> tuple:
     pass
 
 
