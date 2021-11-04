@@ -14,5 +14,6 @@ def test_clean_trainer():
     assert type(new_value) is tuple
 
 
+# not finalised
 def test_clean_skill_value():
     pass
