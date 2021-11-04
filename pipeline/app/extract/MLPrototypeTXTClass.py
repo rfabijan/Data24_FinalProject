@@ -11,11 +11,14 @@ class TxtExtractor(s3c.S3ParentClass):
     def get_keys(self):
         return self.__keys
 
-    def pull_single_txt(self, key: str):
-        text_str = self.get_object["Body"].read().decode("utf-8")
+    def read_text_object(self, object):
+        text_str = object["Body"].read().decode("utf-8")
         return text_str.split('\n')
 
-    def functiongoeshere.exe:
-        self.get_client.get_object(Bucket=self.bucket_name, Key=key)
+    def functiongoeshere(self):
+        for i in self.get_keys:
+            object_instance = self.get_client.get_object(Bucket=self.bucket_name, Key=i)
+            object_list = self.read_text_object(object_instance)
+            print(object_list)
 
-testTxt = TxtExtractor()
+#testTxt = TxtExtractor()
