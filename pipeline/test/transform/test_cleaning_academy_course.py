@@ -1,4 +1,3 @@
-import pytest
 from pipeline.app.transform import cleaning_academy_course as clean
 
 
