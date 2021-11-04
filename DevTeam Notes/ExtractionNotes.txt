@@ -9,7 +9,7 @@ GENERAL:
 CSV
 - pull as DF
 - DF.toDict() to get it as a dictionary
-------------------------cleaning---------------------------------
+------------------------cleaning----------------------------------
 - using cleaned data to append output dictionary
 - generate dictionary key
 - getter for output dictionary
@@ -39,7 +39,7 @@ TXT
 		presentation = int(substring based on "Presentation: ")
 		
 		
-
+--------------------cleaning------------------------------------------?
 
 OR
 - convert to pandas DF
