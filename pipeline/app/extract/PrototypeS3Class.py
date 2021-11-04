@@ -76,7 +76,7 @@ class S3ParentClass:
                     talent_txt_list.append(key)
 
                 else:
-                    print(f"Key {key} does not fit any criteria, it has been added to the end of the output")
+                    # print(f"Key {key} does not fit any criteria, it has been added to the end of the output")
                     error_list.append(key)
         return [academy_csv_list, talent_csv_list, talent_json_list, talent_txt_list, error_list]
 
