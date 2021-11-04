@@ -1,0 +1,25 @@
+https://understandingdata.com/list-of-python-assert-statements-for-unit-tests/
+
+type():
+assert type(5) is int
+
+isinstance():
+assert isinstance('5', str)
+assert not isinstance('5', int)
+
+in and not in [iterable]:
+assert 5 in [1,3,5,6]
+assert 9 not in [1,3,5,6]
+
+any() - checks if ANY of the values in an iterable are true:
+assert any([5,3,1,6,6])
+assert any([False, False,True, False])
+
+all() - checks if ALL of the values in an iterable are true:
+assert any([5,3,1,6,6]) <- PASS (all non-0s are True)
+assert any([False, False,True, False]) <- FAIL
+
+# Check for values in a list
+character_list = ["a", "b", "c", "d"]
+check_for = ["a", "b", "c"]
+assert all(letter in character_names for letter in check_for)
