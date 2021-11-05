@@ -1,6 +1,6 @@
 import pprint
 
-from pipeline.app.extract import TXTExtractor as ptc
+from pipeline.app.extract import MLPrototypeTXTClass as ptc
 
 txtextractor = ptc.TxtExtractor()
 
