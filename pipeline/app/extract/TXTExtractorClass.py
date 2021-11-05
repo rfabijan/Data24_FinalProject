@@ -113,6 +113,7 @@ if __name__ == '__main__':
                 test_name = testTxt.extract_name_from_line(test_name_line)
                 test_psychometric = testTxt.extract_psychometric_from_line(test_name_line)
                 test_presentation = testTxt.extract_presentation_from_line(test_name_line)
+
                 print(test_academy)
                 print(test_date)
                 print(test_name)
