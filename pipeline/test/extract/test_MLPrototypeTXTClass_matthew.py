@@ -8,8 +8,6 @@ test_name_line = txtextractor.extract_name_line(list_instance, 3)
 
 def test_keys():
     return_value = txtextractor.keys
-    assert type(return_value) is list
-    assert len(return_value) >= 152
     assert 'Talent/Sparta Day 12 September 2019.txt' in return_value
 
 
