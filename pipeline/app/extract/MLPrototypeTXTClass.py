@@ -1,6 +1,5 @@
 import pprint
 
-import pipeline.config_manager as conf
 
 from pipeline.app.extract import PrototypeS3Class as s3c
 import datetime as dt
@@ -109,3 +108,4 @@ if __name__ == '__main__':
                 #print(test_name_line)
                 test_name = testTxt.extract_name_from_line(test_name_line)
                 #print(test_name)
+
