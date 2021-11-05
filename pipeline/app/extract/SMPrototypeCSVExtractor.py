@@ -8,6 +8,7 @@ import pprint as p
 class AcademiesCsvExtractor(s3c.S3ParentClass):
     def __init__(self):
         super().__init__()
+
         self.__keys = self.academy_csv
 
     @property
@@ -28,6 +29,7 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
     def singe_csv(self, key):
         single_csv = pd.read_csv(self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return single_csv
+
 
 
 csv_extractor = AcademiesCsvExtractor()
