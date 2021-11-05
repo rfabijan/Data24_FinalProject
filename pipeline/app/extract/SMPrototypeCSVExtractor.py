@@ -54,7 +54,7 @@ if __name__ == '__main__':
         for row_num in range(0, csv_extractor.len_of_rows(file) + 1):
             # print(row_num)
             dict_holder[row_num] = {}
-            for numb in range(1,csv_extractor.extract_weeks(file.columns)):
+            for numb in range(1, csv_extractor.extract_weeks(file.columns)):
                 var = "W" + str(numb)
                 dict_holder[row_num][var] = {}
                 for column in file.columns:
