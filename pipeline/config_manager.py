@@ -8,3 +8,7 @@ _config = configparser.ConfigParser()
 _config.read(os.path.join(PROJECT_ROOT_DIR, 'config.ini'))
 
 BUCKET_NAME = _config['default']['bucket_name']
+
+
+# Constants
+WEEKDAYS = _config['default']['weekdays'].split(',')
