@@ -10,7 +10,6 @@ def test_talent_csv():
     assert 'Talent/Aug2019Applicants.csv' in get_values
 
 
-# TODO: Change
 def test_client():
     client = extractor.client
 

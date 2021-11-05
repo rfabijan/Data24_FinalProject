@@ -1,5 +1,5 @@
 import json
-import PrototypeS3Class as s3c
+from pipeline.app.extract import PrototypeS3Class as s3c
 
 
 class JSONExtractor(s3c.S3ParentClass):
@@ -15,7 +15,7 @@ class JSONExtractor(s3c.S3ParentClass):
 
 
     # Returns a single dict file pulled from bucket based on passed key
-    def extract_single_json(self, key: str):
+    def pull_single_json(self, key: str):
         # Loading as in a JSON format
         jsonfile = json.load(self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return jsonfile
@@ -76,5 +76,5 @@ class JSONExtractor(s3c.S3ParentClass):
 if __name__ == "__main__":
     extractor = JSONExtractor()
     for i in extractor.extract_keys:
-        file = extractor.extract_single_json(str(i))
+        file = extractor.pull_single_json(str(i))
         print(extractor.extract_tech_self_score(file))
