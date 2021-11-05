@@ -2,6 +2,7 @@ import pprint
 
 
 from pipeline.app.extract import PrototypeS3Class as s3c
+import pipeline.config_manager as conf
 import datetime as dt
 
 
@@ -18,7 +19,6 @@ class TxtExtractor(s3c.S3ParentClass):
     @property
     def sparta_day_dict(self):
         return self.__sparta_day_dict
-
 
     def pull_text_object_as_list(self, key: str) -> list:
         object = self.client.get_object(Bucket=self.bucket_name, Key=key)
@@ -107,5 +107,5 @@ if __name__ == '__main__':
                 test_name_line = testTxt.extract_name_line(list_instance, i)
                 #print(test_name_line)
                 test_name = testTxt.extract_name_from_line(test_name_line)
-                #print(test_name)
+                print(test_name)
 
