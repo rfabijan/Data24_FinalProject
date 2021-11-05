@@ -62,8 +62,4 @@ class TxtExtractor(s3c.S3ParentClass):
 if __name__ == '__main__':
     testTxt = TxtExtractor()
 
-    #pprint.pprint(testTxt.extract_all_info())
-    i = testTxt.keys[0]
-    object_instance = testTxt.client.get_object(Bucket=testTxt.bucket_name, Key=i)
-    #list_instance = testTxt.read_text_object(object_instance)
-    pprint.pprint(testTxt.read_text_object(object_instance))
+    pprint.pprint(testTxt.extract_all_info())
