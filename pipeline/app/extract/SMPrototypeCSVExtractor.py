@@ -1,4 +1,5 @@
 import csv
+import boto3
 
 import PrototypeS3Class as s3c
 import pandas as pd
@@ -29,6 +30,12 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
         single_csv = pd.read_csv(self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return single_csv
 
+    def singe_csvs(self, key):
+        response = self.client.get_object(Bucket=self.bucket_name, Key=key)
+        gzipped = GzipFile(None, 'rb', fileobj=response['Body'])
+        data = TextIOWrapper(gzipped)
+        return single_csv
+
 
 csv_extractor = AcademiesCsvExtractor()
 
@@ -41,3 +48,4 @@ for i in csv_extractor.keys:
     reader = csv.DictReader(open(csv_extractor.client.get_object(Bucket=csv_extractor.bucket_name, Key=i)["Body"]))
     for row in reader:
         print(row)
+
