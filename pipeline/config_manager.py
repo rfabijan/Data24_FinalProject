@@ -1,7 +1,6 @@
 from definitions import PROJECT_ROOT_DIR
 import configparser
 import os
-import pytest
 
 config_files = [
     os.path.join(PROJECT_ROOT_DIR, 'config.ini'),
@@ -12,6 +11,9 @@ _config = configparser.ConfigParser()
 _config.read(config_files)
 
 BUCKET_NAME = _config['default']['bucket_name']
+
+
+WEEKDAYS = _config['default']['weekdays']
 
 DB_SERVER = _config['SQL']['server']
 DB_NAME = _config['SQL']['database']
