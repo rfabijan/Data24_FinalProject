@@ -4,17 +4,10 @@ It will create the necessary tables
 */
 
 -- 1. Create the Database
-USE master
-GO
-
-DROP DATABASE IF EXISTS [Data24ETL]
-GO
-
-CREATE DATABASE [Data24ETL]
-GO
-
+USE master;
+DROP DATABASE IF EXISTS [Data24ETL];
+CREATE DATABASE [Data24ETL];
 USE [Data24ETL];
-GO
 
 
 -- 2. Build the tables
