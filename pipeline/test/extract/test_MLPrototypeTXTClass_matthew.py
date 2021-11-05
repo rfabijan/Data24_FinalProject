@@ -1,7 +1,7 @@
 from pipeline.app.extract import MLPrototypeTXTClass as ptc
 
 txtextractor = ptc.TxtExtractor()
-
+# Hi Rob!
 list_instance = txtextractor.pull_text_object_as_list(txtextractor.keys[0])  # These two are for all the extract funcs
 test_name_line = txtextractor.extract_name_line(list_instance, 3)
 
