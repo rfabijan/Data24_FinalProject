@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 .idea/
-.datafiles/
+/datafiles/*
 private_config.ini
