@@ -82,10 +82,6 @@ class S3ParentClass:
 
 
 if __name__ == '__main__':
-    t = S3ParentClass()
-    client = t.client
-    pprint.pprint([bucket['Name'] for bucket in client.list_buckets()['Buckets']])
+    test_p_class = S3ParentClass()
 
-    # test_p_class = S3ParentClass()
-    #
-    # pprint.pprint(test_p_class.talent_csv)
+    pprint.pprint(test_p_class.talent_csv)
