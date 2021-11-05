@@ -5,7 +5,7 @@ import PrototypeS3Class as s3c
 class JSONExtractor(s3c.S3ParentClass):
     def __init__(self):
         super().__init__()
-        self.__keys = self.get_talent_json
+        self.__keys = self.talent_json
 
     # Static method that returns a list of keys
     # Keys are necessary to extract a specific JSON file from a bucket on S3
@@ -17,7 +17,7 @@ class JSONExtractor(s3c.S3ParentClass):
     # Returns a single dict file pulled from bucket based on passed key
     def pull_single_json(self, key: str):
         # Loading as in a JSON format
-        jsonfile = json.load(self.get_client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
+        jsonfile = json.load(self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return jsonfile
 
     # Returns a name if exists as a key in dictonary
