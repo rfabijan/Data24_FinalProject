@@ -21,24 +21,24 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
 
     # Returns the name for a given row in a csv file.
     @staticmethod
-    def extract_name(file_name, row_number):
+    def extract_name(file_name, row_number: int) -> str:
         return file_name.iloc[:]["name"][row_number]
 
     # Returns the trainer name for a given row in a csv file.
     @staticmethod
-    def extract_trainer(file_name, row_number):
+    def extract_trainer(file_name, row_number: int) -> str:
         return file_name.iloc[:]["trainer"][row_number]
 
     # Returns the number of training weeks in the academy csv files.
     @staticmethod
-    def extract_weeks(columns):
+    def extract_weeks(columns) -> int:
         string = columns[-1].split("_")
         num_of_weeks = string[1].split("W")
         return int(num_of_weeks[1])
 
     # Returns the value for a given column and given name.
     @staticmethod
-    def extract_skill_value(file_name, column_name, row_number):
+    def extract_skill_value(file_name, column_name: str, row_number: int) -> str:
         return file_name.iloc[:][column_name][row_number]
 
     # Returns a single csv file.
@@ -61,13 +61,13 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
         return dict_holder
 
     @staticmethod
-    def extract_course_name(key):
+    def extract_course_name(key) -> str:
         split_1 = key.split("/")[1]
         academy = split_1.split("_")[0] + " " + split_1.split("_")[1]
         return academy
 
     @staticmethod
-    def extract_date(key):
+    def extract_date(key) -> str:
         date = key.split("_")[2].split(".")[0]
         return date
 
@@ -84,71 +84,71 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
 
     # Returns the id for a given row in a csv file.
     @staticmethod
-    def extract_id(file_name, row_number):
+    def extract_id(file_name, row_number: int) -> str:
         return file_name.iloc[:]["id"][row_number]
 
     # Returns the gender for a given row in a csv file.
     @staticmethod
-    def extract_gender(file_name, row_number):
+    def extract_gender(file_name, row_number: int) -> str:
         return file_name.iloc[:]["gender"][row_number]
 
     # Returns the dob for a given row in a csv file.
     @staticmethod
-    def extract_dob(file_name, row_number):
+    def extract_dob(file_name, row_number: int) -> str:
         return file_name.iloc[:]["dob"][row_number]
 
     # Returns the email for a given row in a csv file.
     @staticmethod
-    def extract_email(file_name, row_number):
+    def extract_email(file_name, row_number: int) -> str:
         return file_name.iloc[:]["email"][row_number]
 
     # Returns the city for given row in a csv file.
     @staticmethod
-    def extract_city(file_name, row_number):
+    def extract_city(file_name, row_number: int) -> str:
         return file_name.iloc[:]["city"][row_number]
 
     # Returns the address for a given row in a csv file.
     @staticmethod
-    def extract_address(file_name, row_number):
+    def extract_address(file_name, row_number: int) -> str:
         return file_name.iloc[:]["address"][row_number]
 
     # Returns the postcode for a given row in a csv file.
     @staticmethod
-    def extract_postcode(file_name, row_number):
+    def extract_postcode(file_name, row_number: int) -> str:
         return file_name.iloc[:]["postcode"][row_number]
 
     # Returns the phone number for a given row in a csv file.
     @staticmethod
-    def extract_phone_number(file_name, row_number):
+    def extract_phone_number(file_name, row_number: int) -> str:
         return file_name.iloc[:]["phone_number"][row_number]
 
     # Returns the university name for a given row in a csv file.
     @staticmethod
-    def extract_university(file_name, row_number):
+    def extract_university(file_name, row_number: int) -> str:
         return file_name.iloc[:]["uni"][row_number]
 
     # Returns the degree classification for a given row in a csv file.
     @staticmethod
-    def extract_degree(file_name, row_number):
+    def extract_degree(file_name, row_number: int) -> str:
         return file_name.iloc[:]["degree"][row_number]
 
     # Returns the date an applicant was invited to in a csv file.
     @staticmethod
-    def extract_invited_date(file_name, row_number):
+    def extract_invited_date(file_name, row_number: int) -> str:
         return file_name.iloc[:]["invited_date"][row_number]
 
     # Returns the month an applicant was invited to in a csv file
     @staticmethod
-    def extract_month(file_name, row_number):
+    def extract_month(file_name, row_number: int) -> str:
         return file_name.iloc[:]["month"][row_number]
 
     # Returns the name of the person who invited an applicant in a csv file.
     @staticmethod
-    def extract_invited_by(file_name, row_number):
+    def extract_invited_by(file_name, row_number: int) -> str:
         return file_name.iloc[:]["invited_by"][row_number]
 
     @staticmethod
-    def extract_title_date(key):
+    def extract_title_date(key) -> str:
         month = key.lstrip("Talent/").rstrip("Applicants.csv")
         date = month.split("2")
         return date[0] + "-2" + date[1]
@@ -156,33 +156,10 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
 
 if __name__ == '__main__':
     # Dictionary Name:{"Wk":{"Analytic": , "Independent"}}
-
     test = ApplicantsCsvExtractor()
     #print(test.extract_title_date('Talent/April2019Applicants.csv'))
     # p.pprint(test.extract_city(test.singe_csv('Talent/April2019Applicants.csv'), 36))
-
     csv_extractor = AcademiesCsvExtractor()
-
-    # print(csv_extractor.extract_date("Academy/Engineering_29_2019-12-30.csv"))
-    # p.pprint(csv_extractor.extract_skill_values_per_person_per_week(csv_extractor.singe_csv("Academy/Engineering_29_2019-12-30.csv")))
-    # for key in csv_extractor.keys:
-    #     single_csv_file = csv_extractor.singe_csv(key)
-    #     print(key)
-    #     print(single_csv_file)
-    #     dict_holder = {}
-    #     for rows in range(0, csv_extractor.len_of_rows(single_csv_file)):
-    #         # print(rows)
-    #         dict_holder[csv_extractor.extract_name(single_csv_file, rows)] = {}
-    #
-    #         for numb in range(1, csv_extractor.extract_weeks(single_csv_file.columns) + 1):
-    #             var = "W" + str(numb)
-    #             dict_holder[csv_extractor.extract_name(single_csv_file, rows)][var] = {}
-    #             for columns in single_csv_file.columns:
-    #                 if columns.endswith(var):
-    #                     dict_holder[csv_extractor.extract_name(single_csv_file, rows)][var][columns] = \
-    #                         csv_extractor.extract_skill_value(single_csv_file, columns, rows)
-
     # p.pprint(dict_holder)
-
     # p.pprint(csv_extractor.extract_skill_values_per_person_per_week(
     #     csv_extractor.singe_csv("Academy/Engineering_29_2019-12-30.csv")))
