@@ -1,4 +1,5 @@
-from pipeline.app.extract import PrototypeS3Class as s3c
+
+from pipeline.app.extract import s3_connector as s3c
 import pipeline.config_manager as conf
 
 
