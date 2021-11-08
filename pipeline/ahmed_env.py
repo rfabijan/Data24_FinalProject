@@ -7,8 +7,8 @@ cursor = connection.cursor()
 
 print("Building Database using Script")
 run_script(cursor, 'app/load/database_creator.sql')
-# insert_into_academy(cursor, db_name='Data24ETL', values="('London'), ('Birmingham'), ('Leicester')")
-insert_into_academy(cursor, db_name='Data24ETL', values=['London', 'Birmingham', 'Leicester'])
+insert_into_academy(cursor, db_name='Data24ETL', values="('London'), ('Birmingham'), ('Leicester')")
+# insert_into_academy(cursor, db_name='Data24ETL', values=['London', 'Birmingham', 'Leicester'])
 
 cursor.execute('SELECT * FROM Academy')
 pp(cursor.fetchall())
