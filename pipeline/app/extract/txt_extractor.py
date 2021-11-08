@@ -71,7 +71,6 @@ class TxtExtractor(s3c.S3ParentClass):
         return name_line[hyphen_index + 26:]
 
 
-
 if __name__ == '__main__':
     testTxt = TxtExtractor()
 
