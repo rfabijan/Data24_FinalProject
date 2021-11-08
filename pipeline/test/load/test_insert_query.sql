@@ -69,4 +69,7 @@ INSERT INTO SpartaDay
 VALUES 
     (1, '2021-11-05'), 
     (1, '2021-10-25');
--- SELECT * FROM SpartaDay;
+SELECT * FROM SpartaDay;
+
+USE [Data24ETL];
+SELECT * FROM Academy;
