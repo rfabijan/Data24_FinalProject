@@ -41,21 +41,33 @@ class TxtExtractor(s3c.S3ParentClass):
     @staticmethod
     def extract_name_from_line(name_line: str) -> str:
         if name_line and len(name_line) > 0:
-            hyphen_index = name_line.index("-")
+            if name_line.count("-") == 1:
+                hyphen_index = name_line.index("-")
+            else:
+                hyphen_index_skip = name_line.index("-")
+                hyphen_index = name_line.index("-", hyphen_index_skip+1)
             intermediate = name_line[0:hyphen_index - 1]
             if intermediate:
                 return intermediate
 
-    # Extracts the psychometric section from the line pulled above
+# Extracts the psychometric section from the line pulled above
     @staticmethod
     def extract_psychometric_from_line(name_line: str) -> str:
-        hyphen_index = name_line.index("-")
-        return name_line[hyphen_index + 3:hyphen_index + 23]
+        if name_line.count("-") == 1:
+            hyphen_index = name_line.index("-")
+        else:
+            hyphen_index_skip = name_line.index("-")
+            hyphen_index = name_line.index("-", hyphen_index_skip + 1)
+        return name_line[hyphen_index + 3:hyphen_index + 24]
 
     # Extracts the presentation section from the name line above
     @staticmethod
     def extract_presentation_from_line(name_line: str) -> str:
-        hyphen_index = name_line.index("-")
+        if name_line.count("-") == 1:
+            hyphen_index = name_line.index("-")
+        else:
+            hyphen_index_skip = name_line.index("-")
+            hyphen_index = name_line.index("-", hyphen_index_skip + 1)
         return name_line[hyphen_index + 26:]
 
     # def extract_all_info(self) -> dict:
@@ -114,9 +126,11 @@ if __name__ == '__main__':
                 test_psychometric = testTxt.extract_psychometric_from_line(test_name_line)
                 test_presentation = testTxt.extract_presentation_from_line(test_name_line)
 
-                print(test_academy)
-                print(test_date)
-                print(test_name)
-                print(test_psychometric)
-                print(test_presentation)
-                print("\n")
+                #print(test_academy)
+                #print(test_date)
+                if ":" not in test_name_line:
+                    print(test_name_line)
+                #print(test_name)
+                #print(test_psychometric)
+                #print(test_presentation)
+                #print("\n")

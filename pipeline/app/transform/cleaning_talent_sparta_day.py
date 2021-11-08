@@ -1,19 +1,103 @@
-# str as input(name), output the name as str in a tuple format
-def clean_name(name):
-    pass
+import pipeline.app.extract.TXTExtractorClass as ext
 
-# str as input(psychometrics score),output only the float of the number (54/100) would output 0.54
-def clean_psychometrics(score):
-    pass
+import datetime as dt
+import pprint as pp
 
-# str as input (presentation score), output(int or float) only the score as float so (12/32) would output 0.375
-def clean_presentation(score):
-    pass
 
-# str as input(academy name), output the academy name as str (london academy) would be London Academy
-def clean_academy(academy):
-    pass
+class txt_cleaner(ext.TxtExtractor):
+    def __init__(self):
+        super().__init__()
+        self.__final_dict = {}
+        self.__error_names = []
 
-# str as input(date), output date in a python date format("1 May 2019") would return (2019, 5, 1)
-def clean_date(date):
-    pass
+    @property
+    def final_dict(self):
+        return self.__final_dict
+
+    @property
+    def error_names(self):
+        return self.__error_names
+
+    def clean_name(self, raw_name: str) -> tuple:
+        raw_name = raw_name.title()
+        if raw_name.count(" ") > 1 or "-" in raw_name:
+            self.error_names.append(raw_name)
+        if " " in raw_name:
+            space_index = raw_name.index(" ")
+            name_list = [raw_name[0:space_index], raw_name[space_index + 1:]]
+            return name_list[0], name_list[1]
+        else:
+            print(raw_name)
+
+    @staticmethod
+    def clean_date(raw_date_str: str) -> dt.datetime:
+        space_index = raw_date_str.index(" ") + 1
+        s_ins = raw_date_str[space_index::].replace("\r", "")
+        return dt.datetime.strptime(s_ins, '%d %B %Y')
+
+    @staticmethod
+    def clean_scores(raw_score_str: str) -> float:
+        colon_index = raw_score_str.index(":")
+        slash_index = raw_score_str.index("/")
+        numerator = int(raw_score_str[colon_index+1:slash_index])
+        denominator = int(raw_score_str[slash_index+1:])
+        return numerator/denominator
+
+    @staticmethod
+    def clean_academy(raw_academy: str) -> str:
+        return raw_academy.replace("\r", "").title()
+
+    @staticmethod
+    def key_generator(clean_name: tuple, clean_date: dt.datetime) -> str:
+        return clean_name[0].replace(" ", "") +\
+               clean_name[1].replace(" ", "") +\
+               str(clean_date.day) +\
+               str(clean_date.month) +\
+               str(clean_date.year)
+
+    @staticmethod
+    def single_dict_maker(name: tuple, academy: str, date: dt.datetime, psy: float, pres: float) -> dict:
+        return {"Name": name,
+                "Academy": academy,
+                "Date": date,
+                "Psychometrics": psy,
+                "Presentation": pres}
+
+    def final_dict_appender(self, this_key: str):
+        list_instance = self.pull_text_object_as_list(this_key)
+        #print(f"File {this_key} currently being processed...")
+        for i in range(3, len(list_instance)):
+            if len(list_instance[i]) > 0:
+                raw_name_line = self.extract_name_line(list_instance, i)
+                if (":") not in raw_name_line:
+                    print(raw_name_line, this_key)
+                cleaned_name = self.clean_name(self.extract_name_from_line(raw_name_line))
+                cleaned_academy = self.clean_academy(self.extract_academy(list_instance))
+                cleaned_date = self.clean_date(self.extract_date(list_instance))
+                cleaned_psychometric = self.clean_scores(self.extract_psychometric_from_line(raw_name_line))
+                cleaned_presentation = self.clean_scores(self.extract_presentation_from_line(raw_name_line))
+                unique_key = self.key_generator(cleaned_name, cleaned_date)
+
+                self.final_dict[unique_key] = self.single_dict_maker(cleaned_name,
+                                                                     cleaned_academy,
+                                                                     cleaned_date,
+                                                                     cleaned_psychometric,
+                                                                     cleaned_presentation)
+        #print(f"File {this_key} has been appended to the dictionary.\n")
+
+
+if __name__ == '__main__':
+    testcleaner = txt_cleaner()
+    # print(f"Cleaned Name: {testcleaner.clean_name('''LORINDA O'CROTTY''')}")
+    # print(f"Cleaned Academy: {testcleaner.clean_academy('London Academy')}")
+    # print(f"Cleaned Date: {testcleaner.clean_date('Wednesday 9 October 2019')}")
+    # print(f"Cleaned Psychometrics {testcleaner.clean_scores('Psychometrics: 55/100')}")
+    # print(f"Cleaned Presentaion {testcleaner.clean_scores('Presentation: 20/32')}")
+    # print(f"Generated Key: {testcleaner.key_generator(testcleaner.clean_name('''LORINDA O'CROTTY'''),testcleaner.clean_date('Wednesday 9 October 2019'))}")
+    #
+    for key in testcleaner.keys:
+        testcleaner.final_dict_appender(key)
+    #for this_key in testcleaner.final_dict.keys():
+    #    print(testcleaner.final_dict[this_key]["Name"])
+    pp.pprint(testcleaner.final_dict)
+    #pp.pprint(testcleaner.error_names)

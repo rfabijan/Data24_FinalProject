@@ -13,7 +13,7 @@ _config.read(config_files)
 BUCKET_NAME = _config['default']['bucket_name']
 
 
-WEEKDAYS = _config['default']['weekdays']
+WEEKDAYS = _config['cleaning']['weekdays'].split(',')
 
 DB_SERVER = _config['SQL']['server']
 DB_NAME = _config['SQL']['database']
