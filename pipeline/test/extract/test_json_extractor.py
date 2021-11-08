@@ -1,7 +1,7 @@
-from pipeline.app.extract import JSONExtractor
+from pipeline.app.extract import json_extractor
 
 # instantiation of the class
-extractor = JSONExtractor.JSONExtractor()
+extractor = json_extractor.JSONExtractor()
 
 
 # function to test the JSON key extraction, testing for the type, length and values in the output

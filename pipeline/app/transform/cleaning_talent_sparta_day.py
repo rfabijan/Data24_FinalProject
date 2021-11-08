@@ -1,4 +1,4 @@
-import pipeline.app.extract.TXTExtractor as ext
+import pipeline.app.extract.txt_extractor as ext
 
 import datetime as dt
 import pprint as pp

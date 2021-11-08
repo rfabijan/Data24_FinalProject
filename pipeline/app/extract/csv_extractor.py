@@ -1,5 +1,5 @@
 import csv
-import pipeline.app.extract.PrototypeS3Class as s3c
+import pipeline.app.extract.s3_connector as s3c
 import pandas as pd
 import pprint as p
 
