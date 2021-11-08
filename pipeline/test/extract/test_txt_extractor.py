@@ -95,4 +95,4 @@ def test_extract_presentation_from_line():
         "GAYEL MEINEKING -  Psychometrics: 30/100, Presentation: 19/32"
     ]
     name_line = extractor.extract_name_line(file_body, 0)
-    assert extractor.extract_psychometric_from_line(name_line) == 'Presentation: 16/32'
+    assert extractor.extract_presentation_from_line(name_line) == 'Presentation: 16/32'
