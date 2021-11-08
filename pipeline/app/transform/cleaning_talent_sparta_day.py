@@ -8,11 +8,16 @@ class txt_cleaner(ext.TxtExtractor):
     def __init__(self):
         super().__init__()
         self.__final_dict = {}
-        self.__error_names = []
+        self.__set_list = set()
+        self.__error_names = set()
 
     @property
     def final_dict(self):
         return self.__final_dict
+
+    @property
+    def set_list(self):
+        return self.__set_list
 
     @property
     def error_names(self):
@@ -21,7 +26,7 @@ class txt_cleaner(ext.TxtExtractor):
     def clean_name(self, raw_name: str) -> tuple:
         raw_name = raw_name.title()
         if raw_name.count(" ") > 1 or "-" in raw_name:
-            self.error_names.append(raw_name)
+            self.error_names.add(raw_name)
         if " " in raw_name:
             space_index = raw_name.index(" ")
             name_list = [raw_name[0:space_index], raw_name[space_index + 1:]]
@@ -74,8 +79,6 @@ class txt_cleaner(ext.TxtExtractor):
         for i in range(3, len(list_instance)):
             if len(list_instance[i]) > 0:
                 raw_name_line = self.extract_name_line(list_instance, i)
-                if (":") not in raw_name_line:
-                    print(raw_name_line, this_key)
                 cleaned_name = self.clean_name(self.extract_name_from_line(raw_name_line))
                 cleaned_academy = self.clean_academy(self.extract_academy(list_instance))
                 cleaned_date = self.clean_date(self.extract_date(list_instance))
@@ -88,6 +91,12 @@ class txt_cleaner(ext.TxtExtractor):
                                                                      cleaned_date,
                                                                      cleaned_psychometric,
                                                                      cleaned_presentation)
+                self.set_list.add([unique_key,
+                                   cleaned_name,
+                                   cleaned_academy,
+                                   cleaned_date,
+                                   cleaned_psychometric,
+                                   cleaned_presentation])
 
 
 if __name__ == '__main__':
