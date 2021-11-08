@@ -1,14 +1,16 @@
-from pipeline.app.extract import RFPrototypeJSONExtractor as rf
+from pipeline.app.extract import json_extractor
 
 # instantiation of the class
-values = rf.JSONExtractor()
+extractor = json_extractor.JSONExtractor()
+
 
 # function to test the JSON key extraction, testing for the type, length and values in the output
 def test_extract_keys():
-    get_values = values.extract_keys
-    assert type(get_values) is list
-    assert len(get_values) >= 3105
+    function_return = extractor.extract_keys
+    assert type(function_return) is list
+    assert len(function_return) >= 3105
     assert 'Talent/10385.json' in get_values
+
 
 # function to test extracting data from a single JSON file, testing for type, length, values and keys in the output
 def test_extract_single_json():
@@ -18,6 +20,7 @@ def test_extract_single_json():
     assert get_values['name'] == 'Hilary Willmore'
     assert 'Python' in get_values['tech_self_score']
 
+
 # function to test name extraction from a single JSON file, testing for type and values of the output
 def test_extract_name():
     file = values.pull_single_json('Talent/10383.json')
@@ -25,12 +28,14 @@ def test_extract_name():
     assert get_name == 'Stillmann Castano'
     assert type(get_name) is str
 
+
 # function to test extraction of the date from a single JSON file, testing for type and values of the output
 def test_extract_date():
     file = values.pull_single_json('Talent/10450.json')
     get_date = values.extract_date(file)
     assert get_date == ('15/08/2019')
     assert type(get_date) is str
+
 
 # function to test extraction of the tech_self_score from a single JSON file, testing for type, length, values and keys of the output
 def test_extract_tech_self_score():
@@ -41,6 +46,7 @@ def test_extract_tech_self_score():
     assert get_tech_score['SPSS'] == 3
     assert 'Ruby' in get_tech_score
 
+
 # function to test extraction of the strengths from a single JSON file, testing for type, length and values of the output
 def test_extract_strengths():
     file = values.pull_single_json('Talent/10474.json')
@@ -48,6 +54,7 @@ def test_extract_strengths():
     assert type(get_strengths) is list
     assert len(get_strengths) >= 1
     assert 'Listening' in get_strengths
+
 
 # function to test extraction of the weaknesses from a single JSON file, testing for type, length and values of the output
 def test_extract_weaknesses():
@@ -57,6 +64,7 @@ def test_extract_weaknesses():
     assert len(get_weakness) >= 3
     assert 'Sensitive' in get_weakness
 
+
 # function to test extraction of the self_development from a single JSON file, testing for type and values of the output
 def test_extract_self_development():
     file = values.pull_single_json('Talent/10836.json')
@@ -64,12 +72,14 @@ def test_extract_self_development():
     assert type(get_self_dev) is str
     assert 'No' in get_self_dev
 
+
 # function to test extraction of the goe_flex from a single JSON file, testing for type and values of the output
 def test_extract_geo_flex():
     file = values.pull_single_json('Talent/10887.json')
-    get_geo_flex= values.extract_geo_flex(file)
+    get_geo_flex = values.extract_geo_flex(file)
     assert type(get_geo_flex) is str
     assert 'Yes' in get_geo_flex
+
 
 # function to test extraction of the financial_support_self from a single JSON file, testing for type and values of the output
 def test_extract_financial_support_self():
@@ -78,12 +88,14 @@ def test_extract_financial_support_self():
     assert type(get_finance_supp) is str
     assert 'Yes' in get_finance_supp
 
+
 # function to test extraction of the result from a single JSON file, testing for type and values of the output
 def test_extract_result():
     file = values.pull_single_json('Talent/11098.json')
     get_result = values.extract_result(file)
     assert type(get_result) is str
     assert 'Pass' in get_result
+
 
 # function to test extraction of the course interest from a single JSON file, testing for type and values of the output
 def test_extract_course_interest():

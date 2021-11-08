@@ -1,5 +1,5 @@
 import json
-from pipeline.app.extract import PrototypeS3Class as s3c
+from pipeline.app.extract import s3_connector as s3c
 
 
 class JSONExtractor(s3c.S3ParentClass):

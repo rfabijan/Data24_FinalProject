@@ -1,4 +1,4 @@
-from pipeline.app.extract import PrototypeS3Class as psc
+from pipeline.app.extract import s3_connector as psc
 
 extractor = psc.S3ParentClass()
 
