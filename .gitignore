@@ -131,5 +131,4 @@ dmypy.json
 .idea/
 /datafiles/*
 private_config.ini
-*ahmed
-pipeline/ahmed_env.py
+ahmed
