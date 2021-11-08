@@ -1,4 +1,5 @@
-from pipeline.app.extract import PrototypeS3Class as s3c
+
+from pipeline.app.extract import s3_connector as s3c
 import pipeline.config_manager as conf
 
 
@@ -69,6 +70,7 @@ class TxtExtractor(s3c.S3ParentClass):
             hyphen_index_skip = name_line.index("-")
             hyphen_index = name_line.index("-", hyphen_index_skip + 1)
         return name_line[hyphen_index + 26:]
+
 
 
 if __name__ == '__main__':
