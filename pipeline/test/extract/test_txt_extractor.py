@@ -70,7 +70,7 @@ def test_extract_psychometric_from_line():
     # Check from file read
     file_body = extractor.pull_text_object_as_list('Talent/Sparta Day 29 January 2019.txt')
     name_line = extractor.extract_name_line(file_body, 17)
-    assert extractor.extract_psychometric_from_line(name_line) == '60/100'
+    assert extractor.extract_psychometric_from_line(name_line) == 'Psychometrics: 60/100'
 
     # Check from custom parameter
     file_body = [
@@ -79,14 +79,14 @@ def test_extract_psychometric_from_line():
         "GAYEL MEINEKING -  Psychometrics: 30/100, Presentation: 19/32"
     ]
     name_line = extractor.extract_name_line(file_body, 2)
-    assert extractor.extract_psychometric_from_line(name_line) == '30/100'
+    assert extractor.extract_psychometric_from_line(name_line) == 'Psychometrics: 30/100'
 
 
 def test_extract_presentation_from_line():
     # Check from file read
     file_body = extractor.pull_text_object_as_list('Talent/Sparta Day 28 August 2019.txt')
     name_line = extractor.extract_name_line(file_body, 27)
-    assert extractor.extract_presentation_from_line(name_line) == '19/32'
+    assert extractor.extract_presentation_from_line(name_line) == 'Presentation: 19/32'
 
     # Check from custom parameter
     file_body = [
@@ -95,4 +95,4 @@ def test_extract_presentation_from_line():
         "GAYEL MEINEKING -  Psychometrics: 30/100, Presentation: 19/32"
     ]
     name_line = extractor.extract_name_line(file_body, 0)
-    assert extractor.extract_psychometric_from_line(name_line) == '16/32'
+    assert extractor.extract_psychometric_from_line(name_line) == 'Presentation: 16/32'
