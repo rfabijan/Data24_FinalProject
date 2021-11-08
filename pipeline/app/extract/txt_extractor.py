@@ -91,9 +91,9 @@ if __name__ == '__main__':
                 test_presentation = testTxt.extract_presentation_from_line(test_name_line)
 
                 #print(test_academy)
-                #print(test_date)
-                if ":" not in test_name_line:
-                    print(test_name_line)
+                print(test_date)
+                #if ":" not in test_name_line:
+                #    print(test_name_line)
                 #print(test_name)
                 #print(test_psychometric)
                 #print(test_presentation)
