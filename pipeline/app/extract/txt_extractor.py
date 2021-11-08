@@ -1,3 +1,6 @@
+import boto3
+import botocore
+from botocore.exceptions import ClientError
 
 from pipeline.app.extract import s3_connector as s3c
 import pipeline.config_manager as conf
@@ -15,10 +18,14 @@ class TxtExtractor(s3c.S3ParentClass):
 
     # takes in the key from the list defined previously, and returns the corresponding txt file,
     # but broken down into a list
-    def pull_text_object_as_list(self, this_key: str) -> list:
-        this_object = self.client.get_object(Bucket=self.bucket_name, Key=this_key)
-        text_str = this_object["Body"].read().decode("utf-8")
-        return text_str.split('\n')
+    def pull_text_object_as_list(self, this_key: str) -> list or None:
+        try:
+            this_object = self.client.get_object(Bucket=self.bucket_name, Key=this_key)
+            text_str = this_object["Body"].read().decode("utf-8").rstrip()
+            return text_str.split('\r\n')
+        except ClientError:
+            print(f"File {this_key} not found")
+            return None
 
     # Returns the date in string form from the list above
     @staticmethod
@@ -51,7 +58,7 @@ class TxtExtractor(s3c.S3ParentClass):
             if intermediate:
                 return intermediate
 
-# Extracts the psychometric section from the line pulled above
+    # Extracts the psychometric section from the line pulled above
     @staticmethod
     def extract_psychometric_from_line(name_line: str) -> str:
         if name_line.count("-") == 1:
@@ -70,7 +77,6 @@ class TxtExtractor(s3c.S3ParentClass):
             hyphen_index_skip = name_line.index("-")
             hyphen_index = name_line.index("-", hyphen_index_skip + 1)
         return name_line[hyphen_index + 26:]
-
 
 
 if __name__ == '__main__':
@@ -92,8 +98,8 @@ if __name__ == '__main__':
 
                 #print(test_academy)
                 #print(test_date)
-                if ":" not in test_name_line:
-                    print(test_name_line)
+                #if ":" not in test_name_line:
+                #    print(test_name_line)
                 #print(test_name)
                 #print(test_psychometric)
                 #print(test_presentation)
