@@ -7,70 +7,112 @@ extractor = json_extractor.JSONExtractor()
 # function to test the JSON key extraction, testing for the type, length and values in the output
 def test_extract_keys():
     function_return = extractor.extract_keys
-    assert type(function_return) is list
-    assert len(function_return) >= 3105
-    assert 'Talent/10385.json' in get_values
+
+    # Check return type
+    assert type(function_return) is list  # Check return type
+    assert len(function_return) >= 3105  # Check length of returned value is correct
+    assert 'Talent/10385.json' in function_return  # Check if known file is in the returned list
 
 
 # function to test extracting data from a single JSON file, testing for type, length, values and keys in the output
-def test_extract_single_json():
-    get_values = values.pull_single_json('Talent/10384.json')
-    assert type(get_values) is dict
-    assert len(get_values) >= 10
-    assert get_values['name'] == 'Hilary Willmore'
-    assert 'Python' in get_values['tech_self_score']
+def test_pull_single_json():
+    function_return = extractor.pull_single_json('Talent/10384.json')
+
+    assert type(function_return) is dict  # Check return type
+    assert len(function_return) == 10  # Check # keys in dictionary
+    assert function_return['name'] == 'Hilary Willmore'  # Check correct file was read
+    assert 'Python' in function_return['tech_self_score']  # Check 2 for correct file was read
 
 
 # function to test name extraction from a single JSON file, testing for type and values of the output
 def test_extract_name():
-    file = values.pull_single_json('Talent/10383.json')
-    get_name = values.extract_name(file)
-    assert get_name == 'Stillmann Castano'
-    assert type(get_name) is str
+    file = extractor.pull_single_json('Talent/10383.json')
+    function_return = extractor.extract_name(file)
+
+    assert function_return == 'Stillmann Castano'  # Check return value from file dictionary
+    assert extractor.extract_name({'name': 'John Doe'}) == 'John Doe'  # Check return value from custom dictionary
+    assert extractor.extract_name({'age': 1}) is None  # Check return value on invalid dictionary
 
 
-# function to test extraction of the date from a single JSON file, testing for type and values of the output
+# function to test extraction of the date from a single JSON file, testing for value of the output
 def test_extract_date():
-    file = values.pull_single_json('Talent/10450.json')
-    get_date = values.extract_date(file)
-    assert get_date == ('15/08/2019')
-    assert type(get_date) is str
+    file = extractor.pull_single_json('Talent/10450.json')
+    function_return = extractor.extract_date(file)
+
+    assert function_return == '15/08/2019'
+    assert extractor.extract_name({'date': '01/01/2021'}) == '01/01/2021'
+    assert extractor.extract_name({'dob': '01/01/2021'}) is None
 
 
-# function to test extraction of the tech_self_score from a single JSON file, testing for type, length, values and keys of the output
+# function to test extraction of the tech_self_score from a single JSON file
+# testing for type, length, values and keys of the output
 def test_extract_tech_self_score():
-    file = values.pull_single_json('Talent/10458.json')
-    get_tech_score = values.extract_tech_self_score(file)
-    assert type(get_tech_score) is dict
-    assert len(get_tech_score) >= 4
-    assert get_tech_score['SPSS'] == 3
-    assert 'Ruby' in get_tech_score
+    file = extractor.pull_single_json('Talent/10458.json')
+    function_return = extractor.extract_tech_self_score(file)
+
+    # Check dictionary based on valid file
+    assert type(function_return) is dict
+    assert len(function_return) == 4
+    assert function_return['SPSS'] == 3
+    assert 'Ruby' in function_return
+
+    # Check custom dictionary
+    function_return = extractor.extract_tech_self_score({'tech_self_score': {'C++': 1, 'Python': 3}})
+    assert len(function_return) == 2
+    assert function_return['Python'] == 3
+    assert 'C++' in function_return
+
+    # Check invalid dictionary
+    function_return = extractor.extract_tech_self_score({'strengths': ['Organisation', 'Courteous']})
+    assert function_return is None
 
 
-# function to test extraction of the strengths from a single JSON file, testing for type, length and values of the output
+# function to test extraction of the strengths from a single JSON file
+# testing for type, length and values of the output
 def test_extract_strengths():
-    file = values.pull_single_json('Talent/10474.json')
-    get_strengths = values.extract_strengths(file)
-    assert type(get_strengths) is list
-    assert len(get_strengths) >= 1
-    assert 'Listening' in get_strengths
+    file = extractor.pull_single_json('Talent/10474.json')
+    function_return = extractor.extract_strengths(file)
+
+    # Check dictionary based on valid file
+    assert type(function_return) is list
+    assert len(function_return) == 1
+    assert 'Listening' in function_return
+
+    # Check custom dictionary
+    function_return = extractor.extract_strengths({"strengths": ["Programming", "Gaming"]})
+    assert len(function_return) == 2
+    assert 'Programming' in function_return
+
+    # Check invalid dictionary
+    function_return = extractor.extract_strengths({'tech_self_score': {'C++': 1, 'Python': 3}})
+    assert function_return is None
 
 
-# function to test extraction of the weaknesses from a single JSON file, testing for type, length and values of the output
+# function to test extraction of the weaknesses from a single JSON file
+# testing for type, length and values of the output
 def test_extract_weaknesses():
-    file = values.pull_single_json('Talent/10661.json')
-    get_weakness = values.extract_weaknesses(file)
-    assert type(get_weakness) is list
-    assert len(get_weakness) >= 3
-    assert 'Sensitive' in get_weakness
+    file = extractor.pull_single_json('Talent/10661.json')
+    function_return = extractor.extract_weaknesses(file)
+
+    # Check dictionary based on valid file
+    assert type(function_return) is list
+    assert len(function_return) == 3
+    assert 'Sensitive' in function_return
+
+    # Check custom dictionary
+    function_return = extractor.extract_strengths({"weaknesses": ["Procrastination", 'Distractable']})
+    assert len(function_return) == 2
+    assert 'Distractable' in function_return
 
 
-# function to test extraction of the self_development from a single JSON file, testing for type and values of the output
+# function to test extraction of the self_development from a single JSON file
+# testing value of the output
 def test_extract_self_development():
-    file = values.pull_single_json('Talent/10836.json')
-    get_self_dev = values.extract_self_development(file)
-    assert type(get_self_dev) is str
-    assert 'No' in get_self_dev
+    file = extractor.pull_single_json('Talent/10836.json')
+    function_return = extractor.extract_self_development(file)
+
+    # Check dictionary based on valid file
+    assert function_return == "No"
 
 
 # function to test extraction of the goe_flex from a single JSON file, testing for type and values of the output
