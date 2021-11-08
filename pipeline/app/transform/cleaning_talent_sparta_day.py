@@ -79,8 +79,8 @@ class txt_cleaner(ext.TxtExtractor):
                 cleaned_name = self.clean_name(self.extract_name_from_line(raw_name_line))
                 cleaned_academy = self.clean_academy(self.extract_academy(list_instance))
                 cleaned_date = self.clean_date(self.extract_date(list_instance))
-                cleaned_psychometric = self.clean_scores(self.extract_psychometric_from_line(raw_name_line))
-                cleaned_presentation = self.clean_scores(self.extract_presentation_from_line(raw_name_line))
+                cleaned_psychometric = self.clean_psychometrics(self.extract_psychometric_from_line(raw_name_line))
+                cleaned_presentation = self.clean_presentation(self.extract_presentation_from_line(raw_name_line))
                 unique_key = self.key_generator(cleaned_name, cleaned_date)
 
                 self.final_dict[unique_key] = self.single_dict_maker(cleaned_name,
