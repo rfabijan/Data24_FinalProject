@@ -129,5 +129,7 @@ dmypy.json
 .pyre/
 
 .idea/
-.datafiles/
+/datafiles/*
 private_config.ini
+*ahmed
+pipeline/ahmed_env.py
