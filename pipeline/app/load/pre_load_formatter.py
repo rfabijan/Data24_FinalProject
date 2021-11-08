@@ -118,4 +118,3 @@ class pre_load_formatter(tsd.txt_cleaner, t.json_cleaner, ta.csv_cleaner1, ca.cs
             self.sparta_day_set.append(list_to_add)
 
 
-            
