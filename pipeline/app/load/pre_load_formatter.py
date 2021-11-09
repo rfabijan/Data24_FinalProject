@@ -37,15 +37,8 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner): #, ta.csv_cleaner1, ca.cs
         self.__course_trainer_jt_df = pandas.DataFrame
         self.__trainer_df = pandas.DataFrame
 
-        # self.__server = 'localhost,1433'
-        # self.__database = conf.DB_NAME
-        # self.__username = 'SA'
-        # self.__password = 'Passw0rd2018'
-        # self.data24etl_db = pyodbc.connect(
-        #     'DRIVER={SQL Server};SERVER=' + self.__server + ';DATABASE=' + self.__database
-        #     + ';UID=' + self.__username + ';PWD=' + self.__password)
-
         self.fill_txt_dict_df()
+        self.populate_json_df()
 
     @property
     def academy_df(self):
@@ -211,11 +204,10 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner): #, ta.csv_cleaner1, ca.cs
 if __name__ == '__main__':
     test_table_formatter = PreLoadFormatter()
 
-    test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Academy"], "academy_df")
-    test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Academy", "Date"], "sparta_day_df")
+    #test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Academy"], "academy_df")
+    #test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Academy", "Date"], "sparta_day_df")
 
-    print(test_table_formatter.sparta_day_df)
+#    test_table_formatter.populate_from_two_df(test_table_formatter.txt_df, test_table_formatter.json_df, ["Academy", "Name", "Course_interest"], "spartans_df")
 
-    # print(test_table_formatter.academy_df.to_sql(name="Academy",
-    #                                              con=test_table_formatter.data24etl_db,
-    #                                              if_exists='replace'))
+    print(test_table_formatter.txt_df)
+    print(test_table_formatter.json_df)
