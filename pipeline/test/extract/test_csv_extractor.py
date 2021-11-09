@@ -26,8 +26,6 @@ def test_extract_trainer():
     assert 'gregor Gomez' not in output
     assert 'gregor gomez' not in output
 
-# def test_extract_weeks(): to do
-
 def test_extract_skill_value():
     output = values.extract_skill_value(values.singe_csv("Academy/Data_31_2019-05-20.csv"),'Determined_W1',1)
     assert output >= 7 or output <= 7
