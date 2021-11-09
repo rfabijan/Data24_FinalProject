@@ -5,11 +5,11 @@ import pprint as pp
 import pandas
 
 
-class txt_cleaner(ext.TxtExtractor):
+class TxtCleaner(ext.TxtExtractor):
     def __init__(self):
-        super().__init__()
+        super(TxtCleaner, self).__init__()
         self.__final_dict = {}
-        self.__final_df = pandas.DataFrame
+        self.__txt_df = pandas.DataFrame
         self.__set_list = set()
         self.__error_names = set()
 
@@ -18,11 +18,11 @@ class txt_cleaner(ext.TxtExtractor):
         return self.__final_dict
 
     @property
-    def final_df(self):
-        return self.__final_df
+    def txt_df(self):
+        return self.__txt_df
 
     def set_df(self, new_df: pandas.DataFrame):
-        self.__final_df = new_df
+        self.__txt_df = new_df
 
     @property
     def set_list(self):
@@ -103,12 +103,16 @@ class txt_cleaner(ext.TxtExtractor):
 
         self.set_df(pandas.DataFrame.from_dict(self.final_dict).transpose())
 
+    def fill_txt_dict_df(self):
+        for this_key in self.txt_keys:
+            self.final_dict_appender(this_key)
 
 
 if __name__ == '__main__':
-    testcleaner = txt_cleaner()
 
-    for key in testcleaner.keys:
+    testcleaner = TxtCleaner()
+
+    for key in testcleaner.txt_keys:
         testcleaner.final_dict_appender(key)
     #for this_key in testcleaner.final_dict.keys():
     #    print(testcleaner.final_dict[this_key]["Name"])

@@ -12,7 +12,7 @@ from pprint import pprint
 
 class JsonCleaner(JSONExtractor):
     def __init__(self):
-        super().__init__()
+        super(JsonCleaner, self).__init__()
 
     def create_unique_key(self, name: tuple, date: dt) -> str:
         if date:
@@ -174,7 +174,7 @@ class JsonCleaner(JSONExtractor):
 
 if __name__ == '__main__':
     cleaner = JsonCleaner()
-    keys = cleaner.extract_keys
+    keys = cleaner.extract_json_keys
     for i in keys:
         file = cleaner.pull_single_json(i)
         pprint(cleaner.create_unique_dict_from_json(file))
