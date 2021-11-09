@@ -10,8 +10,7 @@ class TxtCleaner(ext.TxtExtractor):
         super(TxtCleaner, self).__init__()
         self.__final_dict = {}
         self.__txt_df = pandas.DataFrame
-        self.__set_list = set()
-        self.__error_names = set()
+        self.__txt_error_names = set()
 
     @property
     def final_dict(self):
@@ -25,13 +24,11 @@ class TxtCleaner(ext.TxtExtractor):
         self.__txt_df = new_df
 
     @property
-    def set_list(self):
-        return self.__set_list
-
-    @property
     def error_names(self):
-        return self.__error_names
+        return self.__txt_error_names
 
+    # Takes the raw name from the file and returns a tuple of first name, surname
+    # and appends any that don't follow "normal" naming conventions to a list
     def clean_name(self, raw_name: str) -> tuple:
         raw_name = raw_name.title()
         if raw_name.count(" ") > 1 or "-" in raw_name:
@@ -43,12 +40,14 @@ class TxtCleaner(ext.TxtExtractor):
         else:
             print(raw_name)
 
+    # Returns the date in a datetime format
     @staticmethod
     def clean_date(raw_date_str: str) -> dt.datetime:
         space_index = raw_date_str.index(" ") + 1
         s_ins = raw_date_str[space_index::].replace("\r", "")
         return dt.datetime.strptime(s_ins, '%d %B %Y')
 
+    # Takes the float out of the scores string
     @staticmethod
     def __clean_scores(raw_score_str: str) -> float:
         colon_index = raw_score_str.index(":")
@@ -57,16 +56,19 @@ class TxtCleaner(ext.TxtExtractor):
         denominator = int(raw_score_str[slash_index+1:])
         return numerator/denominator
 
+    # Calls above method for the two scores given
     def clean_psychometrics(self, raw_psychometrics: str) -> float:
         return self.__clean_scores(raw_psychometrics)
 
     def clean_presentation(self, raw_presentation: str) -> float:
         return self.__clean_scores(raw_presentation)
 
+    # Can be updated to check if academy is in a list of academies potentially
     @staticmethod
     def clean_academy(raw_academy: str) -> str:
         return raw_academy.replace("\r", "").title()
 
+    # Takes the name and datetime to make the unique key
     @staticmethod
     def key_generator(clean_name: tuple, clean_date: dt.datetime) -> str:
         return clean_name[0].replace(" ", "") +\
@@ -118,4 +120,4 @@ if __name__ == '__main__':
     #    print(testcleaner.final_dict[this_key]["Name"])
     #pp.pprint(testcleaner.final_dict)
 
-    pp.pprint(testcleaner.final_df)
+    pp.pprint(testcleaner.txt_df)
