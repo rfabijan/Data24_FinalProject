@@ -2,17 +2,31 @@ import pipeline.app.extract.txt_extractor as ext
 
 import datetime as dt
 import pprint as pp
+import pandas
 
 
-class txt_cleaner(ext.TxtExtractor):
+class TxtCleaner(ext.TxtExtractor):
     def __init__(self):
-        super().__init__()
+        super(TxtCleaner, self).__init__()
         self.__final_dict = {}
-        self.__error_names = []
+        self.__txt_df = pandas.DataFrame
+        self.__set_list = set()
+        self.__error_names = set()
 
     @property
     def final_dict(self):
         return self.__final_dict
+
+    @property
+    def txt_df(self):
+        return self.__txt_df
+
+    def set_df(self, new_df: pandas.DataFrame):
+        self.__txt_df = new_df
+
+    @property
+    def set_list(self):
+        return self.__set_list
 
     @property
     def error_names(self):
@@ -21,7 +35,7 @@ class txt_cleaner(ext.TxtExtractor):
     def clean_name(self, raw_name: str) -> tuple:
         raw_name = raw_name.title()
         if raw_name.count(" ") > 1 or "-" in raw_name:
-            self.error_names.append(raw_name)
+            self.error_names.add(raw_name)
         if " " in raw_name:
             space_index = raw_name.index(" ")
             name_list = [raw_name[0:space_index], raw_name[space_index + 1:]]
@@ -74,8 +88,6 @@ class txt_cleaner(ext.TxtExtractor):
         for i in range(3, len(list_instance)):
             if len(list_instance[i]) > 0:
                 raw_name_line = self.extract_name_line(list_instance, i)
-                if (":") not in raw_name_line:
-                    print(raw_name_line, this_key)
                 cleaned_name = self.clean_name(self.extract_name_from_line(raw_name_line))
                 cleaned_academy = self.clean_academy(self.extract_academy(list_instance))
                 cleaned_date = self.clean_date(self.extract_date(list_instance))
@@ -89,19 +101,21 @@ class txt_cleaner(ext.TxtExtractor):
                                                                      cleaned_psychometric,
                                                                      cleaned_presentation)
 
+        self.set_df(pandas.DataFrame.from_dict(self.final_dict).transpose())
+
+    def fill_txt_dict_df(self):
+        for this_key in self.txt_keys:
+            self.final_dict_appender(this_key)
+
 
 if __name__ == '__main__':
-    testcleaner = txt_cleaner()
-    # print(f"Cleaned Name: {testcleaner.clean_name('''LORINDA O'CROTTY''')}")
-    # print(f"Cleaned Academy: {testcleaner.clean_academy('London Academy')}")
-    # print(f"Cleaned Date: {testcleaner.clean_date('Wednesday 9 October 2019')}")
-    # print(f"Cleaned Psychometrics {testcleaner.clean_scores('Psychometrics: 55/100')}")
-    # print(f"Cleaned Presentaion {testcleaner.clean_scores('Presentation: 20/32')}")
-    # print(f"Generated Key: {testcleaner.key_generator(testcleaner.clean_name('''LORINDA O'CROTTY'''),testcleaner.clean_date('Wednesday 9 October 2019'))}")
-    #
-    for key in testcleaner.keys:
+
+    testcleaner = TxtCleaner()
+
+    for key in testcleaner.txt_keys:
         testcleaner.final_dict_appender(key)
     #for this_key in testcleaner.final_dict.keys():
     #    print(testcleaner.final_dict[this_key]["Name"])
-    pp.pprint(testcleaner.final_dict)
-    #pp.pprint(testcleaner.error_names)
+    #pp.pprint(testcleaner.final_dict)
+
+    pp.pprint(testcleaner.final_df)
