@@ -172,9 +172,9 @@ class JsonCleaner(JSONExtractor):
 
 
 
-
-cleaner = JsonCleaner()
-keys = cleaner.extract_keys
-for i in keys:
-    file = cleaner.pull_single_json(i)
-    pprint(cleaner.create_unique_dict_from_json(file))
+if __name__ == '__main__':
+    cleaner = JsonCleaner()
+    keys = cleaner.extract_keys
+    for i in keys:
+        file = cleaner.pull_single_json(i)
+        pprint(cleaner.create_unique_dict_from_json(file))
