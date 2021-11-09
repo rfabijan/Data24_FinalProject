@@ -5,10 +5,6 @@ import numpy as np
 values = cx.AcademiesCsvExtractor()
 values1 = cx.ApplicantsCsvExtractor()
 
-print(values1.extract_dob(values.singe_csv("Talent/Aug2019Applicants.csv"),5))
-# print(values.extract_date('Academy/Business_27_2019-09-16.csv'))
-# change single csv name
-
 def test_len_of_rows():
     output = values.len_of_rows(values.singe_csv("Academy/Engineering_29_2019-12-30.csv"))
     assert output >= 9 or output <= 9
@@ -18,13 +14,17 @@ def test_extract_name():
     output = values.extract_name(values.singe_csv("Academy/Data_28_2019-02-18.csv"),3)
     assert type(output) is str
     assert 'Aida Bothams' in output
+    assert 'aida Bothams' not in output
+    assert 'Aida bothams' not in output
+    assert 'aida bothams' not in output
 
 def test_extract_trainer():
     output = values.extract_trainer(values.singe_csv("Academy/Business_20_2019-02-11.csv"),4)
     assert type(output) is str
     assert 'Gregor Gomez' in output
-
-# def test_extract_weeks(): to do
+    assert 'Gregor gomez' not in output
+    assert 'gregor Gomez' not in output
+    assert 'gregor gomez' not in output
 
 def test_extract_skill_value():
     output = values.extract_skill_value(values.singe_csv("Academy/Data_31_2019-05-20.csv"),'Determined_W1',1)
@@ -65,20 +65,15 @@ def test_extract_date():
 
 
 
-
-
-
-
-
 def test_extract_id():
-    pass
-
-
+    output = values1.extract_id(values.singe_csv("Talent/Oct2019Applicants.csv"), 2)
+    assert type(output) == np.int64
+    assert output == 3
 
 def test_extract_gender():
-    pass
-
-
+    output = values1.extract_gender(values.singe_csv("Talent/Feb2019Applicants.csv"), 4)
+    assert type(output) is str
+    assert 'Male' in output
 
 def test_extract_dob():
     output = values1.extract_dob(values.singe_csv("Talent/Aug2019Applicants.csv"),5)
@@ -88,24 +83,53 @@ def test_extract_dob():
     assert output[3:5] == '12'
     assert output[6::] == '2000'
 
-# def count(x):
-#     key = 0
-#     for i in x:
-#         key += 1
-#     return key
-#
-# print(count(values.extract_skill_values_per_person_per_week(values.singe_csv('Academy/Business_29_2019-11-18.csv'))))
-#
+def test_extract_email():
+    output = values1.extract_email(values.singe_csv("Talent/Sept2019Applicants.csv"), 1)
+    assert type(output) is str
+    assert 'dduffil1@exblog.jp' in output
+    assert '@' in output
 
+def test_extract_city():
+    output = values1.extract_city(values.singe_csv("Talent/Aug2019Applicants.csv"), 1)
+    assert type(output) is str
+    assert 'Sutton' in output
+    assert 'sutton' not in output
 
+def test_extract_address():
+    output = values1.extract_address(values.singe_csv("Talent/May2019Applicants.csv"), 5)
+    assert type(output) is str
+    assert '799 Vera Hill' in output
+    assert output[0:3] == '799'
+    assert output[4:8] == 'Vera'
+    assert output[9::] == 'Hill'
 
+def test_extract_postcode():
+    output = values1.extract_postcode(values.singe_csv("Talent/Feb2019Applicants.csv"), 2)
+    assert type(output) is str
+    assert 'GU32' in output
+    assert 'gu32' not in output
+    assert 'Gu32' not in output
+    assert 'gU32' not in output
 
+def test_extract_phone_number():
+    output = values1.extract_phone_number(values.singe_csv("Talent/March2019Applicants.csv"), 3)
+    assert type(output) is str
+    assert '+44-900-852-4771' in output
+    assert output[0:3] == '+44'
+    assert len(output) <= 16
+    assert '+44' in output
 
+def test_extract_university():
+    output = values1.extract_university(values.singe_csv("Talent/Dec2019Applicants.csv"), 1)
+    assert type(output) is str
+    assert 'University of Bradford' in output
+    assert 'university of Bradford' not in output
+    assert 'University of bradford' not in output
+    assert 'university Of bradford' not in output
 
-
-
-
-
-
-
-
+def test_extract_degree():
+    output = values1.extract_degree(values.singe_csv("Talent/Oct2019Applicants.csv"), 4)
+    assert type(output) is str
+    assert '2:2' in output
+    assert output[0] == '2'
+    assert output[2] == '2'
