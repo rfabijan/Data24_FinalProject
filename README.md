@@ -12,7 +12,7 @@ https://spartaglobal.atlassian.net/jira/software/projects/DATA24/boards/300/back
 ## Diagrams
 [Click here](https://drive.google.com/drive/folders/1NK1fbrf5xRy99zEYOgc1MFEPsXAfAs0L?usp=sharing) to view the ERD and Class Diagrams.<br/>Alternatively, copy and paste:<br/>https://drive.google.com/drive/folders/1NK1fbrf5xRy99zEYOgc1MFEPsXAfAs0L?usp=sharing
 
-##Roles:
+##Roles:<br/>
 **Tia** – Scrum Master<br/>
 **Rob** – Dev, Git baby<br/>
 **Sully** – Dev<br/>

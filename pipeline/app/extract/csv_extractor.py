@@ -42,7 +42,7 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
         return file_name.iloc[:][column_name][row_number]
 
     # Returns a single csv file.
-    def singe_csv(self, key):
+    def single_csv(self, key):
         single_csv = pd.read_csv(self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return single_csv
 
@@ -157,7 +157,7 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
 if __name__ == '__main__':
     # Dictionary Name:{"Wk":{"Analytic": , "Independent"}}
     test = ApplicantsCsvExtractor()
-    #print(test.extract_title_date('Talent/April2019Applicants.csv'))
+    print(test.extract_title_date('Talent/April2019Applicants.csv'))
     # p.pprint(test.extract_city(test.singe_csv('Talent/April2019Applicants.csv'), 36))
     csv_extractor = AcademiesCsvExtractor()
     # p.pprint(dict_holder)
