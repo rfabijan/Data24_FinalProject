@@ -7,12 +7,21 @@ I think ideally it'll be before (which we'll need to test with your guidance), a
 """
 from pipeline.app.extract.json_extractor import JSONExtractor
 import datetime as dt
+import pandas as pd
 from pprint import pprint
 
 
 class JsonCleaner(JSONExtractor):
     def __init__(self):
         super(JsonCleaner, self).__init__()
+        self.__json_df = pd.DataFrame
+
+    @property
+    def json_df(self):
+        return self.__json_df
+
+    def set_json_df(self, new_df: pd.DataFrame):
+        self.__json_df = new_df
 
     def create_unique_key(self, name: tuple, date: dt) -> str:
         if date:
@@ -27,7 +36,7 @@ class JsonCleaner(JSONExtractor):
 
 
     @staticmethod
-    def clean_name(name: str):
+    def clean_json_name(name: str):
         # 'Judy' needs cleaning into a tuple of ('Judy','')
         # 'joNNY O Sullivan-Weddeburn' is cleaned to ('Jonny',  'O' Sullivan-Weddeburn') or Sullivan - Weddeburn
         error_names = []
@@ -42,7 +51,7 @@ class JsonCleaner(JSONExtractor):
             print(name)
 
     @staticmethod
-    def clean_date(date: str):
+    def clean_json_date(date: str):
         #  '01/02/2003' converts to datetime.date(2003, 2, 1)
         if not date:
             return None
@@ -58,7 +67,7 @@ class JsonCleaner(JSONExtractor):
                 return datetime
 
     @staticmethod
-    def clean_geo_flex(geo_flex: str):
+    def clean_json_geo_flex(geo_flex: str):
         # 'Yes' converts to True
         if geo_flex == "Yes":
             return True
@@ -66,7 +75,7 @@ class JsonCleaner(JSONExtractor):
             return False
 
     @staticmethod
-    def clean_result(result):
+    def clean_json_result(result):
         # 'Pass' converts to True
         if result == "Pass":
             return True
@@ -74,7 +83,7 @@ class JsonCleaner(JSONExtractor):
             return False
 
     @staticmethod
-    def clean_self_development(self_development):
+    def clean_json_self_development(self_development):
         # 'Yes' converts to True
         if self_development == "Yes":
             return True
@@ -83,19 +92,19 @@ class JsonCleaner(JSONExtractor):
         pass
 
     @staticmethod
-    def clean_course_interest(course_interest: str):
+    def clean_json_course_interest(course_interest: str):
         # 'Data' stays as it is, as a string
-        # Honestly idk if there's any bad values to REALLY clean here
+        # Honestly idk if there's any bad values to REALLY clean_json here
         return course_interest.title()
 
     @staticmethod
-    def clean_tech_self_score(tech_self_scores: dict):
+    def clean_json_tech_self_score(tech_self_scores: dict):
         # {"R": 4} goes in as a dictionary/json/whatever, comes out as a dictionary where dict["R"] == 4
         # Pretty sure this doesn't really get back input, but I'll test with bad numbers that convert to None
         return tech_self_scores
 
     @staticmethod
-    def clean_strengths(strengths: list):
+    def clean_json_strengths(strengths: list):
         # Input is a list, output is a list of strings
         # Must have the first letter only be capitalised
         clean_strengths = []
@@ -105,7 +114,7 @@ class JsonCleaner(JSONExtractor):
         return clean_strengths
 
     @staticmethod
-    def clean_weaknesses(weaknesses):
+    def clean_json_weaknesses(weaknesses):
         # Input is a list, output is a list of strings
         # Must have the first letter only be capitalised
         clean_weaknesses = []
@@ -115,7 +124,7 @@ class JsonCleaner(JSONExtractor):
         return clean_weaknesses
 
     @staticmethod
-    def clean_financial_support_self(financial_support_self):
+    def clean_json_financial_support_self(financial_support_self):
         if financial_support_self == "Yes":
             return True
         else:
@@ -139,16 +148,16 @@ class JsonCleaner(JSONExtractor):
     # - course_interest
     """
     def create_unique_dict_from_json(self, json_file):
-        name = self.clean_name(self.extract_name(json_file))
-        date = self.clean_date(self.extract_date(json_file))
-        tech_dict = self.clean_tech_self_score(self.extract_tech_self_score(json_file))
-        list_of_strengths = self.clean_strengths(self.extract_strengths(json_file))
-        list_of_weaknesses = self.clean_weaknesses(self.extract_weaknesses(json_file))
-        self_development = self.clean_self_development(self.extract_self_development(json_file))
-        geo_flex = self.clean_geo_flex(self.extract_geo_flex(json_file))
-        financial_support_self = self.clean_financial_support_self(self.extract_financial_support_self(json_file))
-        result = self.clean_result(self.extract_result(json_file))
-        course_interest = self.clean_course_interest(self.extract_course_interest(json_file))
+        name = self.clean_json_name(self.extract_json_name(json_file))
+        date = self.clean_json_date(self.extract_json_date(json_file))
+        tech_dict = self.clean_json_tech_self_score(self.extract_json_tech_self_score(json_file))
+        list_of_strengths = self.clean_json_strengths(self.extract_json_strengths(json_file))
+        list_of_weaknesses = self.clean_json_weaknesses(self.extract_json_weaknesses(json_file))
+        self_development = self.clean_json_self_development(self.extract_json_self_development(json_file))
+        geo_flex = self.clean_json_geo_flex(self.extract_json_geo_flex(json_file))
+        financial_support_self = self.clean_json_financial_support_self(self.extract_json_financial_support_self(json_file))
+        result = self.clean_json_result(self.extract_json_result(json_file))
+        course_interest = self.clean_json_course_interest(self.extract_json_course_interest(json_file))
         # CREATE the unique key
         unique_key = self.create_unique_key(name, date)
         # CREATE a final dictonary
@@ -167,6 +176,34 @@ class JsonCleaner(JSONExtractor):
                            }
         return final_dictonary
 
+    def populate_json_df(self):
+        intermediate_dict = {}
+        for key in self.extract_json_keys:
+            json_file = self.pull_single_json(key)
+            name = self.clean_json_name(self.extract_json_name(json_file))
+            date = self.clean_json_date(self.extract_json_date(json_file))
+            tech_dict = self.clean_json_tech_self_score(self.extract_json_tech_self_score(json_file))
+            list_of_strengths = self.clean_json_strengths(self.extract_json_strengths(json_file))
+            list_of_weaknesses = self.clean_json_weaknesses(self.extract_json_weaknesses(json_file))
+            self_development = self.clean_json_self_development(self.extract_json_self_development(json_file))
+            geo_flex = self.clean_json_geo_flex(self.extract_json_geo_flex(json_file))
+            financial_support_self = self.clean_json_financial_support_self(self.extract_json_financial_support_self(json_file))
+            result = self.clean_json_result(self.extract_json_result(json_file))
+            course_interest = self.clean_json_course_interest(self.extract_json_course_interest(json_file))
+            unique_key = self.create_unique_key(name, date)
+            intermediate_dict[unique_key] = {"Name": name
+                                           , "Date": date
+                                           , "Tech_self_score": tech_dict
+                                           , "Strengths": list_of_strengths
+                                           , "Weaknesses": list_of_weaknesses
+                                           , "Self_development": self_development
+                                           , "Geo_flex": geo_flex
+                                           , "Financial_support_self": financial_support_self
+                                           , "Result": result
+                                           , "Course_interest": course_interest
+                                           }
+        self.set_json_df(pd.DataFrame.from_dict(intermediate_dict).transpose())
+
 
 
 
@@ -174,7 +211,9 @@ class JsonCleaner(JSONExtractor):
 
 if __name__ == '__main__':
     cleaner = JsonCleaner()
-    keys = cleaner.extract_json_keys
-    for i in keys:
-        file = cleaner.pull_single_json(i)
-        pprint(cleaner.create_unique_dict_from_json(file))
+    #keys = cleaner.extract_json_keys
+    #for i in keys:
+    #    file = cleaner.pull_single_json(i)
+    #    pprint(cleaner.create_unique_dict_from_json(file))
+    cleaner.populate_json_df()
+    print(cleaner.json_df)

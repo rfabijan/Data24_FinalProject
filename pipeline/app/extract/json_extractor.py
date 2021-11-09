@@ -23,7 +23,7 @@ class JSONExtractor(s3c.S3ParentClass):
 
     # Returns a name if exists as a key in dictonary
     @staticmethod
-    def extract_name(json_file) -> str:
+    def extract_json_name(json_file) -> str:
         if "name" in json_file.keys():
             return json_file["name"]
         else:
@@ -31,7 +31,7 @@ class JSONExtractor(s3c.S3ParentClass):
 
     # Returns a date if exists as a key in dictonary
     @staticmethod
-    def extract_date(json_file) -> str:
+    def extract_json_date(json_file) -> str:
         if "date" in json_file.keys():
             return json_file["date"]
         else:
@@ -39,7 +39,7 @@ class JSONExtractor(s3c.S3ParentClass):
 
     # Returns a tech_self_score
     @staticmethod
-    def extract_tech_self_score(json_file) -> dict:
+    def extract_json_tech_self_score(json_file) -> dict:
         if "tech_self_score" in json_file.keys():
             return json_file["tech_self_score"]
         else:
@@ -47,37 +47,37 @@ class JSONExtractor(s3c.S3ParentClass):
 
     # Returns a strengths
     @staticmethod
-    def extract_strengths(json_file) -> list:
+    def extract_json_strengths(json_file) -> list:
         return json_file["strengths"]
 
     # Returns a weaknesses
     @staticmethod
-    def extract_weaknesses(json_file) -> list:
+    def extract_json_weaknesses(json_file) -> list:
         return json_file["weaknesses"]
 
     # Returns a self_development
     @staticmethod
-    def extract_self_development(json_file) -> str:
+    def extract_json_self_development(json_file) -> str:
         return json_file["self_development"]
 
     # Returns a geo_flex
     @staticmethod
-    def extract_geo_flex(json_file) -> str:
+    def extract_json_geo_flex(json_file) -> str:
         return json_file["geo_flex"]
 
     # Returns a financial_support_self
     @staticmethod
-    def extract_financial_support_self(json_file) -> str:
+    def extract_json_financial_support_self(json_file) -> str:
         return json_file["financial_support_self"]
 
     # Returns a result
     @staticmethod
-    def extract_result(json_file) -> str:
+    def extract_json_result(json_file) -> str:
         return json_file["result"]
 
     # Returns a course_interest
     @staticmethod
-    def extract_course_interest(json_file) -> str:
+    def extract_json_course_interest(json_file) -> str:
         return json_file["course_interest"]
 
 
