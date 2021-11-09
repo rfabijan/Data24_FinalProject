@@ -3,118 +3,200 @@ import pipeline.app.transform.cleaning_talent as t
 import pipeline.app.transform.cleaning_talent_applicants as ta
 import pipeline.app.transform.cleaning_academy_course as ca
 
+import pipeline.config_manager as conf
+
 import datetime as dt
+import pandas
+import pyodbc
 
-class pre_load_formatter(tsd.txt_cleaner, t.json_cleaner, ta.csv_cleaner1, ca.csv_cleaner1):
+
+
+class PreLoadFormatter(tsd.TxtCleaner): #, t.JsonCleaner, ta.csv_cleaner1, ca.csv_cleaner1):
     def __init__(self):
-        super(pre_load_formatter).__init__()
-        self.__academy_list = []
-        self.__sparta_day_list = []
-        self.__app_sparta_day_list = []
-        self.__weakness_list = []
-        self.__app_weakness_jt_list = []
-        self.__strengths_list = []
-        self.__app_strengths_jt_list = []
-        self.__tech_skills_list = []
-        self.__tech_self_score_jt_list = []
-        self.__applicants_list = []
-        self.__streams_list = []
-        self.__invitors_list = []
-        self.__address_list = []
-        self.__spartans_list = []
-        self.__tracker_jt_list = []
-        self.__core_skills_list = []
-        self.__course_list = []
-        self.__course_trainer_jt_list = []
-        self.__trainer_list = []
+        super(PreLoadFormatter, self).__init__()
+        self.__academy_df = pandas.DataFrame
+        self.__sparta_day_df = pandas.DataFrame
+        self.__app_sparta_day_df = pandas.DataFrame
+        self.__weakness_df = pandas.DataFrame
+        self.__app_weakness_jt_df = pandas.DataFrame
+        self.__strengths_df = pandas.DataFrame
+        self.__app_strengths_jt_df = pandas.DataFrame
+        self.__tech_skills_df = pandas.DataFrame
+        self.__tech_self_score_jt_df = pandas.DataFrame
+        self.__applicants_df = pandas.DataFrame
+        self.__streams_df = pandas.DataFrame
+        self.__invitors_df = pandas.DataFrame
+        self.__address_df = pandas.DataFrame
+        self.__spartans_df = pandas.DataFrame
+        self.__tracker_jt_df = pandas.DataFrame
+        self.__core_skills_df = pandas.DataFrame
+        self.__course_df = pandas.DataFrame
+        self.__course_trainer_jt_df = pandas.DataFrame
+        self.__trainer_df = pandas.DataFrame
+
+        self.__server = 'localhost,1433'
+        self.__database = conf.DB_NAME
+        self.__username = 'SA'
+        self.__password = 'Passw0rd2018'
+        self.data24etl_db = pyodbc.connect(
+            'DRIVER={SQL Server};SERVER=' + self.__server + ';DATABASE=' + self.__database
+            + ';UID=' + self.__username + ';PWD=' + self.__password)
+
+        self.fill_txt_dict_df()
 
     @property
-    def academy_list(self):
-        return self.__academy_list
+    def academy_df(self):
+        return self.__academy_df
+
+    def set_academy_df(self, new_df):
+        self.__academy_df = new_df
 
     @property
-    def sparta_day_list(self):
-        return self.__sparta_day_list
+    def sparta_day_df(self):
+        return self.__sparta_day_df
+
+    def set_sparta_day_df(self, new_df):
+        self.__sparta_day_df = new_df
 
     @property
-    def app_sparta_day_list(self):
-        return self.__app_sparta_day_list
+    def app_sparta_day_df(self):
+        return self.__app_sparta_day_df
+
+    def set_app_sparta_day_df(self, new_df):
+        self.__app_sparta_day_df = new_df
 
     @property
-    def weakness_list(self):
-        return self.__weakness_list
+    def weakness_df(self):
+        return self.__weakness_df
+
+    def set_weakness_df(self, new_df):
+        self.__weakness_df = new_df
 
     @property
-    def app_weakness_jt_list(self):
-        return self.__app_weakness_jt_list
+    def app_weakness_jt_df(self):
+        return self.__app_weakness_jt_df
+
+    def set_app_weakness_jt_df(self, new_df):
+        self.__app_weakness_jt_df = new_df
 
     @property
-    def strengths_list(self):
-        return self.__streams_list
+    def strengths_df(self):
+        return self.__streams_df
+
+    def set_strengths_df(self, new_df):
+        self.__streams_df = new_df
 
     @property
-    def app_strengths_jt_list(self):
-        return self.__app_strengths_jt_list
+    def app_strengths_jt_df(self):
+        return self.__app_strengths_jt_df
+
+    def set_app_strengths_jt_df(self, new_df):
+        self.__app_strengths_jt_df = new_df
 
     @property
-    def tech_skills_list(self):
-        return self.__tech_skills_list
+    def tech_skills_df(self):
+        return self.__tech_skills_df
+
+    def set_tech_skills_df(self, new_df):
+        self.__tech_skills_df = new_df
 
     @property
-    def tech_self_score_jt_list(self):
-        return self.__tech_self_score_jt_list
+    def tech_self_score_jt_df(self):
+        return self.__tech_self_score_jt_df
+
+    def set_tech_self_score_jt_df(self, new_df):
+        self.__tech_self_score_jt_df = new_df
 
     @property
-    def applicants_list(self):
-        return self.__applicants_list
+    def applicants_df(self):
+        return self.__applicants_df
+
+    def set_applicants_df(self, new_df):
+        self.__applicants_df = new_df
 
     @property
-    def streams_list(self):
-        return self.__streams_list
+    def streams_df(self):
+        return self.__streams_df
+
+    def set_streams_df(self, new_df):
+        self.__streams_df = new_df
 
     @property
-    def invitors_list(self):
-        return self.__invitors_list
+    def invitors_df(self):
+        return self.__invitors_df
+
+    def set_invitors_df(self, new_df):
+        self.__invitors_df = new_df
 
     @property
-    def address_list(self):
-        return self.__address_list
+    def address_df(self):
+        return self.__address_df
+
+    def set_address_df(self, new_df):
+        self.__address_df = new_df
 
     @property
-    def spartans_list(self):
-        return self.__spartans_list
+    def spartans_df(self):
+        return self.__spartans_df
+
+    def set_spartans_df(self, new_df):
+        self.__spartans_df = new_df
 
     @property
-    def tracker_jt_list(self):
-        return self.__tracker_jt_list
+    def tracker_jt_df(self):
+        return self.__tracker_jt_df
+
+    def set_tracker_df(self, new_df):
+        self.__tracker_jt_df = new_df
 
     @property
-    def core_skills_list(self):
-        return self.__core_skills_list
+    def core_skills_df(self):
+        return self.__core_skills_df
+
+    def set_core_skills_df(self, new_df):
+        self.__core_skills_df = new_df
 
     @property
-    def course_list(self):
-        return self.__course_list
+    def course_df(self):
+        return self.__course_df
+
+    def set_course_df(self, new_df):
+        self.__course_df = new_df
 
     @property
-    def course_trainer_jt_list(self):
-        return self.__course_trainer_jt_list
+    def course_trainer_jt_df(self):
+        return self.__course_trainer_jt_df
+
+    def set_course_trainer_jt_df(self, new_df):
+        self.__course_trainer_jt_df = new_df
 
     @property
-    def trainer_list(self):
-        return self.__trainer_list
+    def trainer_df(self):
+        return self.__trainer_df
+
+    def set_trainer_df(self, new_df):
+        self.__trainer_df = new_df
 
 #######################################################################################################################
 
-    def add_to_academy_list(self, cleaned_academy: str) -> None:
-        if cleaned_academy not in self.academy_list:
-            self.academy_list.append(cleaned_academy)
+    @staticmethod
+    def concat_new_df(data: list, keys: list) -> pandas.DataFrame:
+        return pandas.concat(objs=data, axis=1, keys=keys)
 
-    def add_to_sparta_day_list(self, cleaned_academy: str, cleaned_date: dt.datetime) -> None:
-        if cleaned_academy in self.academy_list:
-            cleaned_academy = str(self.academy_list.index(cleaned_academy))
-        list_to_add = [cleaned_academy, cleaned_date]
-        if list_to_add not in self.sparta_day_list:
-            self.sparta_day_set.append(list_to_add)
+    def populate_given_df(self, data_list, key_list):
+        self.set_academy_df(self.concat_new_df(data_list, key_list))
 
 
+if __name__ == '__main__':
+    test_table_formatter = PreLoadFormatter()
+
+    test_table_formatter.populate_given_df([test_table_formatter.txt_df["Academy"]], ["Academy"])
+
+    print(test_table_formatter.academy_df["Academy"])
+
+    print(test_table_formatter.academy_df.to_sql(name="Academy",
+                                                 con=test_table_formatter.data24etl_db,
+                                                 if_exists='replace'))
+
+
+    #(name, con, schema=None, if_exists='fail', index=True, index_label=None, chunksize=None, dtype=None, method=None
