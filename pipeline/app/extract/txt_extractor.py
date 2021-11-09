@@ -8,13 +8,13 @@ import pipeline.config_manager as conf
 
 class TxtExtractor(s3c.S3ParentClass):
     def __init__(self):
-        super().__init__()
-        self.__keys = self.talent_txt
+        super(TxtExtractor, self).__init__()
+        self.__txt_keys = self.talent_txt
 
     # keys property as assigned in init
     @property
-    def keys(self):
-        return self.__keys
+    def txt_keys(self):
+        return self.__txt_keys
 
     # takes in the key from the list defined previously, and returns the corresponding txt file,
     # but broken down into a list
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     testTxt = TxtExtractor()
 
     # An example of accessing all the data needed from the txt files
-    for key in testTxt.keys:
+    for key in testTxt.txt_keys:
         list_instance = testTxt.pull_text_object_as_list(key)
 
         for i in range(3, len(list_instance)):

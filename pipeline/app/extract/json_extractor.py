@@ -4,14 +4,14 @@ from pipeline.app.extract import s3_connector as s3c
 
 class JSONExtractor(s3c.S3ParentClass):
     def __init__(self):
-        super().__init__()
-        self.__keys = self.talent_json
+        super(JSONExtractor, self).__init__()
+        self.__json_keys = self.talent_json
 
     # Static method that returns a list of keys
     # Keys are necessary to extract a specific JSON file from a bucket on S3
     @property
-    def extract_keys(self):
-        return self.__keys
+    def extract_json_keys(self):
+        return self.__json_keys
 
 
     # Returns a single dict file pulled from bucket based on passed key
