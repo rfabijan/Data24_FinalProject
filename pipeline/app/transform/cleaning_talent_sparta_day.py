@@ -20,7 +20,7 @@ class TxtCleaner(ext.TxtExtractor):
     def txt_df(self):
         return self.__txt_df
 
-    def set_df(self, new_df: pd.DataFrame):
+    def set_txt_df(self, new_df: pd.DataFrame):
         self.__txt_df = new_df
 
     @property
@@ -71,10 +71,10 @@ class TxtCleaner(ext.TxtExtractor):
     # Takes the name and datetime to make the unique key
     @staticmethod
     def key_generator(clean_name: tuple, clean_date: dt.datetime) -> str:
-        return clean_name[0].replace(" ", "") +\
-               clean_name[1].replace(" ", "") +\
-               str(clean_date.day) +\
-               str(clean_date.month) +\
+        return clean_name[0].replace(" ", "") + \
+               clean_name[1].replace(" ", "") + \
+               str(clean_date.day) + \
+               str(clean_date.month) + \
                str(clean_date.year)
 
     @staticmethod
@@ -103,11 +103,10 @@ class TxtCleaner(ext.TxtExtractor):
                                                                      cleaned_psychometric,
                                                                      cleaned_presentation)
 
-        self.set_df(pd.DataFrame.from_dict(self.final_dict).transpose())
-
     def fill_txt_dict_df(self):
         for this_key in self.txt_keys:
             self.final_dict_appender(this_key)
+        self.set_txt_df(pd.DataFrame.from_dict(self.final_dict).transpose())
 
 
 if __name__ == '__main__':

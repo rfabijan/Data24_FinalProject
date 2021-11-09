@@ -20,7 +20,7 @@ class JsonCleaner(JSONExtractor):
     def json_df(self):
         return self.__json_df
 
-    def set_df(self, new_df: pd.DataFrame):
+    def set_json_df(self, new_df: pd.DataFrame):
         self.__json_df = new_df
 
     def create_unique_key(self, name: tuple, date: dt) -> str:
@@ -202,7 +202,7 @@ class JsonCleaner(JSONExtractor):
                                            , "Result": result
                                            , "Course_interest": course_interest
                                            }
-        self.set_df(pd.DataFrame.from_dict(intermediate_dict).transpose())
+        self.set_json_df(pd.DataFrame.from_dict(intermediate_dict).transpose())
 
 
 
