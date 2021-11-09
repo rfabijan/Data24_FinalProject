@@ -82,85 +82,85 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
     def keys(self):
         return self.__keys
 
+    # Returns the id for a given row in a csv file.
+    @staticmethod
+    def extract_id(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "id", row_number)
 
-# Returns the id for a given row in a csv file.
-def extract_id(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "id", row_number)
+    # Returns the gender for a given row in a csv file.
+    @staticmethod
+    def extract_gender(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "gender", row_number)
 
+    # Returns the dob for a given row in a csv file.
+    @staticmethod
+    def extract_dob(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "dob", row_number)
 
-# Returns the gender for a given row in a csv file.
-def extract_gender(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "gender", row_number)
+    # Returns the email for a given row in a csv file.
+    @staticmethod
+    def extract_email(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "email", row_number)
 
+    # Returns the city for given row in a csv file.
+    @staticmethod
+    def extract_city(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "city", row_number)
 
-# Returns the dob for a given row in a csv file.
-def extract_dob(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "dob", row_number)
+    # Returns the address for a given row in a csv file.
+    @staticmethod
+    def extract_address(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "address", row_number)
 
+    # Returns the postcode for a given row in a csv file.
+    @staticmethod
+    def extract_postcode(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "postcode", row_number)
 
-# Returns the email for a given row in a csv file.
-def extract_email(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "email", row_number)
+    # Returns the phone number for a given row in a csv file.
+    @staticmethod
+    def extract_phone_number(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "phone_number", row_number)
 
+    # Returns the university name for a given row in a csv file.
+    @staticmethod
+    def extract_university(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "uni", row_number)
 
-# Returns the city for given row in a csv file.
-def extract_city(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "city", row_number)
+    # Returns the degree classification for a given row in a csv file.
+    @staticmethod
+    def extract_degree(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "degree", row_number)
 
+    # Returns the date an applicant was invited to in a csv file.
+    @staticmethod
+    def extract_invited_date(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "invited_date", row_number)
 
-# Returns the address for a given row in a csv file.
-def extract_address(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "address", row_number)
+    # Returns the month an applicant was invited to in a csv file
+    @staticmethod
+    def extract_month(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "month", row_number)
 
+    # Returns the name of the person who invited an applicant in a csv file.
+    @staticmethod
+    def extract_invited_by(csv_body, row_number: int) -> str:
+        return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "invited_by", row_number)
 
-# Returns the postcode for a given row in a csv file.
-def extract_postcode(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "postcode", row_number)
+    @staticmethod
+    def extract_title_date(key) -> str:
+        try:
+            month = key.lstrip("Talent/").rstrip("Applicants.csv")
+            date = month.split("2")
+            return date[0] + "-2" + date[1]
+        except IndexError:
+            return None
 
-
-# Returns the phone number for a given row in a csv file.
-def extract_phone_number(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "phone_number", row_number)
-
-
-# Returns the university name for a given row in a csv file.
-def extract_university(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "uni", row_number)
-
-
-# Returns the degree classification for a given row in a csv file.
-def extract_degree(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "degree", row_number)
-
-
-# Returns the date an applicant was invited to in a csv file.
-def extract_invited_date(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "invited_date", row_number)
-
-
-# Returns the month an applicant was invited to in a csv file
-def extract_month(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "month", row_number)
-
-
-# Returns the name of the person who invited an applicant in a csv file.
-def extract_invited_by(csv_body, row_number: int) -> str:
-    return extract_value_from_rowcolumn(csv_body, "invited_by", row_number)
-
-
-def extract_title_date(key) -> str:
-    try:
-        month = key.lstrip("Talent/").rstrip("Applicants.csv")
-        date = month.split("2")
-        return date[0] + "-2" + date[1]
-    except IndexError:
-        return None
-
-
-# Returns the value in a column from a .csv file
-def extract_value_from_rowcolumn(csv_body: pd.DataFrame, column: str, row: int):
-    try:
-        # return csv_body.iloc[:][column][row]
-        return csv_body.iloc[row][column]
-    except:
-        return None
+    # Returns the value in a column from a .csv file
+    @staticmethod
+    def extract_value_from_rowcolumn(csv_body: pd.DataFrame, column: str, row: int):
+        try:
+            # return csv_body.iloc[:][column][row]
+            return csv_body.iloc[row][column]
+        except:
+            return None
