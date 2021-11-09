@@ -1,5 +1,6 @@
 import datetime as dt
 import pipeline.app.extract.csv_extractor as ext
+import math as m
 
 
 class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
@@ -11,7 +12,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         self.__error_degree = set()
         self.__error_inv_date = set()
         self.__error_id = set()
-        self.__error_city = set()           # Change all of these at the end pls.
+        self.__error_city = set()  # Change all of these at the end pls.
         self.__error_address = set()
         self.__error_postcode = set()
         self.__error_uni = set()
@@ -23,6 +24,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
     @property
     def error_uni(self):
         return self.__error_uni
+
     @property
     def error_postcode(self):
         return self.__error_postcode
@@ -52,7 +54,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
             cleaned_id = int(raw_id)
             return cleaned_id
         else:
-            self.error_id.append(int(raw_id))
+            self.error_id.add(int(raw_id))
             return None
 
     @staticmethod
@@ -85,7 +87,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         if city.isalpha():
             return str(city).capitalize()
         else:
-            self.__error_city.append(city)
+            self.__error_city.add(city)
             return None
 
     # Cleans the address and splits into house number and road name within a tuple.
@@ -99,14 +101,14 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
                 return address_tuple
             elif road_name.replace(" ", "").isalpha():
                 non_alpha_road = (None, road_name)
-                self.error_address.append(address)
+                self.error_address.add(address)
                 return non_alpha_road
             elif number.isnumeric():
                 non_numeric_number = (int(number), None)
-                self.error_address.append(address)
+                self.error_address.add(address)
                 return non_numeric_number
         else:
-            self.error_address.append(address)
+            self.error_address.add(address)
             error_tuple = (None, None)
             return error_tuple
 
@@ -115,12 +117,12 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         clean_postcode = postcode.replace(" ", "").upper()
         if clean_postcode.isalnum():
             if clean_postcode[0].isnumeric():
-                self.error_postcode.append(postcode)
+                self.error_postcode.add(postcode)
                 return None
             else:
                 return clean_postcode
         else:
-            self.error_postcode.append(postcode)
+            self.error_postcode.add(postcode)
             return None
 
     # Cleans the phone number column. Produces a string of the number or None. If None then appends to an error list.
@@ -129,10 +131,10 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         if len(no_spaces) == 13:
             return no_spaces
         else:
-            self.__error_phone_numbers.append(no_spaces)
+            self.__error_phone_numbers.add(no_spaces)
             return None
 
-    # --------------------------------------------------------------------------------------------------
+    # Cleans the university name column. Returns a string or None. If None then adds to a error set.
     def clean_uni(self, uni: str) -> str or None:
         no_spaces_uni = uni.replace(' ', "")
         if no_spaces_uni.isalpha():
@@ -146,29 +148,56 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
             self.error_uni.add(uni)
             return None
 
-    def clean_degree(self, degree: str) -> str:
-        if degree in ["1st", "2:1", "2:2", "3rd"]:
-            return str(degree)
+    # Returns a degree classification as a string or return None. If none adds to a error set.
+    def clean_degree(self, degree: str) -> str or None:
+        lower_degree = degree.lower()
+        dictionary_of_grades = {"two one": "2:1", "two two": "2:2", "first": "1st", "third": "3rd",
+                                "2:2": "2:2", "1st": "1st", "3rd": "3rd"}
+        if lower_degree in dictionary_of_grades.keys():
+            return dictionary_of_grades[lower_degree]
         else:
-            self.__error_degree.append(str(degree))
+            self.__error_degree.add(degree)
+            return None
 
-    def clean_invited_date(self, invited_date: str) -> int:
-        if int(invited_date) < 31 and int(invited_date) > 0:
-            return int(invited_date)
+    # Returns a invited date as a int or None. If None then adds to an error set.
+    def clean_invited_date(self, invited_date: str) -> int or None:
+        if invited_date.isnumeric():
+            cleaned_inv_date = int(float(invited_date))
+            if 31 > cleaned_inv_date > 0:
+                return cleaned_inv_date
         else:
-            self.__error_inv_date.append(int(invited_date))
+            self.__error_inv_date.add(invited_date)
+            return None
 
-    def clean_month(month: str, filename=None) -> dt.datetime:
-        pass
+    def clean_month(self, month: str, filename=None) -> dt.datetime or None:
+        if month == "" or month is None:
+            month = filename.split("/")[1].split("Applicants")[0].split("2019")[0]
+            year = filename.split("/")[1].split("Applicants")[0].split("2")[1]
+            month_year = str(month) + " " + "2" + str(year)
+            datetime_month_year = dt.datetime.strptime("April 2019", "%B %Y")
+            date_month_year = datetime_month_year.date()
+            return date_month_year
+        elif month.replace(" ", "").isalnum():
+            datetime_strp = dt.datetime.strptime("April 2019", "%B %Y")
+            date = datetime_strp.date()
+            return date
+        else:
+
+            return None
+
+
+
 
     # Split by first name last name
     def clean_invited_by(invited_by: str) -> tuple:
         pass
+
 
 # Dictionary
 
 
 if __name__ == '__main__':
     test = Applicants_Cleaner()
-    print(test.clean_uni('University Of Leicester'))
+    print(test.clean_month("April 2019"))
 
+#Unique key {key: , Key:}
