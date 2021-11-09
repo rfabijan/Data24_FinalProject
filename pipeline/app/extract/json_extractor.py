@@ -86,6 +86,6 @@ class JSONExtractor(s3c.S3ParentClass):
 
 if __name__ == "__main__":
     extractor = JSONExtractor()
-    for i in extractor.extract_keys:
+    for i in extractor.extract_json_keys:
         file = extractor.pull_single_json(str(i))
         print(extractor.extract_tech_self_score(file))
