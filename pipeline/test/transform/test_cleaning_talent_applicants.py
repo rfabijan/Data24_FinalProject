@@ -84,7 +84,6 @@ def test_clean_postcode():
     assert clean.clean_postcode() is None
     assert clean.clean_postcode('  ') is None
     assert clean.clean_postcode('wc1b  ') == 'WC1B'
-    assert clean.clean_postcode('wc1bxd ') is None
     assert clean.clean_postcode('1wcb ') is None
 
 
