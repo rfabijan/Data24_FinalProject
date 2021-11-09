@@ -2,18 +2,27 @@ import pipeline.app.extract.txt_extractor as ext
 
 import datetime as dt
 import pprint as pp
+import pandas
 
 
 class txt_cleaner(ext.TxtExtractor):
     def __init__(self):
         super().__init__()
         self.__final_dict = {}
+        self.__final_df = pandas.DataFrame
         self.__set_list = set()
         self.__error_names = set()
 
     @property
     def final_dict(self):
         return self.__final_dict
+
+    @property
+    def final_df(self):
+        return self.__final_df
+
+    def set_df(self, new_df: pandas.DataFrame):
+        self.__final_df = new_df
 
     @property
     def set_list(self):
@@ -91,26 +100,18 @@ class txt_cleaner(ext.TxtExtractor):
                                                                      cleaned_date,
                                                                      cleaned_psychometric,
                                                                      cleaned_presentation)
-                self.set_list.add([unique_key,
-                                   cleaned_name,
-                                   cleaned_academy,
-                                   cleaned_date,
-                                   cleaned_psychometric,
-                                   cleaned_presentation])
+
+        self.set_df(pandas.DataFrame.from_dict(self.final_dict).transpose())
+
 
 
 if __name__ == '__main__':
     testcleaner = txt_cleaner()
-    # print(f"Cleaned Name: {testcleaner.clean_name('''LORINDA O'CROTTY''')}")
-    # print(f"Cleaned Academy: {testcleaner.clean_academy('London Academy')}")
-    # print(f"Cleaned Date: {testcleaner.clean_date('Wednesday 9 October 2019')}")
-    # print(f"Cleaned Psychometrics {testcleaner.clean_scores('Psychometrics: 55/100')}")
-    # print(f"Cleaned Presentaion {testcleaner.clean_scores('Presentation: 20/32')}")
-    # print(f"Generated Key: {testcleaner.key_generator(testcleaner.clean_name('''LORINDA O'CROTTY'''),testcleaner.clean_date('Wednesday 9 October 2019'))}")
-    #
+
     for key in testcleaner.keys:
         testcleaner.final_dict_appender(key)
     #for this_key in testcleaner.final_dict.keys():
     #    print(testcleaner.final_dict[this_key]["Name"])
-    pp.pprint(testcleaner.final_dict)
-    #pp.pprint(testcleaner.error_names)
+    #pp.pprint(testcleaner.final_dict)
+
+    pp.pprint(testcleaner.final_df)
