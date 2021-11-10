@@ -179,7 +179,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         #     if type(obj) == list:
         #         long_df.append(pd.DataFrame(obj))
         #     data[data.index(obj)] = long_df
-        return pandas.concat(objs=data, axis=0, keys=keys, join='inner')
+        return pandas.concat(objs=data, axis=1, keys=keys, join='inner')
 
     @staticmethod
     def reset_index(df):
@@ -202,6 +202,10 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         eval(f"self.set_{output_dataframe}")((self.concat_new_df(data_list, key_list)).drop_duplicates(subset=key_list))
         self.reset_index(eval(f"self.{output_dataframe}"))
 
+    def populate_from_one_list(self, this_list: list, column_title: str, output_dataframe: str):
+        eval(f"self.set_{output_dataframe}")(pd.DataFrame(this_list, columns=[column_title]))
+        self.reset_index(eval(f"self.{output_dataframe}"))
+
 
 if __name__ == '__main__':
     test_table_formatter = PreLoadFormatter()
@@ -220,13 +224,14 @@ if __name__ == '__main__':
     #print("Creating tech self keys/values dataframe")
     #test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Tech_self_keys", "Tech_self_values"], "tech_self_score_jt_df")
     #print("Creating Strengths dataframe")
-    print(test_table_formatter.json_df["Strengths"])
-    test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Strengths"], "strengths_df")
-    # test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Unique Key", "Strengths"], "app_strengths_jt_df")
+    test_table_formatter.set_strengths_df(pd.DataFrame(test_table_formatter.unique_s_list, columns=["Strengths"]))
+    test_table_formatter.reset_index(test_table_formatter.strengths_df)
+    #test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Strengths"], "strengths_df")
+    test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Unique Key", "Strengths"], "app_strengths_jt_df")
     # test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Weaknesses"], "weaknesses_df")
 
     # It populates, but at what cost?? There are some Nan values, but is this an issue? The database I'm filling won't exist
     test_table_formatter.populate_from_two_df(test_table_formatter.txt_df, test_table_formatter.json_df, ["Academy", "Name", "Course_interest"], "spartans_df")
 
 
-    print(test_table_formatter.spartans_df)
+    print(test_table_formatter.app_strengths_jt_df)
