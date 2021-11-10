@@ -5,7 +5,7 @@ extractor = txt_extractor.TxtExtractor()
 
 
 def test_keys():
-    function_return = extractor.keys
+    function_return = extractor.txt_keys
 
     assert type(function_return) is list
     assert len(function_return) >= 152
@@ -19,58 +19,58 @@ def test_pull_text_object_as_list():
     assert extractor.pull_text_object_as_list('ThisFileDoesNotExist.txt') is None
 
 
-def test_extract_date():
+def test_extract_txt_date():
     # Check from file read
     file_body = extractor.pull_text_object_as_list('Talent/Sparta Day 30 May 2019.txt')
-    assert extractor.extract_date(file_body) == 'Thursday 30 May 2019'
+    assert extractor.extract_txt_date(file_body) == 'Thursday 30 May 2019'
 
     # Check from custom parameter
     file_body = ["Monday 08 November 2021", "London Academy"]
-    assert extractor.extract_date(file_body) == 'Monday 08 November 2021'
+    assert extractor.extract_txt_date(file_body) == 'Monday 08 November 2021'
 
     # Check from invalid parameter
     file_body = ["NATA BOHMAN", "BENNIE LATAN"]
-    assert extractor.extract_date(file_body) is None
+    assert extractor.extract_txt_date(file_body) is None
 
 
-def test_extract_academy():
+def test_extract_txt_academy():
     # Check from file read
     file_body = extractor.pull_text_object_as_list('Talent/Sparta Day 31 October 2019.txt')
-    assert extractor.extract_academy(file_body) == 'Birmingham Academy'
+    assert extractor.extract_txt_academy(file_body) == 'Birmingham Academy'
 
     # Check from custom parameter
     file_body = ["Monday 08 November 2021", "London Academy"]
-    assert extractor.extract_academy(file_body) == 'London Academy'
+    assert extractor.extract_txt_academy(file_body) == 'London Academy'
 
 
-def test_extract_name_line():
+def test_extract_txt_name_line():
     # Check from file read
     file_body = extractor.pull_text_object_as_list('Talent/Sparta Day 27 March 2019.txt')
     expected_output = 'FRANCISKUS LETHARDY -  Psychometrics: 55/100, Presentation: 20/32'
-    assert extractor.extract_name_line(file_body, 3) == expected_output
+    assert extractor.extract_txt_name_line(file_body, 3) == expected_output
 
     # Check from custom parameter
     file_body = ["Monday 08 November 2021", "London Academy", "MATT LYONS - Baking: 10/10"]
-    assert extractor.extract_name_line(file_body, 1) == 'London Academy'
+    assert extractor.extract_txt_name_line(file_body, 1) == 'London Academy'
 
 
-def test_extract_name_from_line():
+def test_extract_txt_name_from_line():
     # Check from file read
     file_body = extractor.pull_text_object_as_list('Talent/Sparta Day 28 May 2019.txt')
-    name_line = extractor.extract_name_line(file_body, 13)
-    assert extractor.extract_name_from_line(name_line) == 'GAV RANTOUL'
+    name_line = extractor.extract_txt_name_line(file_body, 13)
+    assert extractor.extract_txt_name_from_line(name_line) == 'GAV RANTOUL'
 
     # Check from custom parameter
     file_body = ["MATT LYONS - 10/10", "ROB FABIJAN - 11/10", "SULLY MAHMOOD - ?/10"]
-    name_line = extractor.extract_name_line(file_body, 1)
-    assert extractor.extract_name_from_line(name_line) == 'ROB FABIJAN'
+    name_line = extractor.extract_txt_name_line(file_body, 1)
+    assert extractor.extract_txt_name_from_line(name_line) == 'ROB FABIJAN'
 
 
-def test_extract_psychometric_from_line():
+def test_extract_txt_psychometric_from_line():
     # Check from file read
     file_body = extractor.pull_text_object_as_list('Talent/Sparta Day 29 January 2019.txt')
-    name_line = extractor.extract_name_line(file_body, 17)
-    assert extractor.extract_psychometric_from_line(name_line) == 'Psychometrics: 60/100'
+    name_line = extractor.extract_txt_name_line(file_body, 17)
+    assert extractor.extract_txt_psychometric_from_line(name_line) == 'Psychometrics: 60/100'
 
     # Check from custom parameter
     file_body = [
@@ -78,15 +78,15 @@ def test_extract_psychometric_from_line():
         "SALOMON COSTELLOW -  Psychometrics: 20/100, Presentation: 27/32",
         "GAYEL MEINEKING -  Psychometrics: 30/100, Presentation: 19/32"
     ]
-    name_line = extractor.extract_name_line(file_body, 2)
-    assert extractor.extract_psychometric_from_line(name_line) == 'Psychometrics: 30/100'
+    name_line = extractor.extract_txt_name_line(file_body, 2)
+    assert extractor.extract_txt_psychometric_from_line(name_line) == 'Psychometrics: 30/100'
 
 
-def test_extract_presentation_from_line():
+def test_extract_txt_presentation_from_line():
     # Check from file read
     file_body = extractor.pull_text_object_as_list('Talent/Sparta Day 28 August 2019.txt')
-    name_line = extractor.extract_name_line(file_body, 27)
-    assert extractor.extract_presentation_from_line(name_line) == 'Presentation: 19/32'
+    name_line = extractor.extract_txt_name_line(file_body, 27)
+    assert extractor.extract_txt_presentation_from_line(name_line) == 'Presentation: 19/32'
 
     # Check from custom parameter
     file_body = [
@@ -94,5 +94,5 @@ def test_extract_presentation_from_line():
         "SALOMON COSTELLOW -  Psychometrics: 20/100, Presentation: 27/32",
         "GAYEL MEINEKING -  Psychometrics: 30/100, Presentation: 19/32"
     ]
-    name_line = extractor.extract_name_line(file_body, 0)
-    assert extractor.extract_presentation_from_line(name_line) == 'Presentation: 16/32'
+    name_line = extractor.extract_txt_name_line(file_body, 0)
+    assert extractor.extract_txt_presentation_from_line(name_line) == 'Presentation: 16/32'

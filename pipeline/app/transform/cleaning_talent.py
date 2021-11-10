@@ -15,10 +15,25 @@ class JsonCleaner(JSONExtractor):
     def __init__(self):
         super(JsonCleaner, self).__init__()
         self.__json_df = pd.DataFrame
+        self.__unique_s_list = []
+        self.__unique_w_list = []
+        self.__unique_ts_list = []
 
     @property
     def json_df(self):
         return self.__json_df
+
+    @property
+    def unique_s_list(self):
+        return self.__unique_s_list
+
+    @property
+    def unique_w_list(self):
+        return self.__unique_w_list
+
+    @property
+    def unique_ts_list(self):
+        return self.__unique_ts_list
 
     def set_json_df(self, new_df: pd.DataFrame):
         self.__json_df = new_df
@@ -178,9 +193,9 @@ class JsonCleaner(JSONExtractor):
 
     def populate_json_df(self):
         intermediate_dict = {}
-        print(f"Beginning processing all {len(self.extract_json_keys[:1000])} JSON files...\n")
+        print(f"Beginning processing all {len(self.extract_json_keys)} JSON files...\n")
         i = 0
-        for key in self.extract_json_keys[:1000]:
+        for key in self.extract_json_keys[:5]:
             json_file = self.pull_single_json(key)
             name = self.clean_json_name(self.extract_json_name(json_file))
             date = self.clean_json_date(self.extract_json_date(json_file))
@@ -197,8 +212,8 @@ class JsonCleaner(JSONExtractor):
                                            , "Name": name
                                            , "Date": date
                                            , "Tech_self_score": tech_dict
-#                                           , "Tech_score_keys": tech_dict.keys()
-#                                           , "Tech_score_values": tech_dict.values()
+                                           , "Tech_score_keys": tuple(tech_dict.keys())
+                                           , "Tech_score_values": tuple(tech_dict.values())
                                            , "Strengths": list_of_strengths
                                            , "Weaknesses": list_of_weaknesses
                                            , "Self_development": self_development
@@ -207,6 +222,18 @@ class JsonCleaner(JSONExtractor):
                                            , "Result": result
                                            , "Course_interest": course_interest
                                            }
+            for strength in list_of_strengths:
+                if strength not in self.unique_s_list:
+                    self.unique_s_list.append(strength)
+
+            for weakness in list_of_weaknesses:
+                if weakness not in self.unique_w_list:
+                    self.unique_w_list.append(weakness)
+
+            for skill in list(tech_dict.keys()):
+                if skill not in self.__unique_ts_list:
+                    self.unique_ts_list.append(skill)
+
             i += 1
             if i % 50 == 0:
                 print(f"{i} JSON files completed...")
