@@ -10,6 +10,7 @@ def test_len_of_rows():
     assert output >= 9 or output <= 9
     assert type(output) is int
 
+
 # tests for the type and specific value format of the output
 def test_extract_name():
     output = values.extract_name(values.single_csv("Academy/Data_28_2019-02-18.csv"), 3)
@@ -19,6 +20,7 @@ def test_extract_name():
     assert 'Aida bothams' not in output
     assert 'aida bothams' not in output
 
+
 # tests for the type and specific value format of the output
 def test_extract_trainer():
     output = values.extract_trainer(values.single_csv("Academy/Business_20_2019-02-11.csv"), 4)
@@ -27,6 +29,7 @@ def test_extract_trainer():
     assert 'Gregor gomez' not in output
     assert 'gregor Gomez' not in output
     assert 'gregor gomez' not in output
+
 
 # tests for the type and values in the output
 def test_extract_skill_value():

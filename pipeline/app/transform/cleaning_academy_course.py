@@ -1,4 +1,5 @@
 import pipeline.app.extract.csv_extractor as extractor
+import pandas as pd
 
 
 class AcademyCleaner(extractor.AcademiesCsvExtractor):
@@ -24,7 +25,8 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         if " " in name:
             space_index = name.index(" ")
             name_list = [name[0:space_index], name[space_index + 1:]]
-            return name_list[0], name_list[1]
+            clean_name = name_list[0], name_list[1]
+            return clean_name
         else:
             print(name)
     # returns cleaned trainer name in a tuple format
@@ -40,60 +42,44 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
             return name_list[0], name_list[1]
         else:
             print(trainer_name)
+
     # returns skill value score in a specific range
     @staticmethod
-    def clean_skill_value(score: int) -> int or None:
-        if score in range(1, 9):
-            return score
+    def create_unique_key(clean_name: tuple) -> str:
+        unique = str(clean_name[0] + clean_name[1])
+        return unique
 
-        else:
-            return None
+    def set_csv_df(self, new_df: pd.DataFrame):
+        self.__csv_df = new_df
+
+    @staticmethod
+    def single_csv_academies_dict(unique_key: str, name: tuple, trainer: tuple, skill_value: int) -> dict:
+        return {"Unique Key": unique_key,
+                "Name": name,
+                "Trainer": trainer,
+                "Skill Value": skill_value}
+
+    def final_academy_csv_dict_appender(self):
+        csv_dict = {}
+        for keys in self.keys:
+            csv_body = self.single_csv(keys)
+            for row in range(0, self.len_of_rows(csv_body) + 1):
+                name = self.clean_name(self.extract_csv_name(csv_body, 1))
+                trainer = self.clean_trainer(self.extract_academies_trainer(csv_body, 1))
+                skill_value = self.extract_academies_skill_values_per_person_per_week(csv_body)
+                # file_name, column_name: str, row_number: int
+                unique_key = self.create_unique_key(name)
+
+                csv_dict[unique_key] = {"Unique Key": unique_key,
+                                        "Name": name,
+                                        "Trainer Name": trainer,
+                                        "Skill Value": skill_value}
+
+        self.set_csv_df(pd.DataFrame.from_dict(csv_dict).transpose())
 
 
 if __name__ == "__main__":
     test = AcademyCleaner()
-    print(test.clean_name("Rossie Caitlin"))
+    print(test.final_academy_csv_dict_appender())
 
-
-
-# def clean_name(name):
-#     name_errors = []
-#     name = name.title()                                                     # capitalises the first letter of each word
-#
-#     if name.count(" ") > 1 or "-" in name:                                  # checks for multiple spaces and hyphens
-#         name_errors.append(name)                                            # adds names with errors to the error list
-#         return f"These names contain errors: {name_errors}"                 # returns the names with errors
-#
-#     if " " in name:                                                         # checks for a space in the name
-#         space_index = name.index(" ")                                       # gets the index number of the space
-#         list_of_names = [name[0: space_index], name[space_index + 1:]]      # separates first and last name
-#         return list_of_names[0], list_of_names[1]                           # returns first and last name as a tuple
-#
-#     else:
-#         return name
-#
-#
-# def clean_trainer(trainer_name):
-#     trainer_name_errors = []
-#     trainer_name = trainer_name.title()
-#
-#     if trainer_name.count(" ") > 1 or "-" in trainer_name:
-#         trainer_name_errors.append(trainer_name)
-#         return f"These names contain errors: {trainer_name_errors}"
-#
-#     if " " in trainer_name:
-#         space_index = trainer_name.index(" ")
-#         list_of_trainer_names = [trainer_name[0: space_index], trainer_name[space_index + 1:]]
-#         return list_of_trainer_names[0], list_of_trainer_names[1]
-#
-#     else:
-#         return trainer_name
-#
-#
-# def clean_skill_value(score):
-#     if score in range(1, 9):
-#         return score
-#
-#     else:
-#         return None
 
