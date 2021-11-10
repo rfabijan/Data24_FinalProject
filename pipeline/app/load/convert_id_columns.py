@@ -94,7 +94,7 @@ def ci_app_weaknesses_jt(x):
 def ci_spartans(x):
     spartans_df = x.spartans_df
     course_df = x.course_df
-    applicants_df = x.applicants_df
+    # applicants_df = x.applicants_df
     # spartans_df['CourseID'] = spartans_df['CourseID'].map(course_df.set_index('CourseName')['CourseID'])  # Also not totally sure
     spartans_df = spartans_df.merge(course_df, on=['CourseName', 'WeekLength', 'StartDate'],
                                                       suffixes=['', '', '_2']).drop(
