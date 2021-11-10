@@ -21,43 +21,50 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
 
     # Returns the name for a given row in a csv file.
     @staticmethod
-    def extract_name(file_name, row_number: int) -> str:
+    def extract_csv_name(file_name, row_number: int) -> str:
         return file_name.iloc[:]["name"][row_number]
 
     # Returns the trainer name for a given row in a csv file.
     @staticmethod
-    def extract_trainer(file_name, row_number: int) -> str:
+    def extract_academies_trainer(file_name, row_number: int) -> str:
         return file_name.iloc[:]["trainer"][row_number]
 
     # Returns the number of training weeks in the academy csv files.
     @staticmethod
-    def extract_weeks(columns) -> int:
+    def extract_academies_weeks(columns) -> int:
         string = columns[-1].split("_")
         num_of_weeks = string[1].split("W")
         return int(num_of_weeks[1])
 
     # Returns the value for a given column and given name.
     @staticmethod
-    def extract_skill_value(file_name, column_name: str, row_number: int) -> str:
-        return file_name.iloc[:][column_name][row_number]
+    def extract_academies_skill_value(file_name, column_name: str, row_number: int) -> int:
+        return int(file_name.iloc[:][column_name][row_number])
 
     # Returns a single csv file.
     def single_csv(self, key):
         single_csv = pd.read_csv(self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return single_csv
 
+    @staticmethod
+    def clean_skill_value(score: int) -> int or None:
+        if score in range(1, 9):
+            return score
+        else:
+            return None
+
     # Produces a dictionary in the form of name:{wk:{skill:}} for a given csv file.
-    def extract_skill_values_per_person_per_week(self, csv):
+    def extract_academies_skill_values_per_person_per_week(self, csv):
         dict_holder = {}
         for rows in range(0, self.len_of_rows(csv)):
-            dict_holder[self.extract_name(csv, rows)] = {}
-            for numb in range(1, self.extract_weeks(csv.columns) + 1):
+            dict_holder[self.extract_csv_name(csv, rows)] = {}
+            for numb in range(1, self.extract_academies_weeks(csv.columns) + 1):
                 var = "W" + str(numb)
-                dict_holder[self.extract_name(csv, rows)][var] = {}
+                dict_holder[self.extract_csv_name(csv, rows)][var] = {}
                 for columns in csv.columns:
                     if columns.endswith(var):
-                        dict_holder[self.extract_name(csv, rows)][var][columns] = \
-                            self.extract_skill_value(csv, columns, rows)
+                        dict_holder[self.extract_csv_name(csv, rows)][var][columns] = \
+                            self.clean_skill_value(self.extract_academies_skill_value(csv, columns, rows))
         return dict_holder
 
     @staticmethod
