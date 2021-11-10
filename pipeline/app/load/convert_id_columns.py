@@ -3,14 +3,15 @@ import pipeline.app.load.pre_load_formatter as plf
 # TODO: Make sure this is actually taking in the populated databases
 
 # TODO: Praise Jesus because we're uploading data with ApplicantID attatched
-#  Or is it?
-#  If it isn't, fix the junction tables by demanding FirstName, LastName, DOB be included in all tables with ApplicantID
+#  therefore all need to replace ApplicantID with a foreign key is unnecessary and only the commented-out ashes remain
 
 # TODO: The Spartans and Tracker tables, probably by demanding that ApplicantID be included to allow for conversion
 
 
 def convert_id_columns():
-    x = plf.PreLoadFormatter()
+    x = plf.PreLoadFormatter()  # x instantiates the object with all the dataframes TODO: Make sure this is right
+
+    # Runs all the functions below this one
     sparta_day_df = ci_app_sparta_day(x)
     course_trainer_jt_df = ci_course_trainer_jt(x)
     applicants_df = ci_applicants(x)
@@ -21,11 +22,21 @@ def convert_id_columns():
     spartans_df = ci_spartans(x)
     tracker_df = ci_tracker_jt(x)
 
+    return sparta_day_df, course_trainer_jt_df, applicants_df, app_sparta_day_df, tech_self_score_jt_df, app_strengths_jt_df, app_weaknesses_jt_df, spartans_df, tracker_df
+
+
+# TODO: Read the comments in these next 2 functions, because they should explain the rest
+
 
 def ci_sparta_day(x):
+    # Row like these get the dataframes
     academy_df = x.academy_df
     sparta_day_df = x.sparta_day_df
+
+    # This map function takes a column called 'AcademyID' in sparta_day_df that is filled with Academy Names
+    # It then replaces them with the Academy IDs of the corresponding Academy Names that they match in the Academy DF
     sparta_day_df['AcademyID'] = sparta_day_df['AcademyID'].map(academy_df.set_index('AcademyName')['AcademyID'])
+
     return sparta_day_df
 
 
@@ -33,7 +44,17 @@ def ci_course_trainer_jt(x):
     course_trainer_jt_df = x.course_trainer_jt_df
     course_df = x.course_df
     trainer_df = x.trainer_df
-    # course_trainer_jt_df['CourseID'] = course_trainer_jt_df['CourseID'].map(course_df.set_index('CourseName')['CourseID'])  # Also not totally sure
+
+    # Here and below I have included the old map functions in many places where they have been replaced by merges,
+    # because I am unsure if they work
+    #
+    # The merges assume there are X (e.g. 2) columns in the dataframe that should be replaced by an ID, but are useful
+    # because they match the same columns in the table we're getting the ID from
+    #
+    # This is done through the merge, which is a kind of inner join 'on' the X columns, that we then delete after
+    # adding the ID column from the other table
+
+    # course_trainer_jt_df['CourseID'] = course_trainer_jt_df['CourseID'].map(course_df.set_index('CourseName')['CourseID'])
     course_trainer_jt_df = course_trainer_jt_df.merge(course_df, on=['CourseName', 'WeekLength', 'StartDate'], suffixes=['', '', '_2']).drop(['CourseName', 'WeekLength', 'StartDate'], axis=1).rename(columns={"id_2": "CourseID"})
     # course_trainer_jt_df['TrainerID'] = course_trainer_jt_df['TrainerID'].map(trainer_df.set_index('FirstName')['TrainerID'])
     course_trainer_jt_df = course_trainer_jt_df.merge(trainer_df, on=['FirstName', 'LastName'], suffixes=['', '_2']).drop(['FirstName', 'LastName'], axis=1).rename(columns={"id_2": "TrainerID"})
@@ -95,7 +116,7 @@ def ci_spartans(x):
     spartans_df = x.spartans_df
     course_df = x.course_df
     # applicants_df = x.applicants_df
-    # spartans_df['CourseID'] = spartans_df['CourseID'].map(course_df.set_index('CourseName')['CourseID'])  # Also not totally sure
+    # spartans_df['CourseID'] = spartans_df['CourseID'].map(course_df.set_index('CourseName')['CourseID'])
     spartans_df = spartans_df.merge(course_df, on=['CourseName', 'WeekLength', 'StartDate'],
                                                       suffixes=['', '', '_2']).drop(
         ['CourseName', 'WeekLength', 'StartDate'], axis=1).rename(columns={"id_2": "CourseID"})
