@@ -16,10 +16,20 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         self.__error_address = set()
         self.__error_postcode = set()
         self.__error_uni = set()
+        self.__error_month = set()
+        self.__error_name = set()
 
     @property
     def final_dict(self):
         return self.__final_dict_applicants
+
+    @property
+    def error_name(self):
+        return self.__error_name
+
+    @property
+    def error_month(self):
+        return self.__error_month
 
     @property
     def error_uni(self):
@@ -57,10 +67,18 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
             self.error_id.add(int(raw_id))
             return None
 
+    # Returns a cleaned name as a tuple.
     @staticmethod
     def clean_name(name: str) -> tuple:
-        pass
+        name = name.title()
+        if " " in name:
+            first_name = name.split(" ", 1)[0]
+            last_name = name.split(" ", 1)[1]
+            return first_name, last_name
+        else:
+            return name, None
 
+    # Returns a cleaned gender as a string or returns None.
     @staticmethod
     def clean_gender(gender: str) -> str or None:
         cleaned_gender = gender.title()
@@ -69,12 +87,17 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         else:
             return None
 
+    # Returns dob as datetime or if no dob returns None.
     @staticmethod
-    def clean_dob(dob: str) -> dt.datetime:
-        cleaned_dob = dt.datetime.strptime(dob, "%d/%m/%y")
-        return cleaned_dob
+    def clean_dob(dob: str) -> dt.datetime or None:
+        if len(dob) > 2:
+            date_dob = dt.datetime.strptime("04/08/1994", "%d/%m/%Y")
+            cleaned_dob = date_dob.date()
+            return cleaned_dob
+        else:
+            return None
 
-    # Do we want to add the optional stuff in?
+    # Returns a cleaned email as a string and checks to see if @ and . are present.
     def clean_email(email: str) -> str or None:
         cleaned_email = str(email)
         if "@" in cleaned_email and "." in cleaned_email:
@@ -161,7 +184,8 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
 
     # Returns a invited date as a int or None. If None then adds to an error set.
     def clean_invited_date(self, invited_date: str) -> int or None:
-        if invited_date.isnumeric():
+        invited_date = invited_date.split(".")[0]
+        if invited_date.isdigit():
             cleaned_inv_date = int(float(invited_date))
             if 31 > cleaned_inv_date > 0:
                 return cleaned_inv_date
@@ -169,6 +193,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
             self.__error_inv_date.add(invited_date)
             return None
 
+    # Returns a date as datetime or returns None. If None then adds to an error set.
     def clean_month(self, month: str, filename=None) -> dt.datetime or None:
         if month == "" or month is None:
             month = filename.split("/")[1].split("Applicants")[0].split("2019")[0]
@@ -180,24 +205,54 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         elif month.replace(" ", "").isalnum():
             datetime_strp = dt.datetime.strptime("April 2019", "%B %Y")
             date = datetime_strp.date()
-            return date
+            return date.year, date.month
         else:
-
+            self.__error_month.add(month)
             return None
 
-
-
-
     # Split by first name last name
-    def clean_invited_by(invited_by: str) -> tuple:
-        pass
+    @staticmethod
+    def clean_invited_by(invited_by: str) -> tuple or None:
+        name = invited_by.title()
+        if " " in name:
+            first_name = name.split(" ", 1)[0]
+            last_name = name.split(" ", 1)[1]
+            return first_name, last_name
+        elif len(name) > 2:
+            return name, None
+        else:
+            return None
+
+    @staticmethod
+    def applicants_key_generator(clean_name: tuple, clean_invited_date, clean_month):
+        return clean_name[0].replace(" ", "") + clean_name[1].replace(" ", "") + \
+               str(clean_invited_date) + str(clean_month[1]) + str(clean_month[0])
+
+    @staticmethod
+    def single_dict_maker_applicants(id, name, gender, dob, email, city, address, postcode, phone_number, uni,
+                                     degree, invited_date, month, invited_by):
+        return {"id": id,
+                "name": name,
+                "gender": gender,
+                "dob": dob,
+                "email": email,
+                "city": city,
+                "address": address,
+                "postcode": postcode,
+                "phone_number": phone_number,
+                "uni": uni,
+                "degree": degree,
+                "invited_date": invited_date,
+                "month": month,
+                "invited_by": invited_by}
 
 
-# Dictionary
 
 
 if __name__ == '__main__':
     test = Applicants_Cleaner()
-    print(test.clean_month("April 2019"))
-
-#Unique key {key: , Key:}
+    clean_date = test.clean_invited_date("18.0")
+    test2 = test.clean_month('April 2019')
+    print(test.applicants_key_generator(('Esme', 'Trusslove'), clean_date, test2))
+    #print(test.clean_month("April 2019"))
+# Unique key {key: , Key:}

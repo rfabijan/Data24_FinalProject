@@ -1,6 +1,6 @@
 from pipeline.app.transform import cleaning_talent_applicants as clean
 import datetime
-
+clean = clean.Applicants_Cleaner()
 
 def test_clean_id():
     # testing good value(s)
