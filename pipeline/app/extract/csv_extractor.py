@@ -164,3 +164,10 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
             return csv_body.iloc[row][column]
         except:
             return None
+
+if __name__ == '__main__':
+    csv_extractor = ApplicantsCsvExtractor()
+    for keys in csv_extractor.keys:
+        print(keys)
+
+
