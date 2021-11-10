@@ -148,7 +148,7 @@ def test_clean_invited_by():
     # testing good value(s)
     return_value = clean.clean_invited_by('Fifi Eton')
     assert return_value == ('Fifi', 'Eton')
-    assert type(return_value) is tuple
+    assert type(return_value) is tuple or None
 
     # testing bad value(s)
     assert clean.clean_invited_by('') == (None, None)

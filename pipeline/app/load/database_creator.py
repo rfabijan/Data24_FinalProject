@@ -41,6 +41,7 @@ class DatabaseCreator:
         # Uses master database (prevents dropping active database)
         self.cursor.execute('USE master;')
         self.cursor.execute(f'DROP DATABASE IF EXISTS [{conf.DB_NAME}];')
+        print("DATABASE HAS BEEN DELETED SUCCESSFULLY!")
 
     # ToDo: Add validation so tests pass
     def run_script(self, script_file_path=None):
