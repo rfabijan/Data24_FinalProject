@@ -92,11 +92,6 @@ class JSONExtractor(s3c.S3ParentClass):
     def extract_json_course_interest(json_file) -> str:
         return json_file["course_interest"]
 
-    @property
-    def connector(self):
-        return self.__connector
-
-
 
 
 

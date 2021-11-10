@@ -52,14 +52,21 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
 
     # Returns the value for a given column and given name.
     @staticmethod
-    def extract_academies_skill_value(file_name, column_name: str, row_number: int) -> str:
-        return file_name.iloc[:][column_name][row_number]
+    def extract_academies_skill_value(file_name, column_name: str, row_number: int) -> float:
+        return float(file_name.iloc[:][column_name][row_number])
 
     # Returns a single csv file.
     def single_csv(self, key):
         single_csv = pd.read_csv(
             self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return single_csv
+
+    @staticmethod
+    def clean_skill_value(score: int) -> int or None:
+        if score in range(1, 9):
+            return score
+        else:
+            return None
 
     # Produces a dictionary in the form of name:{wk:{skill:}} for a given csv file.
     def extract_academies_skill_values_per_person_per_week(self, csv):
@@ -72,7 +79,8 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
                 for columns in csv.columns:
                     if columns.endswith(var):
                         dict_holder[self.extract_csv_name(csv, rows)][var][columns] = \
-                            self.extract_academies_skill_value(csv, columns, rows)
+                            self.clean_skill_value(self.extract_academies_skill_value(csv, columns, rows))
+
         return dict_holder
 
     @staticmethod
