@@ -339,8 +339,6 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         return pd.DataFrame.from_dict(self.final_dict__appender_applicants()).transpose()
 
 
-# id, name, gender, dob, email, city, address, postcode, phone_number, uni,
-#                                      degree, invited_date, month, invited_by
 if __name__ == '__main__':
     test = Applicants_Cleaner()
     p.pprint(test.applicants_dict_df())
