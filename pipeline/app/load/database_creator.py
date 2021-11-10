@@ -4,7 +4,7 @@ import pipeline.config_manager as conf
 
 def connect_to_database(server: str = conf.DB_SERVER, username: str = conf.DB_USERNAME,
                         password: str = conf.DB_PASSWORD,  db_name: str = 'master') -> pyodbc.Connection:
-    connection_config = f'DRIVER={{ODBC Driver 17 for SQL Server}};' \
+    connection_config = f'DRIVER={{SQL Server}};' \
                         f'SERVER={server};' \
                         f'DATABASE={db_name};' \
                         f'UID={username};' \
