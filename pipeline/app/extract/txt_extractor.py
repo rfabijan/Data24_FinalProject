@@ -1,7 +1,4 @@
-import boto3
-import botocore
 from botocore.exceptions import ClientError
-
 from pipeline.app.extract import s3_connector as s3c
 import pipeline.config_manager as conf
 
@@ -9,7 +6,21 @@ import pipeline.config_manager as conf
 class TxtExtractor(s3c.S3ParentClass):
     def __init__(self):
         super(TxtExtractor, self).__init__()
-        self.__txt_keys = self.talent_txt
+        self.__txt_keys = self.populate_txt_files()
+
+    def populate_txt_files(self):
+        paginator = self.client.get_paginator('list_objects_v2')
+        pages = paginator.paginate(Bucket=self.bucket_name)
+        files_list = []
+        for page in pages:
+
+            for i in page["Contents"]:
+                key = i["Key"]
+
+                if key.startswith("Talent") and key.endswith(".txt"):
+                    files_list.append(key)
+
+        return files_list
 
     # keys property as assigned in init
     @property
