@@ -193,9 +193,9 @@ class JsonCleaner(JSONExtractor):
 
     def populate_json_df(self):
         intermediate_dict = {}
-        print(f"Beginning processing all {len(self.extract_json_keys[:150])} JSON files...\n")
+        print(f"Beginning processing all {len(self.extract_json_keys)} JSON files...\n")
         i = 0
-        for key in self.extract_json_keys[:150]:
+        for key in self.extract_json_keys:
             json_file = self.pull_single_json(key)
             name = self.clean_json_name(self.extract_json_name(json_file))
             date = self.clean_json_date(self.extract_json_date(json_file))
@@ -212,8 +212,8 @@ class JsonCleaner(JSONExtractor):
                                            , "Name": name
                                            , "Date": date
                                            , "Tech_self_score": tech_dict
-                                           , "Tech_score_keys": tech_dict.keys()
-                                           , "Tech_score_values": tech_dict.values()
+                                           , "Tech_score_keys": tuple(tech_dict.keys())
+                                           , "Tech_score_values": tuple(tech_dict.values())
                                            , "Strengths": list_of_strengths
                                            , "Weaknesses": list_of_weaknesses
                                            , "Self_development": self_development
