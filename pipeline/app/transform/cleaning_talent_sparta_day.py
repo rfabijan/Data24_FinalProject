@@ -78,8 +78,9 @@ class TxtCleaner(ext.TxtExtractor):
                str(clean_date.year)
 
     @staticmethod
-    def single_dict_maker(name: tuple, academy: str, date: dt.datetime, psy: float, pres: float) -> dict:
-        return {"Name": name,
+    def single_dict_maker(key: str, name: tuple, academy: str, date: dt.datetime, psy: float, pres: float) -> dict:
+        return {"Unique Key" : key,
+                "Name": name,
                 "Academy": academy,
                 "Date": date,
                 "Psychometrics": psy,
@@ -97,26 +98,25 @@ class TxtCleaner(ext.TxtExtractor):
                 cleaned_presentation = self.clean_txt_presentation(self.extract_txt_presentation_from_line(raw_name_line))
                 unique_key = self.key_generator(cleaned_name, cleaned_date)
 
-                self.final_dict[unique_key] = self.single_dict_maker(cleaned_name,
+                self.final_dict[unique_key] = self.single_dict_maker(unique_key,
+                                                                     cleaned_name,
                                                                      cleaned_academy,
                                                                      cleaned_date,
                                                                      cleaned_psychometric,
                                                                      cleaned_presentation)
 
     def fill_txt_dict_df(self):
+        print(f"Beginning processing {len(self.txt_keys)} files...\n")
         for this_key in self.txt_keys:
+            print(f"Processing .txt file {this_key}.\n")
             self.final_dict_appender(this_key)
         self.set_txt_df(pd.DataFrame.from_dict(self.final_dict).transpose())
-
+        print(f"Finished processing all {len(self.txt_keys)} txt files.\n\n")
 
 if __name__ == '__main__':
 
     testcleaner = TxtCleaner()
 
-    for key in testcleaner.txt_keys:
-        testcleaner.final_dict_appender(key)
-    #for this_key in testcleaner.final_dict.keys():
-    #    print(testcleaner.final_dict[this_key]["Name"])
-    #pp.pprint(testcleaner.final_dict)
+    testcleaner.fill_txt_dict_df()
 
-    pp.pprint(testcleaner.txt_df)
+    pp.pprint(testcleaner.txt_df.columns)

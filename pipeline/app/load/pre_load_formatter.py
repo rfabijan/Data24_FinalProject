@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 
-class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.applicants_cleaner): #, ca.csv_cleaner1):
+class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.AcademyCleaner):
     def __init__(self):
         super(PreLoadFormatter, self).__init__()
         self.__academy_df = pandas.DataFrame
@@ -174,7 +174,12 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.applicants_cleaner): #,
 
     @staticmethod
     def concat_new_df(data: list, keys: list) -> pandas.DataFrame:
-        return pandas.concat(objs=data, axis=1, keys=keys)
+        # long_df = pd.DataFrame
+        # for obj in data:
+        #     if type(obj) == list:
+        #         long_df.append(pd.DataFrame(obj))
+        #     data[data.index(obj)] = long_df
+        return pandas.concat(objs=data, axis=0, keys=keys, join='inner')
 
     @staticmethod
     def reset_index(df):
@@ -201,9 +206,27 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.applicants_cleaner): #,
 if __name__ == '__main__':
     test_table_formatter = PreLoadFormatter()
 
+    print("Creating Academy dataframe")
     test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Academy"], "academy_df")
+    print("Creating Sparta Day dataframe")
     test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Academy", "Date"], "sparta_day_df")
+    print("Creating App Sparta Day JT dataframe")
+    test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Unique Key", "Date", "Psychometrics", "Presentation"], "app_sparta_day_df")
 
+
+    # The list/dict issue:
+    #print("Creating Tech Self Keys dataframe")
+    # test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Tech_self_keys"], "tech_skills_df") ## How will we handle dictionaries?
+    #print("Creating tech self keys/values dataframe")
+    #test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Tech_self_keys", "Tech_self_values"], "tech_self_score_jt_df")
+    #print("Creating Strengths dataframe")
+    print(test_table_formatter.json_df["Strengths"])
+    test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Strengths"], "strengths_df")
+    # test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Unique Key", "Strengths"], "app_strengths_jt_df")
+    # test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Weaknesses"], "weaknesses_df")
+
+    # It populates, but at what cost?? There are some Nan values, but is this an issue? The database I'm filling won't exist
     test_table_formatter.populate_from_two_df(test_table_formatter.txt_df, test_table_formatter.json_df, ["Academy", "Name", "Course_interest"], "spartans_df")
 
-    print(test_table_formatter.sparta_day_df)
+
+    print(test_table_formatter.spartans_df)

@@ -178,22 +178,27 @@ class JsonCleaner(JSONExtractor):
 
     def populate_json_df(self):
         intermediate_dict = {}
-        for key in self.extract_json_keys:
+        print(f"Beginning processing all {len(self.extract_json_keys[:1000])} JSON files...\n")
+        i = 0
+        for key in self.extract_json_keys[:1000]:
             json_file = self.pull_single_json(key)
             name = self.clean_json_name(self.extract_json_name(json_file))
             date = self.clean_json_date(self.extract_json_date(json_file))
             tech_dict = self.clean_json_tech_self_score(self.extract_json_tech_self_score(json_file))
-            list_of_strengths = self.clean_json_strengths(self.extract_json_strengths(json_file))
-            list_of_weaknesses = self.clean_json_weaknesses(self.extract_json_weaknesses(json_file))
+            list_of_strengths = tuple(self.clean_json_strengths(self.extract_json_strengths(json_file)))
+            list_of_weaknesses = tuple(self.clean_json_weaknesses(self.extract_json_weaknesses(json_file)))
             self_development = self.clean_json_self_development(self.extract_json_self_development(json_file))
             geo_flex = self.clean_json_geo_flex(self.extract_json_geo_flex(json_file))
             financial_support_self = self.clean_json_financial_support_self(self.extract_json_financial_support_self(json_file))
             result = self.clean_json_result(self.extract_json_result(json_file))
             course_interest = self.clean_json_course_interest(self.extract_json_course_interest(json_file))
             unique_key = self.create_unique_key(name, date)
-            intermediate_dict[unique_key] = {"Name": name
+            intermediate_dict[unique_key] = {"Unique Key": unique_key
+                                           , "Name": name
                                            , "Date": date
                                            , "Tech_self_score": tech_dict
+#                                           , "Tech_score_keys": tech_dict.keys()
+#                                           , "Tech_score_values": tech_dict.values()
                                            , "Strengths": list_of_strengths
                                            , "Weaknesses": list_of_weaknesses
                                            , "Self_development": self_development
@@ -202,8 +207,11 @@ class JsonCleaner(JSONExtractor):
                                            , "Result": result
                                            , "Course_interest": course_interest
                                            }
+            i += 1
+            if i % 50 == 0:
+                print(f"{i} JSON files completed...")
         self.set_json_df(pd.DataFrame.from_dict(intermediate_dict).transpose())
-
+        print(f"All JSON files completed\n")
 
 
 
@@ -216,4 +224,4 @@ if __name__ == '__main__':
     #    file = cleaner.pull_single_json(i)
     #    pprint(cleaner.create_unique_dict_from_json(file))
     cleaner.populate_json_df()
-    print(cleaner.json_df)
+    print(cleaner.json_df.columns)
