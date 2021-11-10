@@ -256,6 +256,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         eval(f"self.set_{output_dataframe}")(pd.DataFrame(this_list, columns=[column_title]))
         self.reset_index(eval(f"self.{output_dataframe}"))
 
+
     def create_final_dataframes(self):
         print("Creating Academy dataframe.\n")
         self.populate_from_one_df(self.txt_df,
