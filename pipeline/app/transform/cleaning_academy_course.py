@@ -18,6 +18,8 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
 
     def clean_name(self, name: str) -> tuple:
         name = name.title()
+        if name.isalpha() == False:
+            self.error_names.add(name)
         if name.count(" ") > 1 or "-" in name:
             self.error_names.add(name)
         if " " in name:
@@ -30,6 +32,8 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
 
     def clean_trainer(self, trainer_name: str) -> tuple:
         trainer_name = trainer_name.title()
+        if trainer_name.isalpha() == False:
+            self.error_names.add(trainer_name)
         if trainer_name.count(" ") > 1 or "-" in trainer_name:
             self.error_names.add(trainer_name)
         if " " in trainer_name:
@@ -78,3 +82,5 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
 if __name__ == "__main__":
     test = AcademyCleaner()
     print(test.final_academy_csv_dict_appender())
+
+

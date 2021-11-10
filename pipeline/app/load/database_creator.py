@@ -1,54 +1,62 @@
 import pyodbc
 import pipeline.config_manager as conf
 
+"""
+This class is estabilishes connection with SQL Server by using pyodbc
+First it connects to master database and creates a cursor to make a SQL querying possible
+"""
+class DatabaseCreator:
+    def __init__(self):
+        self.__server = conf.DB_SERVER
+        self.__database = "master"
+        self.__username = conf.DB_USERNAME
+        self.__password = conf.DB_PASSWORD
+        self.__data24etl_db = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + self.__server
+                                             + ';DATABASE=' + self.__database
+                                             + ';UID=' + self.__username
+                                             + ';PWD=' + self.__password, autocommit=True)
+        self.cursor = self.__data24etl_db.cursor()
 
-def connect_to_database(server: str = conf.DB_SERVER, username: str = conf.DB_USERNAME,
-                        password: str = conf.DB_PASSWORD,  db_name: str = 'master') -> pyodbc.Connection:
-    connection_config = f'DRIVER={{ODBC Driver 17 for SQL Server}};' \
-                        f'SERVER={server};' \
-                        f'DATABASE={db_name};' \
-                        f'UID={username};' \
-                        f'PWD={password};'
-    return pyodbc.connect(connection_config, autocommit=True)
+    # This method creates a database
+    def create_database(self) -> bool:
+        try:
+            print("DATABASE CREATION IN PROGRESS ..... ")
+            # Check if database does not exist on the server
+            if not self.check_db_exists():
+                self.cursor.execute(f'CREATE DATABASE [{conf.DB_NAME}];')
+                print("DATABASE HAS BEEN CREATED SUCCESSFULLY")
+            else:
+                # If exists uses an existing database
+                self.cursor.execute(f'USE [{conf.DB_NAME}];')
+        except:
+            return False
+        return True
 
+    # This method checks if database does not exist on the server
+    def check_db_exists(self):
+        return self.cursor.execute(f"SELECT * FROM sys.databases WHERE name = '{conf.DB_NAME}'").fetchone() is not None
 
-def create_database(cursor: pyodbc.Cursor, db_name: str = 'Data24ETL') -> bool:
-    try:
-        cursor.execute(f'CREATE DATABASE [{db_name}];')
-    except:
-        return False
+    # This method remove existing database
+    def reset_database(self):
+        # Uses master database (prevents dropping active database)
+        self.cursor.execute('USE master;')
+        self.cursor.execute(f'DROP DATABASE IF EXISTS [{conf.DB_NAME}];')
 
-    cursor.execute(f'USE [{db_name}];')
-    return True
+    # ToDo: Add validation so tests pass
+    def run_script(self, script_file_path=None):
+        # Reads the script
+        with open(script_file_path, 'r') as file:
+            query = file.read()
 
+        # Executes the sql query in load folder:
+        self.cursor.execute(query)
+        # Commits the executions of the script
+        self.cursor.commit()
 
-def check_db_exists(cursor, db_name):
-    return cursor.execute(f"SELECT * FROM sys.databases WHERE name = '{db_name}'").fetchone() is not None
-
-
-def reset_database(cursor, db_name):
-    # Use master database (prevents dropping active database)
-    cursor.execute('USE master;')
-    cursor.execute(f'DROP DATABASE IF EXISTS [{db_name}];')
-    create_database(cursor, db_name)
-
-    return check_db_exists(cursor, db_name)
-
-
-# ToDo: Add validation so tests pass
-def run_script(cursor, script_file_path=None):
-    # Read the script
-    with open(script_file_path, 'r') as file:
-        query = file.read()
-
-    # Execute the query within:
-    cursor.execute(query)
 
 
 if __name__ == "__main__":
-    cursor = connect_to_database('localhost,1433', 'SA', 'Passw0rd2018', 'master').cursor()
-    print(f"Create Database: {create_database(cursor, 'Data24ETL')}")
-    print(f"Reset Database: {reset_database(cursor, 'Data24ETL')}")
-
-    print("Building Database using Script")
-    run_script(cursor, 'database_creator.sql')
+    database_connector = DatabaseCreator()
+    database_connector.reset_database()
+    database_connector.create_database()
+    database_connector.run_script("database_creator.sql")

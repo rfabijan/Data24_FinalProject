@@ -7,11 +7,11 @@ import pipeline.config_manager as conf
 
 import datetime as dt
 import pandas
-import pyodbc
+import numpy as np
+import pandas as pd
 
 
-
-class PreLoadFormatter(tsd.TxtCleaner): #, t.JsonCleaner, ta.csv_cleaner1, ca.csv_cleaner1):
+class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.AcademyCleaner):
     def __init__(self):
         super(PreLoadFormatter, self).__init__()
         self.__academy_df = pandas.DataFrame
@@ -34,15 +34,8 @@ class PreLoadFormatter(tsd.TxtCleaner): #, t.JsonCleaner, ta.csv_cleaner1, ca.cs
         self.__course_trainer_jt_df = pandas.DataFrame
         self.__trainer_df = pandas.DataFrame
 
-        self.__server = 'localhost,1433'
-        self.__database = conf.DB_NAME
-        self.__username = 'SA'
-        self.__password = 'Passw0rd2018'
-        self.data24etl_db = pyodbc.connect(
-            'DRIVER={SQL Server};SERVER=' + self.__server + ';DATABASE=' + self.__database
-            + ';UID=' + self.__username + ';PWD=' + self.__password)
-
         self.fill_txt_dict_df()
+        self.populate_json_df()
 
     @property
     def academy_df(self):
@@ -177,26 +170,93 @@ class PreLoadFormatter(tsd.TxtCleaner): #, t.JsonCleaner, ta.csv_cleaner1, ca.cs
     def set_trainer_df(self, new_df):
         self.__trainer_df = new_df
 
-#######################################################################################################################
+    ####################################################################################################################
 
     @staticmethod
     def concat_new_df(data: list, keys: list) -> pandas.DataFrame:
-        return pandas.concat(objs=data, axis=1, keys=keys)
+        # long_df = pd.DataFrame
+        # for obj in data:
+        #     if type(obj) == list:
+        #         long_df.append(pd.DataFrame(obj))
+        #     data[data.index(obj)] = long_df
+        return pandas.concat(objs=data, axis=1, keys=keys, join='inner')
 
-    def populate_given_df(self, data_list, key_list):
-        self.set_academy_df(self.concat_new_df(data_list, key_list))
+    @staticmethod
+    def reset_index(df):
+        df.index = np.arange(1, len(df) + 1)
+
+    @staticmethod
+    def set_key_as_index(df):
+        if "Unique Key" in list(df.columns):
+            df.set_index("Unique Key", inplace=True)
+
+    def populate_from_one_df(self, dataframe, key_list, output_dataframe):
+        data_list = []
+        for key in key_list:
+            data_list.append(dataframe[key])
+        eval(f"self.set_{output_dataframe}")((self.concat_new_df(data_list, key_list)).drop_duplicates(subset=key_list))
+        self.reset_index(eval(f"self.{output_dataframe}"))
+        self.set_key_as_index(eval(f"self.{output_dataframe}"))
+
+    def populate_from_two_df(self, df1: pd.DataFrame, df2: pd.DataFrame, key_list: list, output_dataframe: str):
+        data_list = []
+        for key in key_list:
+            if key in df1.keys():
+                data_list.append(df1[key])
+            elif key in df2.keys():
+                data_list.append(df2[key])
+        eval(f"self.set_{output_dataframe}")((self.concat_new_df(data_list, key_list)).drop_duplicates(subset=key_list))
+        self.reset_index(eval(f"self.{output_dataframe}"))
+
+    def populate_from_one_list(self, this_list: list, column_title: str, output_dataframe: str):
+        eval(f"self.set_{output_dataframe}")(pd.DataFrame(this_list, columns=[column_title]))
+        self.reset_index(eval(f"self.{output_dataframe}"))
+
+    def create_final_dataframes(self):
+        print("Creating Academy dataframe.\n")
+        self.populate_from_one_df(self.txt_df,
+                                  ["Academy"], "academy_df")
+
+        print("Creating Sparta Day dataframe.\n")
+        self.populate_from_one_df(self.txt_df,
+                                  ["Academy", "Date"], "sparta_day_df")
+
+        print("Creating App Sparta Day JT dataframe.\n")
+        # self.populate_from_two_df(self.applicants_csv_df, self.txt_df,
+        #                         ["Unique Key", "Academy", "Date", "Psychometrics", "Presentation"]
+
+        print("Creating Applicants dataframe.\n")
+        # self.populate_from_two_df(self.applicants_csv_df, self.json_df,   # ToDo COMPLETE WHEN DATAFRAME FOR APPLICANTS IS IN
+        #                         ["Unique Key",
+
+        print("Creating Strengths dataframe. \n")
+        self.populate_from_one_list(self.unique_s_list,
+                                    "Strengths", "strengths_df")
+
+        print("Creating App Strengths JT dataframe. \n")
+        self.populate_from_one_df(self.json_df,
+                                  ["Unique Key", "Strengths"], "app_strengths_jt_df")
+
+        print("Creating Weakness dataframe. \n")
+        self.populate_from_one_list(self.unique_w_list,
+                                    "Weaknesses", "weakness_df")
+
+        print("Creating App Weakness JT dataframe.\n")
+        self.populate_from_one_df(self.json_df,
+                                  ["Unique Key", "Weaknesses"], "app_weakness_jt_df")
+
+        print("Creating Tech Skills dataframe.\n")
+        self.populate_from_one_list(self.unique_ts_list,
+                                    "Tech Score Topics", "tech_skills_df")
+
+        print("Creating Tech Self Score JT dataframe.\n")
+        self.populate_from_one_df(self.json_df,
+                                  ["Unique Key", "Tech_score_keys", "Tech_score_values"], "tech_self_score_jt_df")
 
 
 if __name__ == '__main__':
     test_table_formatter = PreLoadFormatter()
 
-    test_table_formatter.populate_given_df([test_table_formatter.txt_df["Academy"]], ["Academy"])
+    test_table_formatter.create_final_dataframes()
 
-    print(test_table_formatter.academy_df["Academy"])
-
-    print(test_table_formatter.academy_df.to_sql(name="Academy",
-                                                 con=test_table_formatter.data24etl_db,
-                                                 if_exists='replace'))
-
-
-    #(name, con, schema=None, if_exists='fail', index=True, index_label=None, chunksize=None, dtype=None, method=None
+    print(test_table_formatter.weakness_df)
