@@ -7,11 +7,11 @@ import pipeline.config_manager as conf
 
 import datetime as dt
 import pandas
-import pyodbc
+import numpy as np
+import pandas as pd
 
 
-
-class PreLoadFormatter(tsd.TxtCleaner): #, t.JsonCleaner, ta.csv_cleaner1, ca.csv_cleaner1):
+class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.AcademyCleaner):
     def __init__(self):
         super(PreLoadFormatter, self).__init__()
         self.__academy_df = pandas.DataFrame
@@ -34,15 +34,8 @@ class PreLoadFormatter(tsd.TxtCleaner): #, t.JsonCleaner, ta.csv_cleaner1, ca.cs
         self.__course_trainer_jt_df = pandas.DataFrame
         self.__trainer_df = pandas.DataFrame
 
-        self.__server = 'localhost,1433'
-        self.__database = conf.DB_NAME
-        self.__username = 'SA'
-        self.__password = 'Passw0rd2018'
-        self.data24etl_db = pyodbc.connect(
-            'DRIVER={SQL Server};SERVER=' + self.__server + ';DATABASE=' + self.__database
-            + ';UID=' + self.__username + ';PWD=' + self.__password)
-
         self.fill_txt_dict_df()
+        self.populate_json_df()
 
     @property
     def academy_df(self):
@@ -177,26 +170,63 @@ class PreLoadFormatter(tsd.TxtCleaner): #, t.JsonCleaner, ta.csv_cleaner1, ca.cs
     def set_trainer_df(self, new_df):
         self.__trainer_df = new_df
 
-#######################################################################################################################
+    #######################################################################################################################
 
     @staticmethod
     def concat_new_df(data: list, keys: list) -> pandas.DataFrame:
-        return pandas.concat(objs=data, axis=1, keys=keys)
+        # long_df = pd.DataFrame
+        # for obj in data:
+        #     if type(obj) == list:
+        #         long_df.append(pd.DataFrame(obj))
+        #     data[data.index(obj)] = long_df
+        return pandas.concat(objs=data, axis=0, keys=keys, join='inner')
 
-    def populate_given_df(self, data_list, key_list):
-        self.set_academy_df(self.concat_new_df(data_list, key_list))
+    @staticmethod
+    def reset_index(df):
+        df.index = np.arange(1, len(df) + 1)
+
+    def populate_from_one_df(self, dataframe, key_list, output_dataframe):
+        data_list = []
+        for key in key_list:
+            data_list.append(dataframe[key])
+        eval(f"self.set_{output_dataframe}")((self.concat_new_df(data_list, key_list)).drop_duplicates(subset=key_list))
+        self.reset_index(eval(f"self.{output_dataframe}"))
+
+    def populate_from_two_df(self, df1: pd.DataFrame, df2: pd.DataFrame, key_list: list, output_dataframe: str):
+        data_list = []
+        for key in key_list:
+            if key in df1.keys():
+                data_list.append(df1[key])
+            elif key in df2.keys():
+                data_list.append(df2[key])
+        eval(f"self.set_{output_dataframe}")((self.concat_new_df(data_list, key_list)).drop_duplicates(subset=key_list))
+        self.reset_index(eval(f"self.{output_dataframe}"))
 
 
 if __name__ == '__main__':
     test_table_formatter = PreLoadFormatter()
 
-    test_table_formatter.populate_given_df([test_table_formatter.txt_df["Academy"]], ["Academy"])
+    print("Creating Academy dataframe")
+    test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Academy"], "academy_df")
+    print("Creating Sparta Day dataframe")
+    test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Academy", "Date"], "sparta_day_df")
+    print("Creating App Sparta Day JT dataframe")
+    test_table_formatter.populate_from_one_df(test_table_formatter.txt_df, ["Unique Key", "Date", "Psychometrics", "Presentation"], "app_sparta_day_df")
 
-    print(test_table_formatter.academy_df["Academy"])
 
-    print(test_table_formatter.academy_df.to_sql(name="Academy",
-                                                 con=test_table_formatter.data24etl_db,
-                                                 if_exists='replace'))
+    # The list/dict issue:
+    #print("Creating Tech Self Keys dataframe")
+    # test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Tech_self_keys"], "tech_skills_df") ## How will we handle dictionaries?
+    #print("Creating tech self keys/values dataframe")
+    #test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Tech_self_keys", "Tech_self_values"], "tech_self_score_jt_df")
+    #print("Creating Strengths dataframe")
+    print(test_table_formatter.json_df["Strengths"])
+    test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Strengths"], "strengths_df")
+    # test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Unique Key", "Strengths"], "app_strengths_jt_df")
+    # test_table_formatter.populate_from_one_df(test_table_formatter.json_df, ["Weaknesses"], "weaknesses_df")
+
+    # It populates, but at what cost?? There are some Nan values, but is this an issue? The database I'm filling won't exist
+    test_table_formatter.populate_from_two_df(test_table_formatter.txt_df, test_table_formatter.json_df, ["Academy", "Name", "Course_interest"], "spartans_df")
 
 
-    #(name, con, schema=None, if_exists='fail', index=True, index_label=None, chunksize=None, dtype=None, method=None
+    print(test_table_formatter.spartans_df)

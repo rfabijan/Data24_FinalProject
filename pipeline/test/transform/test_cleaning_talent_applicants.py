@@ -84,7 +84,6 @@ def test_clean_postcode():
     assert clean.clean_postcode() is None
     assert clean.clean_postcode('  ') is None
     assert clean.clean_postcode('wc1b  ') == 'WC1B'
-    assert clean.clean_postcode('wc1bxd ') is None
     assert clean.clean_postcode('1wcb ') is None
 
 
@@ -145,8 +144,8 @@ def test_clean_month():
     # testing bad value(s)
     assert clean.clean_month() is None
     assert clean.clean_month(' ') is None
-    assert clean.clean_month('', 'Talent-April2019Applicants.csv') == datetime.datetime(2019, 4, 1)
-    assert clean.clean_month(None, 'Talent-June2019Applicants.csv') == datetime.datetime(2019, 6, 1)
+    assert clean.clean_month('', 'Talent/April2019Applicants.csv') == datetime.datetime(2019, 4, 1)
+    assert clean.clean_month(None, 'Talent/June2019Applicants.csv') == datetime.datetime(2019, 6, 1)
 
 
 def test_clean_invited_by():

@@ -5,14 +5,11 @@ import pipeline.config_manager as conf
 # TODO: Validation on method parameters
 
 
-def insert_data(insert_records_query, records_rows, data24etl_db):  # Takes the SQL query and the table of data
-    with data24etl_db.cursor() as cursor:
-        cursor.executemany(insert_records_query, records_rows)  # Executes the query on each row in the table
-        data24etl_db.commit()
-
-
-def insert_data_df(df, tablename, connection):
+def insert_data_df(df, tablename, connection, identity_insert_on_sql, identity_insert_off_sql):
+    connection.cursor.execute(identity_insert_on_sql)  # Allows us to insert ID rows
     df.to_sql(tablename, connection, if_exists='append', index=False, index_label=None)
+    connection.cursor.execute(identity_insert_off_sql)  # Reverts the ID rows allowance to close the fabric of spacetime
+    connection.commit()
 
 
 def insert():
@@ -44,15 +41,11 @@ def insert():
         column_string = "(" + ("?,"*number_of_columns)
         column_string = column_string[:-1] + ")"
 
-        insert_query = f"""
-        INSERT INTO {tablename}
-        VALUES {column_string}
-        """
-        # TODO: Don't have any tables of data
-        insert_data(insert_query, records_rows, data24etl_db)
+        identity_insert_on_sql = f"""SET IDENTITY_INSERT {tablename} ON"""
+        identity_insert_off_sql = f"""SET IDENTITY_INSERT {tablename} OFF"""
 
         # TODO: Alternative dataframe function usage
-        insert_data_df(df, tablename, data24etl_db)
+        insert_data_df(df, tablename, data24etl_db, identity_insert_on_sql, identity_insert_off_sql)
 
 
 """records_rows is a list of tuples (or lists, I don't think it matters), with each tuple being a row in the database"""
