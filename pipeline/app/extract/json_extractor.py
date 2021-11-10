@@ -43,7 +43,7 @@ class JSONExtractor(s3c.S3ParentClass):
         if "tech_self_score" in json_file.keys():
             return json_file["tech_self_score"]
         else:
-            return None
+            return {}
 
     # Returns a strengths
     @staticmethod
