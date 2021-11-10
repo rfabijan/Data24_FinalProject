@@ -7,15 +7,15 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         super(AcademyCleaner, self).__init__()
         self.__error_names = set()
         self.__error_trainer_names = set()
-
+    # returns names appended to the error_names set
     @property
     def error_names(self):
         return self.__error_names
-
+    # returns names appended to the error_trainer_names set
     @property
     def error_trainer_names(self):
         return self.__error_trainer_names
-
+    # returns cleaned name in a tuple format
     def clean_name(self, name: str) -> tuple:
         name = name.title()
         if name.isalpha() == False:
@@ -29,7 +29,7 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
             return clean_name
         else:
             print(name)
-
+    # returns cleaned trainer name in a tuple format
     def clean_trainer(self, trainer_name: str) -> tuple:
         trainer_name = trainer_name.title()
         if trainer_name.isalpha() == False:
@@ -43,8 +43,7 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         else:
             print(trainer_name)
 
-
-
+    # returns skill value score in a specific range
     @staticmethod
     def create_unique_key(clean_name: tuple) -> str:
         unique = str(clean_name[0] + clean_name[1])
