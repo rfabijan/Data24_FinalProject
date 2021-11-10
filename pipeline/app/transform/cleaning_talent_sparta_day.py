@@ -113,10 +113,10 @@ class TxtCleaner(ext.TxtExtractor):
         self.set_txt_df(pd.DataFrame.from_dict(self.final_dict).transpose())
         print(f"Finished processing all {len(self.txt_keys)} txt files.\n\n")
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     testcleaner = TxtCleaner()
 
     testcleaner.fill_txt_dict_df()
 
-    pp.pprint(testcleaner.txt_df.columns)
+    pp.pprint(testcleaner.txt_df)
