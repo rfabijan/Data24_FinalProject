@@ -1,6 +1,5 @@
 import pipeline.app.extract.csv_extractor as extractor
 import pandas as pd
-import pprint as p
 
 
 class AcademyCleaner(extractor.AcademiesCsvExtractor):
@@ -8,17 +7,19 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         super(AcademyCleaner, self).__init__()
         self.__error_names = set()
         self.__error_trainer_names = set()
-
+    # returns names appended to the error_names set
     @property
     def error_names(self):
         return self.__error_names
-
+    # returns names appended to the error_trainer_names set
     @property
     def error_trainer_names(self):
         return self.__error_trainer_names
-
+    # returns cleaned name in a tuple format
     def clean_name(self, name: str) -> tuple:
         name = name.title()
+        if name.isalpha() == False:
+            self.error_names.add(name)
         if name.count(" ") > 1 or "-" in name:
             self.error_names.add(name)
         if " " in name:
@@ -28,9 +29,11 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
             return clean_name
         else:
             print(name)
-
+    # returns cleaned trainer name in a tuple format
     def clean_trainer(self, trainer_name: str) -> tuple:
         trainer_name = trainer_name.title()
+        if trainer_name.isalpha() == False:
+            self.error_names.add(trainer_name)
         if trainer_name.count(" ") > 1 or "-" in trainer_name:
             self.error_names.add(trainer_name)
         if " " in trainer_name:
@@ -40,6 +43,7 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         else:
             print(trainer_name)
 
+    # returns skill value score in a specific range
     @staticmethod
     def create_unique_key(clean_name: tuple) -> str:
         unique = str(clean_name[0] + clean_name[1])
@@ -49,8 +53,9 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         self.__csv_df = new_df
 
     @staticmethod
-    def single_csv_academies_dict(name: tuple, trainer: tuple, skill_value: int) -> dict:
-        return {"Name": name,
+    def single_csv_academies_dict(unique_key: str, name: tuple, trainer: tuple, skill_value: int) -> dict:
+        return {"Unique Key": unique_key,
+                "Name": name,
                 "Trainer": trainer,
                 "Skill Value": skill_value}
 
@@ -58,19 +63,23 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         csv_dict = {}
         for keys in self.keys:
             csv_body = self.single_csv(keys)
-            for row in range(0, self.len_of_rows(csv_body)):
-                name = self.clean_name(self.extract_csv_name(csv_body, row))
-                trainer = self.clean_trainer(self.extract_academies_trainer(csv_body, row))
-                skill_value = self.extract_academies_skill_values_per_person_per_week(csv_body)[name[0] + " " + name[1]]
-
+            for row in range(0, self.len_of_rows(csv_body) + 1):
+                name = self.clean_name(self.extract_csv_name(csv_body, 1))
+                trainer = self.clean_trainer(self.extract_academies_trainer(csv_body, 1))
+                skill_value = self.extract_academies_skill_values_per_person_per_week(csv_body)
+                # file_name, column_name: str, row_number: int
                 unique_key = self.create_unique_key(name)
 
-                csv_dict[unique_key] = self.single_csv_academies_dict(name, trainer, skill_value)
+                csv_dict[unique_key] = {"Unique Key": unique_key,
+                                        "Name": name,
+                                        "Trainer Name": trainer,
+                                        "Skill Value": skill_value}
 
-        # self.set_csv_df(pd.DataFrame.from_dict(csv_dict).transpose())
-        return csv_dict
+        self.set_csv_df(pd.DataFrame.from_dict(csv_dict).transpose())
 
 
 if __name__ == "__main__":
     test = AcademyCleaner()
-    p.pprint(test.final_academy_csv_dict_appender())
+    print(test.final_academy_csv_dict_appender())
+
+

@@ -7,7 +7,21 @@ import pprint as p
 class AcademiesCsvExtractor(s3c.S3ParentClass):
     def __init__(self):
         super().__init__()
-        self.__keys = self.academy_csv
+        self.__keys = self.populate_academy_csv_files()
+
+    # This method populates a csv file occurring in Academy folder on S3
+    def populate_academy_csv_files(self):
+        # Paginator returns the iterator over all pages within the bucket
+        paginator = self.client.get_paginator('list_objects_v2')
+        # Pages list from the bucket
+        pages = paginator.paginate(Bucket=self.bucket_name)
+        files_list = []
+        for page in pages:
+            for i in page["Contents"]:
+                key = i["Key"]
+                if key.startswith("Academy"):
+                    files_list.append(key)
+        return files_list
 
     # keys property as assigned in init
     @property
@@ -38,12 +52,15 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
 
     # Returns the value for a given column and given name.
     @staticmethod
-    def extract_academies_skill_value(file_name, column_name: str, row_number: int) -> float:
-        return float(file_name.iloc[:][column_name][row_number])
+
+    def extract_academies_skill_value(file_name, column_name: str, row_number: int) -> int:
+        return int(file_name.iloc[:][column_name][row_number])
+
 
     # Returns a single csv file.
     def single_csv(self, key):
-        single_csv = pd.read_csv(self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
+        single_csv = pd.read_csv(
+            self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return single_csv
 
     @staticmethod
@@ -65,16 +82,17 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
                     if columns.endswith(var):
                         dict_holder[self.extract_csv_name(csv, rows)][var][columns] = \
                             self.clean_skill_value(self.extract_academies_skill_value(csv, columns, rows))
+
         return dict_holder
 
     @staticmethod
-    def extract_course_name(key) -> str:
+    def extract_academies_course_name(key) -> str:
         split_1 = key.split("/")[1]
         academy = split_1.split("_")[0] + " " + split_1.split("_")[1]
         return academy
 
     @staticmethod
-    def extract_date(key) -> str:
+    def extract_academies_date(key) -> str:
         date = key.split("_")[2].split(".")[0]
         return date
 
@@ -82,80 +100,95 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
 class ApplicantsCsvExtractor(AcademiesCsvExtractor):
     def __init__(self):
         super().__init__()
-        self.__keys = self.talent_csv
+        self.__keys = self.populate_applicants_csv_files()
+
+    # This method populates a csv file occurring in Talent folder on S3
+    def populate_applicants_csv_files(self):
+        # Paginator returns the iterator over all pages within the bucket
+        paginator = self.client.get_paginator('list_objects_v2')
+        # Pages list from the bucket
+        pages = paginator.paginate(Bucket=self.bucket_name)
+        files_list = []
+        # Paginator is responsible for going through all pages on s3 bucket
+        for page in pages:
+            for i in page["Contents"]:
+                key = i["Key"]
+                if key.startswith("Talent") and key.endswith(".csv"):
+                    files_list.append(key)
+        return files_list
 
     # keys property as assigned in init
     @property
-    def keys(self):
+    def applicants_keys(self):
         return self.__keys
 
     # Returns the id for a given row in a csv file.
     @staticmethod
-    def extract_id(csv_body, row_number: int) -> str:
+    def extract_applicants_id(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "id", row_number)
 
     # Returns the gender for a given row in a csv file.
     @staticmethod
-    def extract_gender(csv_body, row_number: int) -> str:
+    def extract_applicants_gender(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "gender", row_number)
 
     # Returns the dob for a given row in a csv file.
     @staticmethod
-    def extract_dob(csv_body, row_number: int) -> str:
+    def extract_applicants_dob(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "dob", row_number)
 
     # Returns the email for a given row in a csv file.
     @staticmethod
-    def extract_email(csv_body, row_number: int) -> str:
+    def extract_applicants_email(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "email", row_number)
 
     # Returns the city for given row in a csv file.
     @staticmethod
-    def extract_city(csv_body, row_number: int) -> str:
+    def extract_applicants_city(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "city", row_number)
 
     # Returns the address for a given row in a csv file.
     @staticmethod
-    def extract_address(csv_body, row_number: int) -> str:
+    def extract_applicants_address(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "address", row_number)
 
     # Returns the postcode for a given row in a csv file.
     @staticmethod
-    def extract_postcode(csv_body, row_number: int) -> str:
+    def extract_applicants_postcode(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "postcode", row_number)
 
     # Returns the phone number for a given row in a csv file.
     @staticmethod
-    def extract_phone_number(csv_body, row_number: int) -> str:
+    def extract_applicants_phone_number(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "phone_number", row_number)
 
     # Returns the university name for a given row in a csv file.
     @staticmethod
-    def extract_university(csv_body, row_number: int) -> str:
+    def extract_applicants_university(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "uni", row_number)
 
     # Returns the degree classification for a given row in a csv file.
     @staticmethod
-    def extract_degree(csv_body, row_number: int) -> str:
+    def extract_applicants_degree(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "degree", row_number)
 
     # Returns the date an applicant was invited to in a csv file.
     @staticmethod
-    def extract_invited_date(csv_body, row_number: int) -> str:
+    def extract_applicants_invited_date(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "invited_date", row_number)
 
     # Returns the month an applicant was invited to in a csv file
     @staticmethod
-    def extract_month(csv_body, row_number: int) -> str:
+    def extract_applicants_month(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "month", row_number)
 
     # Returns the name of the person who invited an applicant in a csv file.
     @staticmethod
-    def extract_invited_by(csv_body, row_number: int) -> str:
+    def extract_applicants_invited_by(csv_body, row_number: int) -> str:
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "invited_by", row_number)
 
     @staticmethod
-    def extract_title_date(key) -> str or None:
+    def extract_applicants_title_date(key) -> str or None:
         try:
             month = key.lstrip("Talent/").rstrip("Applicants.csv")
             date = month.split("2")
@@ -167,7 +200,16 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
     @staticmethod
     def extract_value_from_rowcolumn(csv_body: pd.DataFrame, column: str, row: int):
         try:
-            # return csv_body.iloc[:][column][row]
-            return csv_body.iloc[row][column]
+            return csv_body.iloc[:][column][row]
+            # return csv_body.iloc[row][column]
         except:
             return None
+
+
+if __name__ == '__main__':
+    csv_extractor = ApplicantsCsvExtractor()
+
+    # print(csv_extractor.extract_applicants_invited_by(csv_extractor.single_csv()))
+    for keys in csv_extractor.applicants_keys:
+        print(csv_extractor.extract_applicants_invited_by(csv_extractor.single_csv(keys), 2))
+
