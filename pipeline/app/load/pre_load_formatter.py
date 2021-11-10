@@ -16,7 +16,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         super(PreLoadFormatter, self).__init__()
         self.__academy_df = pandas.DataFrame
         self.__sparta_day_df = pandas.DataFrame
-        self.__app_sparta_day_df = pandas.DataFrame
+        self.__app_sparta_day_jt_df = pandas.DataFrame
         self.__weakness_df = pandas.DataFrame
         self.__app_weakness_jt_df = pandas.DataFrame
         self.__strengths_df = pandas.DataFrame
@@ -34,8 +34,36 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         self.__course_trainer_jt_df = pandas.DataFrame
         self.__trainer_df = pandas.DataFrame
 
+        # A list containing all the dataframes, to allow all to be accessed at once if needed
+        self.__all_dataframes = [self.academy_df,
+                                 self.sparta_day_df,
+                                 self.app_sparta_day_jt_df,
+                                 self.weakness_df,
+                                 self.app_weakness_jt_df,
+                                 self.strengths_df,
+                                 self.app_strengths_jt_df,
+                                 self.tech_skills_df,
+                                 self.tech_self_score_jt_df,
+                                 self.applicants_df,
+                                 self.streams_df,
+                                 self.invitors_df,
+                                 self.address_df,
+                                 self.spartans_df,
+                                 self.tracker_jt_df,
+                                 self.core_skills_df,
+                                 self.course_df,
+                                 self.course_trainer_jt_df,
+                                 self.trainer_df
+                                 ]
+        # The functions to fill the dataframes with data from S3 (via extract and transform functions)
         self.fill_txt_dict_df()
         self.populate_json_df()
+
+    # Getters and setters for each dataframe - I won't comment each one as it it fairly self explanatory as to
+    # what they do
+    @property
+    def all_dataframes(self):
+        return self.__all_dataframes
 
     @property
     def academy_df(self):
@@ -52,11 +80,11 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         self.__sparta_day_df = new_df
 
     @property
-    def app_sparta_day_df(self):
-        return self.__app_sparta_day_df
+    def app_sparta_day_jt_df(self):
+        return self.__app_sparta_day_jt_df
 
-    def set_app_sparta_day_df(self, new_df):
-        self.__app_sparta_day_df = new_df
+    def set_app_sparta_day_jt_df(self, new_df):
+        self.__app_sparta_day_jt_df = new_df
 
     @property
     def weakness_df(self):
@@ -222,12 +250,9 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
                                   ["Academy", "Date"], "sparta_day_df")
 
         print("Creating App Sparta Day JT dataframe.\n")
-        # self.populate_from_two_df(self.applicants_csv_df, self.txt_df,
-        #                         ["Unique Key", "Academy", "Date", "Psychometrics", "Presentation"]
-
-        print("Creating Applicants dataframe.\n")
-        # self.populate_from_two_df(self.applicants_csv_df, self.json_df,   # ToDo COMPLETE WHEN DATAFRAME FOR APPLICANTS IS IN
-        #                         ["Unique Key",
+        self.populate_from_one_df(self.txt_df,
+                                  ["Unique Key", "Academy", "Date", "Psychometrics", "Presentation"],
+                                  "app_sparta_day_jt_df")
 
         print("Creating Strengths dataframe. \n")
         self.populate_from_one_list(self.unique_s_list,
@@ -253,10 +278,55 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         self.populate_from_one_df(self.json_df,
                                   ["Unique Key", "Tech_score_keys", "Tech_score_values"], "tech_self_score_jt_df")
 
+        print("Creating Applicants dataframe.\n")
+        # self.populate_from_two_df(self.applicants_csv_df, self.json_df,   # ToDo COMPLETE WHEN DATAFRAME FOR APPLICANTS IS IN
+        #                         ["Unique Key", "Course_interest", "Invited_by", "HouseNumber", "AddressLine",
+        #                         "Postcode", "City", "FirstName", "LastName", "Gender", "DoB", "Email", "PhoneNumber",
+        #                         "Uni", "Degree", "Geo_flex", "Financial_support_self", "Result"], "applicants_df")
+
+        print("Creating streams dataframe.\n")
+        self.populate_from_one_df(self.json_df,
+                                  ["Course_interest"], "streams_df")
+
+        print("Creating Invitors dataframe.\n")
+#        self.populate_from_one_list(self.unique_i_list,
+#                                    "Invitors",
+#                                    "invitors_df")
+        print("Creating Address dataframe.\n")
+#        self.populate_from_one_df(self.applicants_csv_df,
+#                                  ["HouseNumber, AddressLine, Postcode, City"],
+#                                  "address_df")
+
+        print("Creating Spartans dataframe.\n")
+#        self.populate_from_two_df(self.applicants_csv_df, self.academy_csv_df,
+#                                    ["Unique Key", "Course_Name"],
+#                                     "spartans_df")
+        print("Creating Course dataframe.\n")
+#        self.populate_from_one_df(self.academy_csv_df,
+#                                  ["Course_Name", "WeekLength", "StartDate"],
+#                                   "course_df")
+
+        print("Creating Course Trainer JT dataframe.\n")
+        # self.populate_from_one_df(self.academy_csv_df,
+#                                    ["Course_Name, Trainer_FirstName", "Trainer_LastName"],
+#                                    "course_trainer_jt_df")
+
+        print("Creating Trainer dataframe.\n")
+        #self.populate_from_one_df(self.academy_csv_df,
+#                                   ["Trainer_FirstName", "Trainer_LastName"],
+#                                    "trainer_df")
+
+        print("Creating Tracker JT dataframe.\n")
+        #self.populate_from_one_df(self.academy_csv_df,
+#                                    ["ApplicantID", "CoreSkill", "Week", "SkillValue"],
+#                                    "tracker_jt_df")
+
+        print("Creating Core Skills dataframe.\n")
+        #self.populate_from_one_list(self.unique_cs_list, "Core Skill", "core_skills_df")
 
 if __name__ == '__main__':
     test_table_formatter = PreLoadFormatter()
 
     test_table_formatter.create_final_dataframes()
-
-    print(test_table_formatter.weakness_df)
+    pd.set_option('display.max_columns', None)
+    print(test_table_formatter.app_sparta_day_jt_df)
