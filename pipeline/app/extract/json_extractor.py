@@ -1,25 +1,37 @@
 import json
-from pipeline.app.extract import s3_connector as s3c
+import pipeline.app.extract.s3_connector as s3c
 
 
 class JSONExtractor(s3c.S3ParentClass):
     def __init__(self):
         super(JSONExtractor, self).__init__()
-        self.__json_keys = self.talent_json
+        self.__keys = self.populate_json_files()
+
+    def populate_json_files(self):
+        paginator = self.client.get_paginator('list_objects_v2')
+        pages = paginator.paginate(Bucket=self.bucket_name)
+        files_list = []
+        for page in pages:
+
+            for i in page["Contents"]:
+                key = i["Key"]
+
+                if key.startswith("Talent") and key.endswith(".json"):
+                    files_list.append(key)
+
+        return files_list
 
     # Static method that returns a list of keys
     # Keys are necessary to extract a specific JSON file from a bucket on S3
     @property
     def extract_json_keys(self):
-        return self.__json_keys
-
+        return self.__keys
 
     # Returns a single dict file pulled from bucket based on passed key
     def pull_single_json(self, key: str):
         # Loading as in a JSON format
         jsonfile = json.load(self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return jsonfile
-
 
     # Returns a name if exists as a key in dictonary
     @staticmethod
@@ -43,7 +55,7 @@ class JSONExtractor(s3c.S3ParentClass):
         if "tech_self_score" in json_file.keys():
             return json_file["tech_self_score"]
         else:
-            return None
+            return {}
 
     # Returns a strengths
     @staticmethod
@@ -80,12 +92,17 @@ class JSONExtractor(s3c.S3ParentClass):
     def extract_json_course_interest(json_file) -> str:
         return json_file["course_interest"]
 
+    @property
+    def connector(self):
+        return self.__connector
+
 
 
 
 
 if __name__ == "__main__":
+    connector = s3c.S3ParentClass()
     extractor = JSONExtractor()
     for i in extractor.extract_json_keys:
         file = extractor.pull_single_json(str(i))
-        print(extractor.extract_tech_self_score(file))
+        print(extractor.extract_json_tech_self_score(file))

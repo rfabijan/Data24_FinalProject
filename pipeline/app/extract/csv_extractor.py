@@ -7,7 +7,21 @@ import pprint as p
 class AcademiesCsvExtractor(s3c.S3ParentClass):
     def __init__(self):
         super().__init__()
-        self.__keys = self.academy_csv
+        self.__keys = self.populate_academy_csv_files()
+
+    # This method populates a csv file occurring in Academy folder on S3
+    def populate_academy_csv_files(self):
+        # Paginator returns the iterator over all pages within the bucket
+        paginator = self.client.get_paginator('list_objects_v2')
+        # Pages list from the bucket
+        pages = paginator.paginate(Bucket=self.bucket_name)
+        files_list = []
+        for page in pages:
+            for i in page["Contents"]:
+                key = i["Key"]
+                if key.startswith("Academy"):
+                    files_list.append(key)
+        return files_list
 
     # keys property as assigned in init
     @property
@@ -43,7 +57,8 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
 
     # Returns a single csv file.
     def single_csv(self, key):
-        single_csv = pd.read_csv(self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
+        single_csv = pd.read_csv(
+            self.client.get_object(Bucket=self.bucket_name, Key=key)["Body"])
         return single_csv
 
     # Produces a dictionary in the form of name:{wk:{skill:}} for a given csv file.
@@ -75,7 +90,22 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
 class ApplicantsCsvExtractor(AcademiesCsvExtractor):
     def __init__(self):
         super().__init__()
-        self.__keys = self.talent_csv
+        self.__keys = self.populate_applicants_csv_files()
+
+    # This method populates a csv file occurring in Talent folder on S3
+    def populate_applicants_csv_files(self):
+        # Paginator returns the iterator over all pages within the bucket
+        paginator = self.client.get_paginator('list_objects_v2')
+        # Pages list from the bucket
+        pages = paginator.paginate(Bucket=self.bucket_name)
+        files_list = []
+        # Paginator is responsible for going through all pages on s3 bucket
+        for page in pages:
+            for i in page["Contents"]:
+                key = i["Key"]
+                if key.startswith("Talent") and key.endswith(".csv"):
+                    files_list.append(key)
+        return files_list
 
     # keys property as assigned in init
     @property
@@ -165,9 +195,8 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
         except:
             return None
 
+
 if __name__ == '__main__':
     csv_extractor = ApplicantsCsvExtractor()
     for keys in csv_extractor.keys:
         print(keys)
-
-
