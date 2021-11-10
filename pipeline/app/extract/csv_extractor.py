@@ -52,10 +52,8 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
 
     # Returns the value for a given column and given name.
     @staticmethod
-
-    def extract_academies_skill_value(file_name, column_name: str, row_number: int) -> int:
-        return int(file_name.iloc[:][column_name][row_number])
-
+    def extract_academies_skill_value(file_name, column_name: str, row_number: int) -> float:
+        return float(file_name.iloc[:][column_name][row_number])
 
     # Returns a single csv file.
     def single_csv(self, key):
