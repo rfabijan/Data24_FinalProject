@@ -21,7 +21,7 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
 
     # Returns the name for a given row in a csv file.
     @staticmethod
-    def extract_academies_name(file_name, row_number: int) -> str:
+    def extract_csv_name(file_name, row_number: int) -> str:
         return file_name.iloc[:]["name"][row_number]
 
     # Returns the trainer name for a given row in a csv file.
@@ -50,13 +50,13 @@ class AcademiesCsvExtractor(s3c.S3ParentClass):
     def extract_academies_skill_values_per_person_per_week(self, csv):
         dict_holder = {}
         for rows in range(0, self.len_of_rows(csv)):
-            dict_holder[self.extract_academies_name(csv, rows)] = {}
+            dict_holder[self.extract_csv_name(csv, rows)] = {}
             for numb in range(1, self.extract_academies_weeks(csv.columns) + 1):
                 var = "W" + str(numb)
-                dict_holder[self.extract_academies_name(csv, rows)][var] = {}
+                dict_holder[self.extract_csv_name(csv, rows)][var] = {}
                 for columns in csv.columns:
                     if columns.endswith(var):
-                        dict_holder[self.extract_academies_name(csv, rows)][var][columns] = \
+                        dict_holder[self.extract_csv_name(csv, rows)][var][columns] = \
                             self.extract_academies_skill_value(csv, columns, rows)
         return dict_holder
 
@@ -79,7 +79,7 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
 
     # keys property as assigned in init
     @property
-    def keys(self):
+    def applicants_keys(self):
         return self.__keys
 
     # Returns the id for a given row in a csv file.
@@ -160,14 +160,14 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
     @staticmethod
     def extract_value_from_rowcolumn(csv_body: pd.DataFrame, column: str, row: int):
         try:
-            # return csv_body.iloc[:][column][row]
-            return csv_body.iloc[row][column]
+            return csv_body.iloc[:][column][row]
+            # return csv_body.iloc[row][column]
         except:
             return None
 
+
 if __name__ == '__main__':
     csv_extractor = ApplicantsCsvExtractor()
-    for keys in csv_extractor.keys:
-        print(keys)
-
-
+    # print(csv_extractor.extract_applicants_invited_by(csv_extractor.single_csv()))
+    for keys in csv_extractor.applicants_keys:
+        print(csv_extractor.extract_applicants_invited_by(csv_extractor.single_csv(keys), 2))
