@@ -10,7 +10,7 @@ import pandas
 import numpy as np
 import pandas as pd
 
-
+# main class
 class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.AcademyCleaner):
     def __init__(self):
         super(PreLoadFormatter, self).__init__()
@@ -36,7 +36,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
 
         self.fill_txt_dict_df()
         self.populate_json_df()
-
+    # returns dataframes with info in relation to the academy
     @property
     def academy_df(self):
         return self.__academy_df
@@ -44,6 +44,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_academy_df(self, new_df):
         self.__academy_df = new_df
 
+    # returns dataframes with info in relation to the sparta day
     @property
     def sparta_day_df(self):
         return self.__sparta_day_df
@@ -58,6 +59,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_app_sparta_day_df(self, new_df):
         self.__app_sparta_day_df = new_df
 
+    # returns dataframes with info in relation to the applicants weaknesses
     @property
     def weakness_df(self):
         return self.__weakness_df
@@ -72,6 +74,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_app_weakness_jt_df(self, new_df):
         self.__app_weakness_jt_df = new_df
 
+    # returns dataframes with info in relation to the applicants strengths
     @property
     def strengths_df(self):
         return self.__streams_df
@@ -86,6 +89,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_app_strengths_jt_df(self, new_df):
         self.__app_strengths_jt_df = new_df
 
+    # returns dataframes with info in relation to the applicants tech skills scores
     @property
     def tech_skills_df(self):
         return self.__tech_skills_df
@@ -100,6 +104,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_tech_self_score_jt_df(self, new_df):
         self.__tech_self_score_jt_df = new_df
 
+    # returns dataframes with info in relation to the applicant
     @property
     def applicants_df(self):
         return self.__applicants_df
@@ -107,6 +112,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_applicants_df(self, new_df):
         self.__applicants_df = new_df
 
+    # returns dataframes with info in relation to the streams
     @property
     def streams_df(self):
         return self.__streams_df
@@ -114,6 +120,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_streams_df(self, new_df):
         self.__streams_df = new_df
 
+    # returns dataframes with info in relation to the sparta day invitors
     @property
     def invitors_df(self):
         return self.__invitors_df
@@ -121,6 +128,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_invitors_df(self, new_df):
         self.__invitors_df = new_df
 
+    # returns dataframes with info in relation to the applicants address
     @property
     def address_df(self):
         return self.__address_df
@@ -128,6 +136,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_address_df(self, new_df):
         self.__address_df = new_df
 
+    # returns dataframes with info in relation to the spartans
     @property
     def spartans_df(self):
         return self.__spartans_df
@@ -135,6 +144,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_spartans_df(self, new_df):
         self.__spartans_df = new_df
 
+    # returns dataframes with info in relation to the applicants tracker
     @property
     def tracker_jt_df(self):
         return self.__tracker_jt_df
@@ -142,6 +152,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_tracker_df(self, new_df):
         self.__tracker_jt_df = new_df
 
+    # returns dataframes with info in relation to the applicants core skills
     @property
     def core_skills_df(self):
         return self.__core_skills_df
@@ -149,6 +160,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_core_skills_df(self, new_df):
         self.__core_skills_df = new_df
 
+    # returns dataframes with info in relation to the course
     @property
     def course_df(self):
         return self.__course_df
@@ -156,6 +168,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_course_df(self, new_df):
         self.__course_df = new_df
 
+    # returns dataframes with info in relation to the course trainer
     @property
     def course_trainer_jt_df(self):
         return self.__course_trainer_jt_df
@@ -163,6 +176,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def set_course_trainer_jt_df(self, new_df):
         self.__course_trainer_jt_df = new_df
 
+    # returns dataframes with info in relation to the specific trainer
     @property
     def trainer_df(self):
         return self.__trainer_df
@@ -171,7 +185,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         self.__trainer_df = new_df
 
     ####################################################################################################################
-
+    # returns concatinated dataframes
     @staticmethod
     def concat_new_df(data: list, keys: list) -> pandas.DataFrame:
         # long_df = pd.DataFrame
@@ -184,7 +198,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     @staticmethod
     def reset_index(df):
         df.index = np.arange(1, len(df) + 1)
-
+    # checks for an unique key and sets it as the index
     @staticmethod
     def set_key_as_index(df):
         if "Unique Key" in list(df.columns):
