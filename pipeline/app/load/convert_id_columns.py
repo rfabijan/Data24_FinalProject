@@ -1,4 +1,5 @@
 import pipeline.app.load.pre_load_formatter as plf
+import pandas as pd
 
 # TODO: Make sure this is actually taking in the populated databases
 
@@ -55,9 +56,9 @@ def ci_course_trainer_jt(x):
     # adding the ID column from the other table
 
     # course_trainer_jt_df['CourseID'] = course_trainer_jt_df['CourseID'].map(course_df.set_index('Course Name')['CourseID'])
-    course_trainer_jt_df = course_trainer_jt_df.merge(course_df, on=['Course Name'], suffixes=['_2']).drop(['Course Name'], axis=1).rename(columns={"id_2": "CourseID"})
+    course_trainer_jt_df.merge(course_df, on=['Course Name'], suffixes=['_2'], how="right").drop(['Course Name'], axis=1).rename(columns={"id_2": "CourseID"})
     # course_trainer_jt_df['TrainerID'] = course_trainer_jt_df['TrainerID'].map(trainer_df.set_index('FirstName')['TrainerID'])
-    course_trainer_jt_df = course_trainer_jt_df.merge(trainer_df, on=['First Name', 'Last Name'], suffixes=['', '_2']).drop(['First Name', 'Last Name'], axis=1).rename(columns={"id_2": "TrainerID"})
+    course_trainer_jt_df.merge(trainer_df, on=['Trainer First Name', 'Trainer Last Name'], suffixes=['', '_2'], how="right").drop(['Trainer First Name', 'Trainer Last Name'], axis=1).rename(columns={"id_2": "TrainerID"})
     return course_trainer_jt_df
 
 
@@ -66,11 +67,11 @@ def ci_applicants(x):
     streams_df = x.streams_df
     invitors_df = x.invitors_df
     address_df = x.address_df
-    applicants_df['Course_interest'] = applicants_df['Course_interest'].map(streams_df.set_index('Course_interest')['StreamID'])
+    applicants_df['Course_interest'] = applicants_df['Course Interest'].map(streams_df.set_index('Course Interest')['index'])
     # applicants_df['InvitedByID'] = applicants_df['InvitedByID'].map(invitors_df.set_index('FirstName')['InvitedByID'])
-    applicants_df = applicants_df.merge(invitors_df, on=['Invitors'], suffixes=['_2']).drop(['Invitors'], axis=1).rename(columns={"id_2": "InvitorID"})
+    applicants_df.merge(invitors_df, on=['Invited By'], suffixes=['_2'],  how="right").drop(['Invited By'], axis=1).rename(columns={"id_2": "InvitorID"})
     # applicants_df['AddressID'] = applicants_df['AddressID'].map(address_df.set_index('HouseNumber')['AddressID'])
-    applicants_df = applicants_df.merge(address_df, on=['AddressLine', 'Postcode', 'City'], suffixes=['', '', '_2']).drop(['AddressLine', 'Postcode', 'City'], axis=1).rename(columns={"id_2": "Address_id"})
+    applicants_df.merge(address_df, on=['Address', 'Postcode', 'City'], suffixes=['', '', '_2'], how="right").drop(['Address', 'Postcode', 'City'], axis=1).rename(columns={"id_2": "Address_id"})
     return applicants_df
 
 
@@ -81,7 +82,7 @@ def ci_app_sparta_day(x):
     # app_sparta_day_df['ApplicantID'] = app_sparta_day_df['ApplicantID'].map(applicants_df.set_index('matchingvalues')['ApplicantID'])
     # app_sparta_day_df = app_sparta_day_df.merge(applicants_df, on=['AcademyID', 'c2'], suffixes=['', '_2']).drop(['c1', 'c2'], axis=1).rename(columns={"id_2": "df2_id"})
     # app_sparta_day_df['SpartaDayID'] = app_sparta_day_df['SpartaDayID'].map(sparta_day_df.set_index('matchingvalues')['SpartaDayID'])
-    app_sparta_day_df = app_sparta_day_df.merge(sparta_day_df, on=['Academy', 'Date'], suffixes=['', '_2']).drop(['Academy', 'Date'], axis=1).rename(columns={"id_2": "SpartaDayID"})
+    app_sparta_day_df = pd.merge(app_sparta_day_df, sparta_day_df, on=['Academy', 'Date'], suffixes=('', '_2')).drop(['Academy', 'Date'], axis=1).rename(columns={"id_2": "SpartaDayID"})
     return app_sparta_day_df
 
 
@@ -117,8 +118,8 @@ def ci_spartans(x):
     course_df = x.course_df
     # applicants_df = x.applicants_df
     # spartans_df['CourseID'] = spartans_df['CourseID'].map(course_df.set_index('CourseName')['CourseID'])
-    spartans_df = spartans_df.merge(course_df, on=['Course Name'],
-                                                      suffixes=['_2']).drop(
+    spartans_df.merge(course_df, on=['Course Name'],
+                                                      suffixes=['_2'], how="right").drop(
         ['Course Name'], axis=1).rename(columns={"id_2": "CourseID"})
     # spartans_df['ApplicantID'] = spartans_df['ApplicantID'].map(applicants_df.set_index('matchingvalues')['ApplicantID'])
     return spartans_df

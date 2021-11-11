@@ -1,9 +1,26 @@
 import pyodbc
 import pipeline.config_manager as conf
 import pipeline.app.load.convert_id_columns as cic
-
+import urllib
+import sqlalchemy
 # TODO: Validation on method parameters
 
+driver = "ODBC Driver 17 for SQL Server"
+database = conf.DB_NAME
+password = 'Passw0rd2018'
+server = 'localhost,1433'
+username = 'SA'
+params = urllib.parse.quote_plus(
+    'Driver=%s;' % driver +
+    'Server=tcp:%s,1433;' % server +
+    'Database=%s;' % database +
+    'Uid=%s;' % username +
+    'Pwd={%s};' % password +
+    'Encrypt=yes;' +
+    'TrustServerCertificate=yes;' +
+    'Connection Timeout=30;')
+conn_str = 'mssql+pyodbc:///?odbc_connect={}'.format(params)
+engine = sqlalchemy.create_engine(conn_str)
 
 def insert_data_df(df, tablename, connection, identity_insert_on_sql, identity_insert_off_sql):
     connection.cursor.execute(identity_insert_on_sql)  # Allows us to insert ID rows
@@ -29,18 +46,18 @@ def insert(df, tablename):
     """
     This bit connects to the database
     """
-    server = 'localhost,1433'
-    database = conf.DB_NAME
-    username = 'SA'
-    password = 'Passw0rd2018'
-
-    data24etl_db = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID='
-                                  + username + ';PWD=' + password)
+    # server = 'localhost,1433'
+    # database = conf.DB_NAME
+    # username = 'SA'
+    # password = 'Passw0rd2018'
+    #
+    # data24etl_db = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID='
+    #                               + username + ';PWD=' + password)
 
     identity_insert_on_sql = f"""SET IDENTITY_INSERT {tablename} ON"""
     identity_insert_off_sql = f"""SET IDENTITY_INSERT {tablename} OFF"""
 
-    insert_data_df(df, tablename, data24etl_db, identity_insert_on_sql, identity_insert_off_sql)
+    insert_data_df(df, tablename, engine, identity_insert_on_sql, identity_insert_off_sql)
 
     # TODO: The number of columns in each table in the dictionary below needs to be reduced because it currently counts
     #  ID columns, which aren't in the data tables
