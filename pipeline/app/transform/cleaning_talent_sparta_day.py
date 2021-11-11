@@ -107,7 +107,7 @@ class TxtCleaner(ext.TxtExtractor):
 
     def fill_txt_dict_df(self):
         print(f"Beginning processing {len(self.txt_keys)} files...\n")
-        for this_key in self.txt_keys:
+        for this_key in self.txt_keys[:5]:
             print(f"Processing .txt file {this_key}.")
             self.final_dict_appender(this_key)
         self.set_txt_df(pd.DataFrame.from_dict(self.final_dict).transpose())

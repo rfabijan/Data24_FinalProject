@@ -237,7 +237,8 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         if "Unique Key" in list(df.columns):
             df.set_index("Unique Key", inplace=True)
 
-    def populate_from_one_df(self, dataframe, key_list, output_dataframe, reindex=True):
+    def populate_from_one_df(self, dataframe, key_list, output_dataframe,
+                             pk_column_name="", reindex=True, generate_key=False):
         data_list = []
         for key in key_list:
             data_list.append(dataframe[key])
@@ -246,9 +247,14 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         if reindex:
             self.reset_index(eval(f"self.{output_dataframe}"))
             self.set_key_as_index(eval(f"self.{output_dataframe}"))
+        if generate_key:
+            rename_dict = {"index": pk_column_name}
+            eval(f"(self.{output_dataframe}.reset_index(level=0, inplace=True))")
+            eval(f"self.{output_dataframe}.rename({rename_dict}, inplace=True)")
 
     def populate_from_two_df(self, df1: pd.DataFrame, df2: pd.DataFrame,
-                             key_list: list, output_dataframe: str, reindex=True, join_index=None):
+                             key_list: list, output_dataframe: str,
+                             reindex=True, join_index=None, generate_key=False, pk_column_name=""):
         data_list = []
         if join_index is not None:
             print(f"Resetting index to {join_index}")
@@ -278,21 +284,33 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         if reindex:
             self.reset_index(eval(f"self.{output_dataframe}"))
             self.set_key_as_index(eval(f"self.{output_dataframe}"))
+        if generate_key:
+            rename_dict = {"index": pk_column_name}
+            eval(f"(self.{output_dataframe}.reset_index(level=0, inplace=True))")
+            eval(f"self.{output_dataframe}.rename({rename_dict}, inplace=True)")
 
-    def populate_from_one_list(self, this_list: list, column_title: str, output_dataframe: str, reindex=True):
+    def populate_from_one_list(self, this_list: list, column_title: str, output_dataframe: str, reindex=True,
+                               generate_key=False, pk_column_name=""):
         eval(f"self.set_{output_dataframe}")(
             pd.DataFrame(this_list, columns=[column_title]).drop_duplicates(ignore_index=True))
         if reindex:
             self.reset_index(eval(f"self.{output_dataframe}"))
+        if generate_key:
+            rename_dict = {"index": pk_column_name}
+            eval(f"(self.{output_dataframe}.reset_index(level=0, inplace=True))")
+            eval(f"self.{output_dataframe}.rename({rename_dict}, inplace=True)")
 
     def create_final_dataframes(self):
         print("Creating Academy dataframe.\n")
         self.populate_from_one_df(self.txt_df,
-                                  ["Academy"], "academy_df")
+                                  ["Academy"], "academy_df",
+                                  generate_key=True,
+                                  pk_column_name="AcademyID")
 
         print("Creating Sparta Day dataframe.\n")
         self.populate_from_one_df(self.txt_df,
-                                  ["Academy", "Date"], "sparta_day_df")
+                                  ["Academy", "Date"], "sparta_day_df",
+                                  generate_key=True)
 
         print("Creating App Sparta Day JT dataframe.\n")
         self.populate_from_one_df(self.txt_df,
@@ -301,58 +319,67 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
 
         print("Creating Strengths dataframe. \n")
         self.populate_from_one_list(self.unique_s_list,
-                                    "Strengths", "strengths_df")
+                                    "Strengths", "strengths_df",
+                                    generate_key=True)
 
         print("Creating App Strengths JT dataframe. \n")
         self.populate_from_one_df(self.json_df,
                                   ["Unique Key", "Strengths"], "app_strengths_jt_df")
+        self.set_app_strengths_jt_df(self.app_strengths_jt_df.explode("Strengths"))
 
         print("Creating Weakness dataframe. \n")
         self.populate_from_one_list(self.unique_w_list,
-                                    "Weaknesses", "weakness_df")
+                                    "Weaknesses", "weakness_df",
+                                    generate_key=True)
 
         print("Creating App Weakness JT dataframe.\n")
         self.populate_from_one_df(self.json_df,
                                   ["Unique Key", "Weaknesses"], "app_weakness_jt_df")
+        self.set_app_weakness_jt_df(self.app_weakness_jt_df.explode("Weaknesses"))
 
         print("Creating Tech Skills dataframe.\n")
         self.populate_from_one_list(self.unique_ts_list,
-                                    "Tech Score Topics", "tech_skills_df")
+                                    "Tech Score Topics", "tech_skills_df",
+                                    generate_key=True)
 
         print("Creating Tech Self Score JT dataframe.\n")
         self.populate_from_one_df(self.json_df,
-                                  ["Unique Key", "Tech_score_keys", "Tech_score_values"], "tech_self_score_jt_df")
+                                  ["Unique Key", "Tech Score Key", "Tech Score Value"], "tech_self_score_jt_df")
 
         print("Creating Applicants dataframe.\n")
         self.populate_from_two_df(self.csv_talent_df, self.json_df,
-                                  ["Unique Key", "Course_interest", "Invited By", "Address",
+                                  ["Academy Unique Key", "Unique Key", "Course Interest", "Invited By", "Address",
                                    "Postcode", "City", "First Name", "Last Name", "Gender", "DoB", "Email",
-                                   "Phone Number", "Uni", "Degree", "Geo_flex", "Financial_support_self", "Result"],
+                                   "Phone Number", "Uni", "Degree", "Geo Flex", "Financial Support Self", "Result"],
                                   "applicants_df")
 
         print("Creating streams dataframe.\n")
         self.populate_from_one_df(self.json_df,
-                                  ["Course_interest"], "streams_df")
+                                  ["Course Interest"], "streams_df",
+                                  generate_key=True)
 
         print("Creating Invitors dataframe.\n")
         self.populate_from_one_list(self.unique_i_list,
                                     "Invitors",
-                                    "invitors_df")
+                                    "invitors_df",
+                                    generate_key=True)
 
         print("Creating Address dataframe.\n")
         self.populate_from_one_df(self.csv_talent_df,
                                   ["Address", "Postcode", "City"],
-                                  "address_df")
+                                  "address_df",
+                                  generate_key=True)
 
         print("Creating Spartans dataframe.\n")
         self.populate_from_two_df(self.csv_talent_df, self.csv_academy_df,
-                                  ["Academy Unique Key", "First Name", "Course Name"],
+                                  ["Academy Unique Key", "Unique Key", "Course Name"],
                                   "spartans_df", reindex=False, join_index="Academy Unique Key")
 
         print("Creating Course dataframe.\n")
         self.populate_from_one_df(self.csv_academy_df,
                                   ["Course Name", "Course Length", "Date"],
-                                  "course_df")
+                                  "course_df",
+                                  generate_key=True)
 
         print("Creating Course Trainer JT dataframe.\n")
         self.populate_from_one_df(self.csv_academy_df,
@@ -362,7 +389,8 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         print("Creating Trainer dataframe.\n")
         self.populate_from_one_df(self.csv_academy_df,
                                   ["Trainer First Name", "Trainer Last Name"],
-                                  "trainer_df")
+                                  "trainer_df",
+                                  generate_key=True)
 
         print("Creating Tracker JT dataframe.\n")
         self.populate_from_one_df(self.csv_academy_df,
@@ -370,7 +398,8 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
                                   "tracker_jt_df")
 
         print("Creating Core Skills dataframe.\n")
-        self.populate_from_one_list(self.unique_cs_list, "Core Skill", "core_skills_df")
+        self.populate_from_one_list(self.unique_cs_list, "Core Skill", "core_skills_df",
+                                    generate_key=True)
 
 
 if __name__ == '__main__':
@@ -379,4 +408,4 @@ if __name__ == '__main__':
     test_table_formatter.create_final_dataframes()
     print("###########################################################################################################")
     pd.set_option('display.max_columns', None)
-    print(test_table_formatter.spartans_df)
+    print(test_table_formatter.tech_self_score_jt_df)

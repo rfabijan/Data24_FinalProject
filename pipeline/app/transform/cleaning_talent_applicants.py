@@ -314,7 +314,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
     def final_dict_appender_applicants(self):
         applicant_dictionary = {}
         print(f"Beginning work on {len(list(self.applicants_keys))} keys.")
-        for keys in self.applicants_keys:
+        for keys in self.applicants_keys[:3]:
             print(f"Currently loading file {keys}...")
             csv_body = self.single_csv(keys)
             for row in range(0, self.len_of_rows(csv_body)):
