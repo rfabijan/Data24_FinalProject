@@ -114,8 +114,8 @@ CREATE TABLE ApplicantSpartaDay
 (
     ApplicantID             VARCHAR(64) FOREIGN KEY REFERENCES Applicants(ApplicantID),
     SpartaDayID             INT FOREIGN KEY REFERENCES SpartaDay(SpartaDayID),
-    PsychometricScore       INT NOT NULL,
-    PresentationScore       INT NOT NULL
+    PsychometricScore       FLOAT NOT NULL,
+    PresentationScore       FLOAT NOT NULL
 )
 
 CREATE TABLE TechSelfScore
@@ -140,7 +140,7 @@ CREATE TABLE ApplicantWeaknesses
 CREATE TABLE Spartans
 (
     SpartanID               INT IDENTITY(1,1) PRIMARY KEY,
-    ApplicantID             VARCHAR(64) FOREIGN KEY REFERENCES Applicants(ApplicantID),
+    ApplicantID             VARCHAR(64) FOREIGN KEY REFERENCES Applicants(ApplicantID) UNIQUE,
     CourseID                INT FOREIGN KEY REFERENCES Course(CourseID)
 )
 
