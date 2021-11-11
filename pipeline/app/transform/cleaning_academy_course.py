@@ -158,7 +158,7 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
                             "Academy Unique Key": au_key,
                             "First Name": clean_name[0],
                             "Last Name": clean_name[1],
-                            "Date": clean_date,
+                            "Start Date": clean_date,
                             "Trainer First Name": clean_trainer[0],
                             "Trainer Last Name": clean_trainer[1],
                             "Course Name": course_name,

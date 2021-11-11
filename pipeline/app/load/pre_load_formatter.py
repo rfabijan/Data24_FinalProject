@@ -235,7 +235,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     @staticmethod
     def set_key_as_index(df):
         if "Unique Key" in list(df.columns):
-            df.set_index("Unique Key", inplace=True)
+            df.set_index("Unique Key", inplace=True, drop=False)
 
     def populate_from_one_df(self, dataframe, key_list, output_dataframe,
                              pk_column_name="", reindex=True, generate_key=False):
@@ -343,8 +343,8 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
                                     generate_key=True)
 
         print("Creating Tech Self Score JT dataframe.\n")
-        self.populate_from_one_df(self.json_df,
-                                  ["Unique Key", "Tech Score Key", "Tech Score Value"], "tech_self_score_jt_df")
+        self.populate_from_one_df(self.json_skills_df,
+                                  ["Unique Key", "Tech Skills", "Tech Score Value"], "tech_self_score_jt_df")
 
         print("Creating Applicants dataframe.\n")
         self.populate_from_two_df(self.csv_talent_df, self.json_df,
@@ -377,7 +377,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
 
         print("Creating Course dataframe.\n")
         self.populate_from_one_df(self.csv_academy_df,
-                                  ["Course Name", "Course Length", "Date"],
+                                  ["Course Name", "Course Length", "Start Date"],
                                   "course_df",
                                   generate_key=True)
 
@@ -400,6 +400,8 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         print("Creating Core Skills dataframe.\n")
         self.populate_from_one_list(self.unique_cs_list, "Core Skill", "core_skills_df",
                                     generate_key=True)
+
+        print("ALl dataframes now filled.\n\n")
 
 
 if __name__ == '__main__':
