@@ -122,7 +122,7 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         original_dict = self.final_academy_csv_dict_appender()
         intermediate_dict = {}
 
-        for first_key in list(original_dict.keys()):
+        for first_key in list(original_dict.keys())[:10]:
             au_key = first_key
             clean_name = original_dict[first_key]["Name"]
             clean_date = original_dict[first_key]["Course Start Date"]
