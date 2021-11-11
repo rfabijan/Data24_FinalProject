@@ -314,7 +314,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
     def final_dict_appender_applicants(self):
         applicant_dictionary = {}
         print(f"Beginning work on {len(list(self.applicants_keys))} keys.")
-        for keys in self.applicants_keys[:10]:
+        for keys in self.applicants_keys:
             print(f"Currently loading file {keys}...")
             csv_body = self.single_csv(keys)
             for row in range(0, self.len_of_rows(csv_body)):
@@ -345,22 +345,22 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
                     self.unique_i_list.append(applicant_invited_by[0] +" "+ applicant_invited_by[1])
 
                 applicant_dictionary[applicant_unique_key] = \
-                    self.single_dict_maker_applicants(applicant_id,
-                                                      academy_applicant_key,
-                                                      applicant_unique_key,
-                                                      applicant_name,
-                                                      applicant_gender,
-                                                      applicant_dob,
-                                                      applicant_email,
-                                                      applicant_city,
-                                                      applicant_address,
-                                                      applicant_postcode,
-                                                      applicant_phone_number,
-                                                      applicant_university,
-                                                      applicant_degree,
-                                                      applicant_invited_date,
-                                                      applicant_month,
-                                                      applicant_invited_by)
+                    self.single_dict_maker_applicants(id=applicant_id,
+                                                      au_key=academy_applicant_key,
+                                                      unique_key=applicant_unique_key,
+                                                      name=applicant_name,
+                                                      gender=applicant_gender,
+                                                      dob=applicant_dob,
+                                                      email=applicant_email,
+                                                      city=applicant_city,
+                                                      address=applicant_address,
+                                                      postcode=applicant_postcode,
+                                                      phone_number=applicant_phone_number,
+                                                      uni=applicant_university,
+                                                      degree=applicant_degree,
+                                                      invited_date=applicant_invited_date,
+                                                      month=applicant_month,
+                                                      invited_by=applicant_invited_by)
                 print(f"File {keys} - {applicant_unique_key} loaded into dictionary.\n")
         return applicant_dictionary
 
@@ -372,4 +372,4 @@ if __name__ == '__main__':
     test = Applicants_Cleaner()
     test.populate_talent_csv_file()
     pd.set_option('display.max_columns', None)
-    p.pprint(test.csv_talent_df["Academy Unique Key"])
+    p.pprint(test.csv_talent_df["First Name"])

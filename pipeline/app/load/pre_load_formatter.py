@@ -250,6 +250,20 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     def populate_from_two_df(self, df1: pd.DataFrame, df2: pd.DataFrame,
                              key_list: list, output_dataframe: str, reindex=True, join_index=None):
         data_list = []
+        if join_index is not None:
+            print(f"Resetting index to {join_index}")
+            keylist1 = []
+            keylist2 = []
+            df1 = df1.set_index(join_index, drop=False)
+            df2 = df2.set_index(join_index, drop=False)
+            for key in key_list:
+                if key in df1.keys():
+                    keylist1.append(key)
+                if key in df2.keys():
+                    keylist2.append(key)
+
+            df1.drop_duplicates(subset=keylist1, inplace=True)
+            df2.drop_duplicates(subset=keylist2, inplace=True)
 
         for key in key_list:
             if key in df1.keys():
@@ -257,16 +271,10 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
             elif key in df2.keys():
                 data_list.append(df2[key])
 
-        if join_index is not None:
-            print(f"Resetting index to {join_index}")
-            df1.set_index(join_index)
-            df2.set_index(join_index)
-            eval(f"self.set_{output_dataframe}")(
-                (self.concat_new_df(data_list, key_list)))
-        else:
-            eval(f"self.set_{output_dataframe}")(
-                (self.concat_new_df(data_list, key_list)))
-        eval(f"self.{output_dataframe}").drop_duplicates(subset=key_list)
+        eval(f"self.set_{output_dataframe}")(
+            (self.concat_new_df(data_list, key_list)))
+
+        eval(f"self.{output_dataframe}")
         if reindex:
             self.reset_index(eval(f"self.{output_dataframe}"))
             self.set_key_as_index(eval(f"self.{output_dataframe}"))
@@ -336,10 +344,10 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
                                   ["Address", "Postcode", "City"],
                                   "address_df")
 
-        print("Creating Spartans dataframe.\n")                                #ToDo <== This one just doesn't work :(
+        print("Creating Spartans dataframe.\n")
         self.populate_from_two_df(self.csv_talent_df, self.csv_academy_df,
-                                  ["Academy Unique Key", "Course Name"],
-                                  "spartans_df", join_index="Academy Unique Key")
+                                  ["Academy Unique Key", "First Name", "Course Name"],
+                                  "spartans_df", reindex=False, join_index="Academy Unique Key")
 
         print("Creating Course dataframe.\n")
         self.populate_from_one_df(self.csv_academy_df,
@@ -371,4 +379,4 @@ if __name__ == '__main__':
     test_table_formatter.create_final_dataframes()
     print("###########################################################################################################")
     pd.set_option('display.max_columns', None)
-    print(test_table_formatter.applicants_df)
+    print(test_table_formatter.spartans_df)
