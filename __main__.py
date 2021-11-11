@@ -4,18 +4,19 @@ from pipeline.app.transform.cleaning_academy_course import AcademyCleaner
 from pipeline.app.transform.cleaning_talent_applicants import Applicants_Cleaner
 from pipeline.app.transform.cleaning_talent_sparta_day import TxtCleaner
 from pipeline.app.load.database_creator import DatabaseCreator
+from pipeline.app.load.pre_load_formatter import PreLoadFormatter
+from pipeline.app.load.convert_id_columns import *
+from pipeline.app.load.insert_data import *
 
 if __name__ == "__main__":
+    # print("Connecting to S3...")
+    # # Receiving data from S3 and cleaning
+    # clean_json = JsonCleaner()
+    # clean_academy = AcademyCleaner()
+    # clean_applicants = Applicants_Cleaner()
+    # clean_txt = TxtCleaner()
+    # print("CONNECTION ESTABLISHED!")
 
-<<<<<<< Updated upstream
-    print("Connecting to S3...")
-    # Receiving data from S3 and cleaning
-    clean_json = JsonCleaner()
-    clean_academy = AcademyCleaner()
-    clean_applicants = Applicants_Cleaner()
-    clean_txt = TxtCleaner()
-    print("CONNECTION ESTABLISHED!")
-=======
     formatter = PreLoadFormatter()
 
     sparta_day_df = ci_app_sparta_day(formatter)
@@ -54,13 +55,13 @@ if __name__ == "__main__":
     insert_df(tracker_df, "Tracker", database.cursor, conf.DB_NAME)
     insert_df(formatter.trainer_df, "Trainer", database.cursor, conf.DB_NAME)
     insert_df(formatter.weakness_df, "Weaknesses", database.cursor, conf.DB_NAME)
->>>>>>> Stashed changes
 
-    print("\nFILE EXTRACTION!")
-    json_keys = clean_json.extract_json_keys
-    applicants_keys = clean_applicants.keys
-    academy_keys = clean_academy.keys
-    txt_keys = clean_txt.txt_keys
+
+    # print("\nFILE EXTRACTION!")
+    # json_keys = clean_json.extract_json_keys
+    # applicants_keys = clean_applicants.keys
+    # academy_keys = clean_academy.keys
+    # txt_keys = clean_txt.txt_keys
 
 
     # print(clean_json.extract_json_keys)

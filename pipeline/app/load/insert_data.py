@@ -1,11 +1,5 @@
 import pyodbc
 import pipeline.config_manager as conf
-<<<<<<< Updated upstream
-
-
-# TODO: Validation on method parameters
-
-=======
 import urllib
 import sqlalchemy
 import pandas as pd
@@ -28,7 +22,6 @@ params = urllib.parse.quote_plus(
 conn_str = 'mssql+pyodbc:///?odbc_connect={}'.format(params)
 engine = sqlalchemy.create_engine(conn_str, pool_pre_ping=True)
 
->>>>>>> Stashed changes
 
 def insert_data_df(df, tablename, connection, identity_insert_on_sql, identity_insert_off_sql):
     connection.execute(identity_insert_on_sql)  # Allows us to insert ID rows
@@ -39,16 +32,16 @@ def insert_data_df(df, tablename, connection, identity_insert_on_sql, identity_i
     connection.commit()
 
 
-def insert():
+def insert(df, tablename):
     """
     This bit connects to the database
     """
-<<<<<<< Updated upstream
+
     server = 'localhost,1433'
     database = conf.DB_NAME
     username = 'SA'
     password = 'Passw0rd2018'
-=======
+
     # server = 'localhost,1433'
     # database = conf.DB_NAME
     # username = 'SA'
@@ -59,12 +52,12 @@ def insert():
 
     identity_insert_on_sql = f"SET IDENTITY_INSERT {tablename} ON"
     identity_insert_off_sql = f"SET IDENTITY_INSERT {tablename} OFF"
->>>>>>> Stashed changes
+
 
     data24etl_db = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID='
                                   + username + ';PWD=' + password)
 
-<<<<<<< Updated upstream
+
     # TODO: The number of columns in each table in the dictionary below needs to be reduced because it currently counts
     #  ID columns, which aren't in the data tables
     # Key = table name, Value = Number of columns
@@ -87,7 +80,7 @@ def insert():
 
         # TODO: Alternative dataframe function usage
         insert_data_df(df, tablename, data24etl_db, identity_insert_on_sql, identity_insert_off_sql)
-=======
+
 """
 def insert_df(df: pd.DataFrame, tablename, cursor, db_name='Data24ETL'):
     values = ''
@@ -108,7 +101,6 @@ def insert_df(df: pd.DataFrame, tablename, cursor, db_name='Data24ETL'):
     cursor.execute(query)
 """
 
->>>>>>> Stashed changes
 
 def insert_df(df: pd.DataFrame, tablename, cursor, db_name='Data24ETL'):
     for index, row in df.iterrows():
