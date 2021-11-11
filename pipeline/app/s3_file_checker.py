@@ -22,7 +22,7 @@ def check_bucket_for_new_files():
                 print("Files modified at: ", key.last_modified)
                 break
         else:
-            return 'No new files found in the bucket'
+            print ('No new files found in the bucket')
 
 
 check_bucket_for_new_files()
