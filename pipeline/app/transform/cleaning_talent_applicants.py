@@ -1,13 +1,16 @@
 import datetime as dt
 import pipeline.app.extract.csv_extractor as ext
 import pprint as p
-import numpy as np
+import pandas as pd
+import re
 
 
 class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
     def __init__(self):
         super().__init__()
         self.__final_dict_applicants = {}
+        self.__csv_talent_df = pd.DataFrame
+        self.__unique_i_list = []
         self.__error_names = set()
         self.__error_phone_numbers = set()
         self.__error_degree = set()
@@ -23,6 +26,14 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
     @property
     def final_dict_applicants(self):
         return self.__final_dict_applicants
+
+    @property
+    def csv_talent_df(self):
+        return self.__csv_talent_df
+
+    @property
+    def unique_i_list(self):
+        return self.__unique_i_list
 
     @property
     def error_name_applicants(self):
@@ -59,6 +70,9 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
     @property
     def error_address_applicants(self):
         return self.__error_address
+
+    def set_csv_talent_df(self, new_df: pd.DataFrame):
+        self.__csv_talent_df = new_df
 
     def clean_applicants_id(self, raw_id: str) -> int or None:
         raw_id = str(raw_id)
@@ -99,7 +113,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         dob = str(dob)
         if len(dob) > 3:
             date_dob = dt.datetime.strptime(dob, "%d/%m/%Y")
-            cleaned_dob = date_dob.date()
+            cleaned_dob = date_dob
             return cleaned_dob
         else:
             return None
@@ -220,43 +234,47 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
                 return None
 
     # Returns a invited date as a int or None. If None then adds to an error set.
-    def clean_applicants_invited_date(self, invited_date: str) -> int or None:
+    def clean_applicants_invited_date(self, invited_date: str, filename=None) -> int or None:
         invited_date = str(invited_date)
         invited_date = invited_date.split(".")[0]
-        if invited_date.isdigit():
-            cleaned_inv_date = int(float(invited_date))
-            if 31 > cleaned_inv_date > 0:
-                return cleaned_inv_date
-        else:
-            self.__error_inv_date.add(invited_date)
+        if invited_date == "" or invited_date == "None":
             return None
+        else:
+            if invited_date.isdigit():
+                cleaned_inv_date = int(float(invited_date))
+                if 31 > cleaned_inv_date > 0:
+                    return cleaned_inv_date
+            else:
+                self.__error_inv_date.add(invited_date)
+                return None
 
     # Returns a date as datetime or returns None. If None then adds to an error set.
     def clean_applicants_month(self, month: str or None, filename=None) -> dt.datetime or None:
         month = str(month)
-        if month == "nan":
-            pass
+        if month == "" or month is None or month == "nan":
+            month = filename.split("/")[1].split("Applicants")[0].split("2019")[0]
+            month = month[:3]
+            year = filename.split("/")[1].split("Applicants")[0].split("2")[1]
+            month_year = str(month) + " " + "2" + str(year)
+            datetime_month_year = dt.datetime.strptime(month_year, "%b %Y")
+            date_month_year = datetime_month_year#.date()
+            return date_month_year
+        elif month.replace(" ", "").isalnum():
+            month = month[:3] + " " + month[-4:]
+            datetime_strp = dt.datetime.strptime(month, "%b %Y")
+            date = datetime_strp#.date()
+            return date
         else:
-            if month == "" or month is None:
-                month = filename.split("/")[1].split("Applicants")[0].split("2019")[0]
-                year = filename.split("/")[1].split("Applicants")[0].split("2")[1]
-                month_year = str(month) + " " + "2" + str(year)
-                datetime_month_year = dt.datetime.strptime(month_year, "%B %Y")
-                date_month_year = datetime_month_year.date()
-                return date_month_year
-            elif month.replace(" ", "").isalnum():
-                datetime_strp = dt.datetime.strptime(month, "%B %Y")
-                date = datetime_strp.date()
-                return date
-            else:
-                self.__error_month.add(month)
-                return None
+            self.__error_month.add(month)
+            return None
 
     # Split by first name last name
     @staticmethod
     def clean_applicants_invited_by(invited_by: str) -> tuple or None:
         invited_by = str(invited_by)
         name = invited_by.title()
+        if name == "nan":
+            return None
         if " " in name:
             first_name = name.split(" ", 1)[0]
             last_name = name.split(" ", 1)[1]
@@ -269,33 +287,37 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
     @staticmethod
     def applicants_key_generator(clean_applicants_name: tuple, clean_applicants_invited_date, clean_applicants_month):
         return clean_applicants_name[0].replace(" ", "") + clean_applicants_name[1].replace(" ", "") + \
-               str(clean_applicants_invited_date) + str(clean_applicants_month)[1] + str(clean_applicants_month)[0]
+               str(clean_applicants_invited_date) + str(clean_applicants_month.month) + \
+               str(clean_applicants_month.year)
 
     @staticmethod
-    def single_dict_maker_applicants(id, name, gender, dob, email, city, address, postcode, phone_number, uni,
-                                     degree, invited_date, month, invited_by):
+    def single_dict_maker_applicants(id, au_key, unique_key, name, gender, dob, email, city, address, postcode, phone_number,
+                                     uni, degree, invited_date, month, invited_by):
         return {"id": id,
-                "name": name,
-                "gender": gender,
-                "dob": dob,
-                "email": email,
-                "city": city,
-                "address": address,
-                "postcode": postcode,
-                "phone_number": phone_number,
-                "uni": uni,
-                "degree": degree,
-                "invited_date": invited_date,
-                "month": month,
-                "invited_by": invited_by}
+                "Academy Unique Key": au_key,
+                "Unique Key": unique_key,
+                "First Name": name[0],
+                "Last Name": name[1],
+                "Gender": gender,
+                "DoB": dob,
+                "Email": email,
+                "City": city,
+                "Address": address,
+                "Postcode": postcode,
+                "Phone Number": phone_number,
+                "Uni": uni,
+                "Degree": degree,
+                "Invited Day": invited_date,
+                "Month": month,
+                "Invited By": invited_by}
 
-    def final_dict__appender_applicants(self):
+    def final_dict_appender_applicants(self):
         applicant_dictionary = {}
-        for keys in self.applicants_keys:
-            # print(keys)
+        print(f"Beginning work on {len(list(self.applicants_keys))} keys.")
+        for keys in self.applicants_keys[:10]:
+            print(f"Currently loading file {keys}...")
             csv_body = self.single_csv(keys)
             for row in range(0, self.len_of_rows(csv_body)):
-                # print(row)
                 applicant_id = self.clean_applicants_id(self.extract_applicants_id(csv_body, row))
                 applicant_name = self.clean_applicants_name(self.extract_csv_name(csv_body, row))
                 applicant_gender = self.clean_applicants_gender(self.extract_applicants_gender(csv_body, row))
@@ -304,19 +326,28 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
                 applicant_city = self.clean_applicants_city(self.extract_applicants_city(csv_body, row))
                 applicant_address = self.clean_applicants_address(self.extract_applicants_address(csv_body, row))
                 applicant_postcode = self.clean_applicants_postcode(self.extract_applicants_postcode(csv_body, row))
-                applicant_phone_number = self.clean_applicants_phone_number\
+                applicant_phone_number = self.clean_applicants_phone_number \
                     (self.extract_applicants_phone_number(csv_body, row))
                 applicant_university = self.clean_applicants_uni(self.extract_applicants_university(csv_body, row))
                 applicant_degree = self.clean_applicants_degree(self.extract_applicants_degree(csv_body, row))
-                applicant_invited_date = self.clean_applicants_invited_date\
-                    (self.extract_applicants_invited_date(csv_body, row))
-                applicant_month = self.clean_applicants_month(self.extract_applicants_month(csv_body, row))
+                applicant_invited_date = self.clean_applicants_invited_date \
+                    (self.extract_applicants_invited_date(csv_body, row), keys)
+                applicant_month = self.clean_applicants_month(self.extract_applicants_month(csv_body, row), keys)
                 applicant_invited_by = self.clean_applicants_invited_by(
                     self.extract_applicants_invited_by(csv_body, row))
                 applicant_unique_key = self.applicants_key_generator(applicant_name, applicant_invited_date,
                                                                      applicant_month)
+                academy_applicant_key = (applicant_name[0]+applicant_name[1]).replace(" ", "")
+
+                if applicant_invited_by not in self.unique_i_list and\
+                        not applicant_invited_by == ("Nan", None) and\
+                        applicant_invited_by is not None:
+                    self.unique_i_list.append(applicant_invited_by[0] +" "+ applicant_invited_by[1])
+
                 applicant_dictionary[applicant_unique_key] = \
                     self.single_dict_maker_applicants(applicant_id,
+                                                      academy_applicant_key,
+                                                      applicant_unique_key,
                                                       applicant_name,
                                                       applicant_gender,
                                                       applicant_dob,
@@ -330,18 +361,15 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
                                                       applicant_invited_date,
                                                       applicant_month,
                                                       applicant_invited_by)
-            return applicant_dictionary
+                print(f"File {keys} - {applicant_unique_key} loaded into dictionary.\n")
+        return applicant_dictionary
+
+    def populate_talent_csv_file(self):
+        self.set_csv_talent_df(pd.DataFrame.from_dict(self.final_dict_appender_applicants()).transpose())
 
 
-# id, name, gender, dob, email, city, address, postcode, phone_number, uni,
-#                                      degree, invited_date, month, invited_by
 if __name__ == '__main__':
     test = Applicants_Cleaner()
-    p.pprint(test.final_dict__appender_applicants())
-    # print(test.applicants_keys)
-    # print(test.clean_applicants_month("April 2019")
-#     clean_applicants_date = test.clean_applicants_invited_date("18.0")
-#     test2 = test.clean_applicants_month('April 2019')
-#     print(test.applicants_key_generator(('Esme', 'Trusslove'), clean_applicants_date, test2))
-#     #print(test.clean_applicants_month("April 2019"))
-# # Unique key {key: , Key:}
+    test.populate_talent_csv_file()
+    pd.set_option('display.max_columns', None)
+    p.pprint(test.csv_talent_df["Academy Unique Key"])

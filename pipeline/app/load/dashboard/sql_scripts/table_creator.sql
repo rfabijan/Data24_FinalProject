@@ -1,13 +1,6 @@
-/*
-This Script will create a Data24ETL Database
-It will create the necessary tables
-*/
+-- 1. Use correct database
+USE [Data24ETLTest];
 
--- 1. Create the Database
-USE master;
-DROP DATABASE IF EXISTS [Data24ETL];
-CREATE DATABASE [Data24ETL];
-USE [Data24ETL];
 
 
 -- 2. Build the tables
@@ -102,7 +95,7 @@ CREATE TABLE Applicants
     Gender                  VARCHAR(6),
     DOB                     DATE,
     Email                   VARCHAR(256),
-    PhoneNumber             VARCHAR(12),
+    PhoneNumber             VARCHAR(13),
     Uni                     VARCHAR(128),
     Degree                  VARCHAR(4),
     GeoFlex                 BIT,
@@ -140,7 +133,7 @@ CREATE TABLE ApplicantWeaknesses
 CREATE TABLE Spartans
 (
     SpartanID               INT IDENTITY(1,1) PRIMARY KEY,
-    ApplicantID             VARCHAR(64) FOREIGN KEY REFERENCES Applicants(ApplicantID) UNIQUE,
+    ApplicantID             VARCHAR(64) FOREIGN KEY REFERENCES Applicants(ApplicantID),
     CourseID                INT FOREIGN KEY REFERENCES Course(CourseID)
 )
 
