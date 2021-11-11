@@ -131,3 +131,4 @@ def ci_tracker_jt(x):
     # tracker_jt_df['SpartanID'] = tracker_jt_df['SpartanID'].map(spartans_df.set_index('matchingvalues')['SpartanID'])
     tracker_jt_df['CoreSkillID'] = tracker_jt_df['CoreSkillID'].map(core_skills_df.set_index('SkillName')['CoreSkillID'])
     return tracker_jt_df
+

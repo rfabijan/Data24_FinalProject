@@ -1,7 +1,6 @@
 import pyodbc
 import pipeline.config_manager as conf
 
-
 # TODO: Validation on method parameters
 
 
