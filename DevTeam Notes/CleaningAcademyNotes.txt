@@ -1,0 +1,17 @@
+cleaning academy course:
+	- Date cleaner now created
+	- Output now contains:
+		- start date of course
+		- duration of course (Not cleaned)
+		- name of course (Not cleaned)
+	- New dataframe output
+
+
+
+This is now also the problems in the pre-load formatter:
+	- drop duplicates has stopped working :(
+		1) drop duplicates isn't working over multiple columns :(
+		2) IT LIIIIIIVES 
+
+	- Nothing to join on as of yet when working with csv_academy_df
+		1) Made the key in the other df to join on to, still no dice
