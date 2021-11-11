@@ -262,7 +262,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         elif month.replace(" ", "").isalnum():
             month = month[:3] + " " + month[-4:]
             datetime_strp = dt.datetime.strptime(month, "%b %Y")
-            date = datetime_strp#.date()
+            date = datetime_strp
             return date
         else:
             self.__error_month.add(month)

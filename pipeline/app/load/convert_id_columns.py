@@ -58,7 +58,7 @@ def ci_course_trainer_jt(x):
     # course_trainer_jt_df['CourseID'] = course_trainer_jt_df['CourseID'].map(course_df.set_index('Course Name')['CourseID'])
     course_trainer_jt_df.merge(course_df, on=['Course Name'], suffixes=['_2'], how="right").drop(['Course Name'], axis=1).rename(columns={"id_2": "CourseID"})
     # course_trainer_jt_df['TrainerID'] = course_trainer_jt_df['TrainerID'].map(trainer_df.set_index('FirstName')['TrainerID'])
-    course_trainer_jt_df.merge(trainer_df, on=['First Name', 'Last Name'], suffixes=['', '_2'], how="right").drop(['First Name', 'Last Name'], axis=1).rename(columns={"id_2": "TrainerID"})
+    course_trainer_jt_df.merge(trainer_df, on=['Trainer First Name', 'Trainer Last Name'], suffixes=['', '_2'], how="right").drop(['Trainer First Name', 'Trainer Last Name'], axis=1).rename(columns={"id_2": "TrainerID"})
     return course_trainer_jt_df
 
 
@@ -67,11 +67,11 @@ def ci_applicants(x):
     streams_df = x.streams_df
     invitors_df = x.invitors_df
     address_df = x.address_df
-    applicants_df['Course_interest'] = applicants_df['Course_interest'].map(streams_df.set_index('Course_interest')['StreamID'])
+    applicants_df['Course_interest'] = applicants_df['Course Interest'].map(streams_df.set_index('Course Interest')['index'])
     # applicants_df['InvitedByID'] = applicants_df['InvitedByID'].map(invitors_df.set_index('FirstName')['InvitedByID'])
-    applicants_df.merge(invitors_df, on=['Invitors'], suffixes=['_2'],  how="right").drop(['Invitors'], axis=1).rename(columns={"id_2": "InvitorID"})
+    applicants_df.merge(invitors_df, on=['Invited By'], suffixes=['_2'],  how="right").drop(['Invited By'], axis=1).rename(columns={"id_2": "InvitorID"})
     # applicants_df['AddressID'] = applicants_df['AddressID'].map(address_df.set_index('HouseNumber')['AddressID'])
-    applicants_df.merge(address_df, on=['AddressLine', 'Postcode', 'City'], suffixes=['', '', '_2'], how="right").drop(['AddressLine', 'Postcode', 'City'], axis=1).rename(columns={"id_2": "Address_id"})
+    applicants_df.merge(address_df, on=['Address', 'Postcode', 'City'], suffixes=['', '', '_2'], how="right").drop(['Address', 'Postcode', 'City'], axis=1).rename(columns={"id_2": "Address_id"})
     return applicants_df
 
 

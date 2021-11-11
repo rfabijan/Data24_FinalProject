@@ -112,10 +112,10 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     # returns dataframes with info in relation to the applicants strengths
     @property
     def strengths_df(self):
-        return self.__streams_df
+        return self.__strengths_df
 
     def set_strengths_df(self, new_df):
-        self.__streams_df = new_df
+        self.__strengths_df = new_df
 
     @property
     def app_strengths_jt_df(self):
@@ -365,7 +365,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
 
         print("Creating Invitors dataframe.\n")
         self.populate_from_one_list(self.unique_i_list,
-                                    "Invitors",
+                                    "Invited By",
                                     "invitors_df",
                                     generate_key=True)
 
@@ -415,3 +415,6 @@ if __name__ == '__main__':
     print("###########################################################################################################")
 
     pd.set_option('display.max_columns', None)
+    print(test_table_formatter.app_strengths_jt_df)
+
+    print(test_table_formatter.strengths_df)

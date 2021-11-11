@@ -276,4 +276,4 @@ if __name__ == '__main__':
     #    pprint(cleaner.create_unique_dict_from_json(file))
     cleaner.populate_json_df()
     pd.set_option('display.max_columns', None)
-    print(cleaner.json_df)
+    print(cleaner.unique_s_list)
