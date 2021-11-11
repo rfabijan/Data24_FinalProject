@@ -11,7 +11,16 @@ def insert_data(insert_records_query, records_rows, data24etl_db):  # Takes the 
         data24etl_db.commit()
 
 
+def allow_id_inserts():
+
+
+def disallow_id_inserts():
+
+
 def insert_data_df(df, tablename, connection):
+    with connection.cursor() as cursor:
+        cursor.executemany(insert_records_query, records_rows)  # Executes the query on each row in the table
+        connection.commit()
     df.to_sql(tablename, connection, if_exists='append', index=False, index_label=None)
 
 

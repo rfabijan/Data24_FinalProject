@@ -148,7 +148,7 @@ class ApplicantsCsvExtractor(AcademiesCsvExtractor):
         return ApplicantsCsvExtractor.extract_value_from_rowcolumn(csv_body, "invited_by", row_number)
 
     @staticmethod
-    def extract_title_date(key) -> str:
+    def extract_title_date(key) -> str or None:
         try:
             month = key.lstrip("Talent/").rstrip("Applicants.csv")
             date = month.split("2")
