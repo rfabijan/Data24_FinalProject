@@ -9,7 +9,7 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
     def __init__(self):
         super(AcademyCleaner, self).__init__()
         self.__csv_academy_df = pd.DataFrame
-        self.__core_skill_set = set()
+        self.__unique_cs_list = []
         self.__core_skill_list = []
         self.__error_names = set()
         self.__error_trainer_names = set()
@@ -20,8 +20,8 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         return self.__csv_academy_df
 
     @property
-    def core_skill_set(self):
-        return self.__core_skill_set
+    def unique_cs_list(self):
+        return self.__unique_cs_list
 
     # return the list for the CoreSkills dataframe in pre_load_formatter
     @property
@@ -73,7 +73,7 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
 
     # returns skill value score in a specific range
     @staticmethod
-    def create_unique_key(clean_name: tuple) -> str:
+    def create_unique_academy_key(clean_name: tuple) -> str:
         unique = str(clean_name[0] + clean_name[1])
         return unique
 
@@ -82,10 +82,12 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         self.__csv_academy_df = new_df
 
     @staticmethod
-    def single_csv_academies_dict(name: tuple, trainer: tuple, date: dt.datetime, clength, skill_value: int) -> dict:
+    def single_csv_academies_dict(name: tuple, trainer: tuple, date: dt.datetime,
+                                  cname, clength, skill_value: int) -> dict:
         return {"Name": name,
                 "Trainer": trainer,
                 "Course Start Date": date,
+                "Course Name": cname,
                 "Course Length": clength,
                 "Skill Value": skill_value}
 
@@ -97,29 +99,34 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         csv_dict = {}
         print(f"Starting loading the {len(list(self.keys))} academy CSV files.\n")
 
-        for keys in self.keys:
+        for keys in self.keys[:10]:
             print(f"Currently loading {keys}...")
             csv_body = self.single_csv(keys)
             for row in range(0, self.len_of_rows(csv_body)):
                 name = self.clean_name(self.extract_csv_name(csv_body, row))
                 trainer = self.clean_trainer(self.extract_academies_trainer(csv_body, row))
                 date = self.clean_course_start_date(self.extract_academies_date(keys))
+                course_name = self.extract_academies_course_name(keys)
                 course_length = self.extract_academies_weeks(csv_body.columns)
                 skill_value = self.extract_academies_skill_values_per_person_per_week(csv_body)[name[0] + " " + name[1]]
-                unique_key = self.create_unique_key(name)
+                unique_key = self.create_unique_academy_key(name)
 
-                csv_dict[unique_key] = self.single_csv_academies_dict(name, trainer, date, course_length, skill_value)
+                csv_dict[unique_key] = self.single_csv_academies_dict(name, trainer, date, course_name,
+                                                                      course_length, skill_value)
             print(f"{keys} loaded.\n")
         self.set_csv_academy_df(pd.DataFrame.from_dict(csv_dict).transpose())
         return csv_dict
 
-    def final_df_maker(self):
+    def populate_final_academy_df(self):
+        print(f"Dictionary being loaded into dataframe...\n")
         original_dict = self.final_academy_csv_dict_appender()
         intermediate_dict = {}
 
         for first_key in list(original_dict.keys()):
+            au_key = first_key
             clean_name = original_dict[first_key]["Name"]
             clean_date = original_dict[first_key]["Course Start Date"]
+            course_name = original_dict[first_key]["Course Name"]
             course_length = original_dict[first_key]["Course Length"]
             clean_trainer = original_dict[first_key]["Trainer"]
             for week_key in list(original_dict[first_key]["Skill Value"].keys()):
@@ -139,7 +146,8 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
                     "Independent": independent_score
                 }
                 for skill_key in list(original_dict[first_key]["Skill Value"][week_key].keys()):
-                    self.core_skill_set.add(self.extract_skill_from_dict_key(skill_key))
+                    if self.extract_skill_from_dict_key(skill_key) not in self.unique_cs_list:
+                        self.unique_cs_list.append(self.extract_skill_from_dict_key(skill_key))
 
                     this_row_id = clean_name[0] + clean_name[1] \
                                   + str(clean_date.day) + str(clean_date.month) + str(clean_date.year)\
@@ -147,10 +155,12 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
 
                     if analytic_score is not None and imaginative_score is not None:
                         intermediate_dict[this_row_id] = {
+                            "Academy Unique Key": au_key,
                             "Name": clean_name,
                             "Date": clean_date,
                             "Trainer First Name": clean_trainer[0],
                             "Trainer Last Name": clean_trainer[1],
+                            "Course Name": course_name,
                             "Course Length": course_length,
                             "Week": week,
                             "Core Skill": self.extract_skill_from_dict_key(self.extract_skill_from_dict_key(skill_key)),
@@ -160,6 +170,6 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
 
 if __name__ == "__main__":
     test = AcademyCleaner()
-    test.final_df_maker()
-    print(test.csv_academy_df)
+    test.populate_final_academy_df()
+    print(test.csv_academy_df.columns)
 #    print(f"and here comes the dataframe (maybe)\n{test.csv_academy_df}")
