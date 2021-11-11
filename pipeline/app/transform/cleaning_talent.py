@@ -195,7 +195,7 @@ class JsonCleaner(JSONExtractor):
         intermediate_dict = {}
         print(f"Beginning processing all {len(self.extract_json_keys)} JSON files...\n")
         i = 0
-        for key in self.extract_json_keys[:10]:
+        for key in self.extract_json_keys:
             json_file = self.pull_single_json(key)
             name = self.clean_json_name(self.extract_json_name(json_file))
             date = self.clean_json_date(self.extract_json_date(json_file))
