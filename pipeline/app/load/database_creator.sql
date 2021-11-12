@@ -13,45 +13,45 @@ USE [Data24ETL];
 -- 2. Build the tables
 CREATE TABLE TechSkill
 (
-    TechSkillID             INT IDENTITY(1,1) PRIMARY KEY,
+    TechSkillID             INT PRIMARY KEY,
     SkillName               VARCHAR(32) NOT NULL
 )
 
 CREATE TABLE Strengths
 (
-    StrengthID              INT IDENTITY(1,1) PRIMARY KEY,
+    StrengthID              INT PRIMARY KEY,
     Strength                VARCHAR(32) NOT NULL
 )
 
 CREATE TABLE Weaknesses
 (
-    WeaknessID              INT IDENTITY(1,1) PRIMARY KEY,
+    WeaknessID              INT PRIMARY KEY,
     Weakness                VARCHAR(32) NOT NULL
 )
 
 CREATE TABLE Academy
 (
-    AcademyID               INT IDENTITY(1,1) PRIMARY KEY,
+    AcademyID               INT PRIMARY KEY,
     AcademyName             VARCHAR(64) NOT NULL
 )
 
 CREATE TABLE SpartaDay
 (
-    SpartaDayID             INT IDENTITY(1,1) PRIMARY KEY,
+    SpartaDayID             INT PRIMARY KEY,
     AcademyID               INT NOT NULL FOREIGN KEY REFERENCES Academy(AcademyID),
     SpartaDayDate           DATE
 )
 
 CREATE TABLE Trainer
 (
-    TrainerID               INT IDENTITY(1,1) PRIMARY KEY,
+    TrainerID               INT PRIMARY KEY,
     FirstName               VARCHAR(64) NOT NULL,
     LastName                VARCHAR(64)
 )
 
 CREATE TABLE Course
 (
-    CourseID                INT IDENTITY(1,1) PRIMARY KEY,
+    CourseID                INT PRIMARY KEY,
     CourseName              VARCHAR(64) NOT NULL,
     WeekLength              INT NOT NULL,
     StartDate               DATE NOT NULL
@@ -65,27 +65,26 @@ CREATE TABLE CourseTrainer
 
 CREATE TABLE CoreSkills
 (
-    CoreSkillID             INT IDENTITY(1,1) PRIMARY KEY,
+    CoreSkillID             INT PRIMARY KEY,
     SkillName               VARCHAR(16) NOT NULL
 )
 
 CREATE TABLE Streams
 (
-    StreamID                INT IDENTITY(1,1) PRIMARY KEY,
+    StreamID                INT PRIMARY KEY,
     StreamName              VARCHAR(64) NOT NULL
 )
 
 CREATE TABLE Invitors
 (
-    InvitorID               INT IDENTITY(1,1) PRIMARY KEY,
+    InvitorID               INT PRIMARY KEY,
     FirstName               VARCHAR(32) NOT NULL,
     LastName                VARCHAR(32)
 )
 
 CREATE TABLE Addresses
 (
-    AddressID               INT IDENTITY(1,1) PRIMARY KEY,
-    HouseNumber             INT,
+    AddressID               INT PRIMARY KEY,
     AddressLine             VARCHAR(256) NOT NULL,
     Postcode                VARCHAR(8),
     City                    VARCHAR(58)
@@ -139,7 +138,9 @@ CREATE TABLE ApplicantWeaknesses
 
 CREATE TABLE Spartans
 (
-    SpartanID               INT IDENTITY(1,1) PRIMARY KEY,
+
+    ApplicantID             VARCHAR(64) FOREIGN KEY REFERENCES Applicants(ApplicantID),
+    SpartanID               INT PRIMARY KEY,
     ApplicantID             VARCHAR(64) FOREIGN KEY REFERENCES Applicants(ApplicantID) UNIQUE,
     CourseID                INT FOREIGN KEY REFERENCES Course(CourseID)
 )

@@ -154,7 +154,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
                 number = address.split(" ", 1)[0]
                 road_name = address.split(" ", 1)[1]
                 if number.isnumeric() and road_name.replace(" ", "").isalpha():
-                    address_tuple = (int(number), road_name)
+                    address_tuple = f"{int(number)}, {road_name}"
                     return address_tuple
                 elif road_name.replace(" ", "").isalpha():
                     non_alpha_road = (None, road_name)
