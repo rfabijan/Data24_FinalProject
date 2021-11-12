@@ -1,57 +1,50 @@
-/*
-This Script will create a Data24ETL Database
-It will create the necessary tables
-*/
+-- 1. Use correct database
+USE [Data24ETLTest];
 
--- 1. Create the Database
-USE master;
-DROP DATABASE IF EXISTS [Data24ETL];
-CREATE DATABASE [Data24ETL];
-USE [Data24ETL];
 
 
 -- 2. Build the tables
 CREATE TABLE TechSkill
 (
-    TechSkillID             INT PRIMARY KEY,
-    SkillName               VARCHAR(32) NOT NULL
+    TechSkillID             INT IDENTITY(1,1) PRIMARY KEY,
+    SkillName               VARCHAR(32) NOT NULL UNIQUE
 )
 
 CREATE TABLE Strengths
 (
-    StrengthID              INT PRIMARY KEY,
-    Strength                VARCHAR(32) NOT NULL
+    StrengthID              INT IDENTITY(1,1) PRIMARY KEY,
+    Strength                VARCHAR(32) NOT NULL UNIQUE
 )
 
 CREATE TABLE Weaknesses
 (
-    WeaknessID              INT PRIMARY KEY,
-    Weakness                VARCHAR(32) NOT NULL
+    WeaknessID              INT IDENTITY(1,1) PRIMARY KEY,
+    Weakness                VARCHAR(32) NOT NULL UNIQUE
 )
 
 CREATE TABLE Academy
 (
-    AcademyID               INT PRIMARY KEY,
-    AcademyName             VARCHAR(64) NOT NULL
+    AcademyID               INT IDENTITY(1,1) PRIMARY KEY,
+    AcademyName             VARCHAR(64) NOT NULL UNIQUE
 )
 
 CREATE TABLE SpartaDay
 (
-    SpartaDayID             INT PRIMARY KEY,
+    SpartaDayID             INT IDENTITY(1,1) PRIMARY KEY,
     AcademyID               INT NOT NULL FOREIGN KEY REFERENCES Academy(AcademyID),
     SpartaDayDate           DATE
 )
 
 CREATE TABLE Trainer
 (
-    TrainerID               INT PRIMARY KEY,
+    TrainerID               INT IDENTITY(1,1) PRIMARY KEY,
     FirstName               VARCHAR(64) NOT NULL,
     LastName                VARCHAR(64)
 )
 
 CREATE TABLE Course
 (
-    CourseID                INT PRIMARY KEY,
+    CourseID                INT IDENTITY(1,1) PRIMARY KEY,
     CourseName              VARCHAR(64) NOT NULL,
     WeekLength              INT NOT NULL,
     StartDate               DATE NOT NULL
@@ -65,26 +58,26 @@ CREATE TABLE CourseTrainer
 
 CREATE TABLE CoreSkills
 (
-    CoreSkillID             INT PRIMARY KEY,
+    CoreSkillID             INT IDENTITY(1,1) PRIMARY KEY,
     SkillName               VARCHAR(16) NOT NULL
 )
 
 CREATE TABLE Streams
 (
-    StreamID                INT PRIMARY KEY,
+    StreamID                INT IDENTITY(1,1) PRIMARY KEY,
     StreamName              VARCHAR(64) NOT NULL
 )
 
 CREATE TABLE Invitors
 (
-    InvitorID               INT PRIMARY KEY,
+    InvitorID               INT IDENTITY(1,1) PRIMARY KEY,
     FirstName               VARCHAR(32) NOT NULL,
     LastName                VARCHAR(32)
 )
 
 CREATE TABLE Addresses
 (
-    AddressID               INT PRIMARY KEY,
+    AddressID               INT IDENTITY(1,1) PRIMARY KEY,
     AddressLine             VARCHAR(256) NOT NULL,
     Postcode                VARCHAR(8),
     City                    VARCHAR(58)
@@ -101,7 +94,7 @@ CREATE TABLE Applicants
     Gender                  VARCHAR(6),
     DOB                     DATE,
     Email                   VARCHAR(256),
-    PhoneNumber             VARCHAR(12),
+    PhoneNumber             VARCHAR(13),
     Uni                     VARCHAR(128),
     Degree                  VARCHAR(4),
     GeoFlex                 BIT,
@@ -138,10 +131,8 @@ CREATE TABLE ApplicantWeaknesses
 
 CREATE TABLE Spartans
 (
-
+    SpartanID               INT IDENTITY(1,1) PRIMARY KEY,
     ApplicantID             VARCHAR(64) FOREIGN KEY REFERENCES Applicants(ApplicantID),
-    SpartanID               INT PRIMARY KEY,
-    ApplicantID             VARCHAR(64) FOREIGN KEY REFERENCES Applicants(ApplicantID) UNIQUE,
     CourseID                INT FOREIGN KEY REFERENCES Course(CourseID)
 )
 

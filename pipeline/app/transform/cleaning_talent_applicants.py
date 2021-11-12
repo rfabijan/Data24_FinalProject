@@ -143,8 +143,9 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
                 return None
 
     # Cleans the address and splits into house number and road name within a tuple.
-    def clean_applicants_address(self, address: str) -> tuple or None:
+    def clean_applicants_address(self, address: str) -> str:
         address = str(address)
+        return str(address)
         if address == "nan":
             pass
         else:
@@ -153,7 +154,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
                 number = address.split(" ", 1)[0]
                 road_name = address.split(" ", 1)[1]
                 if number.isnumeric() and road_name.replace(" ", "").isalpha():
-                    address_tuple = (int(number), road_name)
+                    address_tuple = f"{int(number)}, {road_name}"
                     return address_tuple
                 elif road_name.replace(" ", "").isalpha():
                     non_alpha_road = (None, road_name)
@@ -262,7 +263,7 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
         elif month.replace(" ", "").isalnum():
             month = month[:3] + " " + month[-4:]
             datetime_strp = dt.datetime.strptime(month, "%b %Y")
-            date = datetime_strp#.date()
+            date = datetime_strp
             return date
         else:
             self.__error_month.add(month)

@@ -106,10 +106,10 @@ SELECT      sr.SpartanID, sr.ApplicantID,
 FROM        SpartansRemoved sr LEFT JOIN ApplicantSpartaDay asd ON sr.ApplicantID=asd.ApplicantID;
 
 --
--- CREATE VIEW SpartansComplete AS
--- SELECT      *
--- FROM        SpartanLengthActualVsExpected
--- WHERE       ActualLength >= ExpectedLength;
+CREATE VIEW SpartansComplete AS
+SELECT      *
+FROM        SpartanLengthActualVsExpected
+WHERE       ActualLength >= ExpectedLength;
 
 CREATE VIEW SpartansCompleteTrackerSummary AS
 SELECT      CONCAT(a.FirstName, ' ', a.LastName) AS "Name",
