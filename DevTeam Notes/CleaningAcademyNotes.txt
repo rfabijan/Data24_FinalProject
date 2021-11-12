@@ -15,3 +15,6 @@ This is now also the problems in the pre-load formatter:
 
 	- Nothing to join on as of yet when working with csv_academy_df
 		1) Made the key in the other df to join on to, still no dice
+		2) Data_list appears to populate properly, maybe the duplicate removing is causing problems?
+		3) Turns out no, removing dupes does nothing
+		4) Outer joining works, but also gives the exact wrong thing
