@@ -40,6 +40,9 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
 
     # returns cleaned name in a tuple format
     def clean_name(self, name: str) -> tuple:
+        if name is None:
+            return None, None
+
         name = name.title()
         if not name.isalpha():
             self.error_names.add(name)
@@ -52,6 +55,8 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
             return clean_name
         else:
             print(name)
+
+        return None, None  # failsafe
 
     # returns cleaned trainer name in a tuple format
     def clean_trainer(self, trainer_name: str) -> tuple:

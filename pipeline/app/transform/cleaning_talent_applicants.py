@@ -143,8 +143,9 @@ class Applicants_Cleaner(ext.ApplicantsCsvExtractor):
                 return None
 
     # Cleans the address and splits into house number and road name within a tuple.
-    def clean_applicants_address(self, address: str) -> tuple or None:
+    def clean_applicants_address(self, address: str) -> str:
         address = str(address)
+        return str(address)
         if address == "nan":
             pass
         else:
