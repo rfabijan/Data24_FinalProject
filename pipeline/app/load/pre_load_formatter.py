@@ -281,18 +281,19 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
             elif key in df2.keys():
                 data_list.append(df2[key])
 
-        eval(f"self.set_{output_dataframe}")(
-            (self.concat_new_df(data_list, key_list)))
-
+        eval(f"self.set_{output_dataframe}")((self.concat_new_df(data_list, key_list)))
         eval(f"self.{output_dataframe}")
-        if reindex:
+
+        if reindex:         # Setting the index if needed
             self.reset_index(eval(f"self.{output_dataframe}"))
             self.set_key_as_index(eval(f"self.{output_dataframe}"))
-        if generate_key:
+
+        if generate_key:    # Using the above index (sometimes) to make the primary key where applicable
             rename_dict = {"index": pk_column_name}
             eval(f"(self.{output_dataframe}.reset_index(level=0, inplace=True))")
             eval(f"self.{output_dataframe}.rename({rename_dict}, inplace=True)")
 
+    # Certain datasets are held in lists, and as such need to be treated differently, as is below
     def populate_from_one_list(self, this_list: list, column_title: str, output_dataframe: str, reindex=True,
                                generate_key=False, pk_column_name=""):
         eval(f"self.set_{output_dataframe}")(
@@ -311,6 +312,8 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
                                   ["Academy"], "academy_df",
                                   generate_key=True,
                                   pk_column_name="AcademyID")
+    # pk_column_name is a remnant of renaming the index, however it wasn't necessarily needed and as such has been
+    # abandoned (for now at least)
 
         print("Creating Sparta Day dataframe.\n")
         self.populate_from_one_df(self.txt_df,
@@ -415,6 +418,6 @@ if __name__ == '__main__':
     print("###########################################################################################################")
 
     pd.set_option('display.max_columns', None)
-    print(test_table_formatter.app_strengths_jt_df)
+    print(test_table_formatter.app_sparta_day_jt_df)
 
-    print(test_table_formatter.strengths_df)
+    print(test_table_formatter.academy_df)
