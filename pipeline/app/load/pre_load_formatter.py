@@ -3,9 +3,6 @@ import pipeline.app.transform.cleaning_talent as t
 import pipeline.app.transform.cleaning_talent_applicants as ta
 import pipeline.app.transform.cleaning_academy_course as ca
 
-import pipeline.config_manager as conf
-
-import datetime as dt
 import pandas
 import numpy as np
 import pandas as pd
@@ -34,8 +31,6 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         self.__course_df = pandas.DataFrame
         self.__course_trainer_jt_df = pandas.DataFrame
         self.__trainer_df = pandas.DataFrame
-
-        # A list containing all the dataframes, to allow all to be accessed at once if needed
         self.__all_dataframes = [self.academy_df,
                                  self.sparta_day_df,
                                  self.app_sparta_day_jt_df,
@@ -66,6 +61,9 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         print("TALENT CSV FILES COMPLETED!\n")
         self.populate_final_academy_df()
         print("ACADEMY CSV FILES COMPLETED!\n")
+        print("Now formatting the dataframes into individual tables...\n")
+        self.create_final_dataframes()
+        print("Complete.\n")
 
     # Getters and setters for each dataframe - I won't comment each one as it it fairly self explanatory as to
     # what they do
@@ -114,10 +112,10 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
     # returns dataframes with info in relation to the applicants strengths
     @property
     def strengths_df(self):
-        return self.__streams_df
+        return self.__strengths_df
 
     def set_strengths_df(self, new_df):
-        self.__streams_df = new_df
+        self.__strengths_df = new_df
 
     @property
     def app_strengths_jt_df(self):
@@ -237,6 +235,9 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
         if "Unique Key" in list(df.columns):
             df.set_index("Unique Key", inplace=True, drop=False)
 
+    # The following three functions will take columns from dataframes/lists (depending on the
+    # required format) and feeds them into concat (above) to get out a final dataframe, which
+    # will represent one table
     def populate_from_one_df(self, dataframe, key_list, output_dataframe,
                              pk_column_name="", reindex=True, generate_key=False):
         data_list = []
@@ -251,6 +252,9 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
             rename_dict = {"index": pk_column_name}
             eval(f"(self.{output_dataframe}.reset_index(level=0, inplace=True))")
             eval(f"self.{output_dataframe}.rename({rename_dict}, inplace=True)")
+
+    # The options at the bottom will generate keys where needed and manipulate the indexes
+    # to become keys
 
     def populate_from_two_df(self, df1: pd.DataFrame, df2: pd.DataFrame,
                              key_list: list, output_dataframe: str,
@@ -300,6 +304,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
             eval(f"(self.{output_dataframe}.reset_index(level=0, inplace=True))")
             eval(f"self.{output_dataframe}.rename({rename_dict}, inplace=True)")
 
+    # Calls the above functions for each dataframe required, and explodes tuples where needed
     def create_final_dataframes(self):
         print("Creating Academy dataframe.\n")
         self.populate_from_one_df(self.txt_df,
@@ -360,7 +365,7 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
 
         print("Creating Invitors dataframe.\n")
         self.populate_from_one_list(self.unique_i_list,
-                                    "Invitors",
+                                    "Invited By",
                                     "invitors_df",
                                     generate_key=True)
 
@@ -407,7 +412,9 @@ class PreLoadFormatter(tsd.TxtCleaner, t.JsonCleaner, ta.Applicants_Cleaner, ca.
 if __name__ == '__main__':
     test_table_formatter = PreLoadFormatter()
 
-    test_table_formatter.create_final_dataframes()
     print("###########################################################################################################")
+
     pd.set_option('display.max_columns', None)
-    print(test_table_formatter.tech_self_score_jt_df)
+    print(test_table_formatter.app_strengths_jt_df)
+
+    print(test_table_formatter.strengths_df)
