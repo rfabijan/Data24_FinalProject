@@ -25,14 +25,14 @@ engine = sqlalchemy.create_engine(conn_str, pool_pre_ping=True)
 
 
 # AHMED - Using pyodbc
-import pipeline.config_manager as conf
-connection_config = f'DRIVER={{ODBC Driver 17 for SQL Server}};' \
-                    f'SERVER={conf.DB_SERVER};' \
-                    f'DATABASE=master;' \
-                    f'UID={conf.DB_USERNAME};' \
-                    f'PWD={conf.DB_PASSWORD}'
-db_connection = pyodbc.connect(connection_config, autocommit=True)
-cursor = db_connection.cursor()
+# import pipeline.config_manager as conf
+# connection_config = f'DRIVER={{ODBC Driver 17 for SQL Server}};' \
+#                     f'SERVER={conf.DB_SERVER};' \
+#                     f'DATABASE=master;' \
+#                     f'UID={conf.DB_USERNAME};' \
+#                     f'PWD={conf.DB_PASSWORD}'
+# db_connection = pyodbc.connect(connection_config, autocommit=True)
+# cursor = db_connection.cursor()
 
 
 # Insert an academy dataframe which should be a DF with a single column: AcademyName

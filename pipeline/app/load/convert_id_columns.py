@@ -163,21 +163,44 @@ def convert_id_columns():
 
 
 def ci_sparta_day(x):
-    # Row like these get the dataframes
+
     academy_df = x.academy_df
     sparta_day_df = x.sparta_day_df
-
-    # This map function takes a column called 'AcademyID' in sparta_day_df that is filled with Academy Names
-    # It then replaces them with the Academy IDs of the corresponding Academy Names that they match in the Academy DF
-    sparta_day_df['Academy'] = sparta_day_df['Academy'].map(academy_df.set_index('Academy')['index'])
-
-    return sparta_day_df
-
+    sparta_day_df.set_index('Academy', drop=True, inplace=True)
+    sparta_day_df.reset_index(inplace=True, drop=True)
+    academy_df.set_index('Academy', drop=True, inplace=True)
+    academy_df.reset_index(inplace=True, drop=True)
+    intermediate_df = pd.concat([sparta_day_df, academy_df], axis=1, join='inner')
+    print("Academy ID table:")
+    print(intermediate_df.rename(columns={"index": "AcademyID"}))
+    return intermediate_df.rename(columns={"index": "AcademyID"})
 
 def ci_course_trainer_jt(x):
     course_trainer_jt_df = x.course_trainer_jt_df
     course_df = x.course_df
     trainer_df = x.trainer_df
+
+    course_df.set_index('Course Name', drop=True, inplace=True)
+    course_df.reset_index(inplace=True, drop=True)
+
+    course_trainer_jt_df.set_index('Course Name', drop=True, inplace=True)
+    course_trainer_jt_df.reset_index(inplace=True, drop=True)
+    intermediate_df1 = pd.concat([course_df, course_trainer_jt_df], axis=1, join='inner', verify_integrity=True).drop_duplicates()
+    intermediate_df1.columns = ["CourseId" if x == "index" else x for x in intermediate_df1.columns]
+
+    intermediate_df1.set_index('Trainer First Name', drop=True, inplace=True)
+    intermediate_df1.set_index('Trainer Last Name', drop=True, inplace=True)
+    intermediate_df1.reset_index(inplace=True, drop=True)
+
+    trainer_df.set_index('Trainer First Name', drop=True, inplace=True)
+    trainer_df.set_index('Trainer Last Name', drop=True, inplace=True)
+    trainer_df.reset_index(inplace=True, drop=True)
+
+    intermediate_df2 = pd.concat([intermediate_df1, trainer_df], axis=1, join='inner')
+    intermediate_df1.columns = ["TrainerID" if x == "index" else x for x in intermediate_df2.columns]
+    print("Trainer/Course JT")
+    print(intermediate_df2.rename(columns={"index": "AcademyID"}))
+    return intermediate_df2.rename(columns={"index": "AcademyID"})
 
     # Here and below I have included the old map functions in many places where they have been replaced by merges,
     # because I am unsure if they work
@@ -189,10 +212,6 @@ def ci_course_trainer_jt(x):
     # adding the ID column from the other table
 
     # course_trainer_jt_df['CourseID'] = course_trainer_jt_df['CourseID'].map(course_df.set_index('Course Name')['CourseID'])
-    course_trainer_jt_df.merge(course_df, on=['Course Name'], suffixes=['_2'], how="right").drop(['Course Name'], axis=1).rename(columns={"id_2": "CourseID"})
-    # course_trainer_jt_df['TrainerID'] = course_trainer_jt_df['TrainerID'].map(trainer_df.set_index('FirstName')['TrainerID'])
-    course_trainer_jt_df.merge(trainer_df, on=['Trainer First Name', 'Trainer Last Name'], suffixes=['', '_2'], how="right").drop(['Trainer First Name', 'Trainer Last Name'], axis=1).rename(columns={"id_2": "TrainerID"})
-    return course_trainer_jt_df
 
 
 def ci_applicants(x):
@@ -210,15 +229,17 @@ def ci_applicants(x):
 
 def ci_app_sparta_day(x):
     app_sparta_day_df = x.app_sparta_day_jt_df
-    # applicants_df = x.applicants_df
+    app_sparta_day_df.set_index('Academy', drop=True, inplace=True)
+    app_sparta_day_df.set_index('Date', drop=True, append=True, inplace=True)
+    app_sparta_day_df.reset_index(inplace=True, drop=True)
     sparta_day_df = x.sparta_day_df
-    # app_sparta_day_df['ApplicantID'] = app_sparta_day_df['ApplicantID'].map(applicants_df.set_index('matchingvalues')['ApplicantID'])
-    # app_sparta_day_df = app_sparta_day_df.merge(applicants_df, on=['AcademyID', 'c2'], suffixes=['', '_2']).drop(['c1', 'c2'], axis=1).rename(columns={"id_2": "df2_id"})
-    # app_sparta_day_df['SpartaDayID'] = app_sparta_day_df['SpartaDayID'].map(sparta_day_df.set_index('matchingvalues')['SpartaDayID'])
-    # app_sparta_day_df.merge(sparta_day_df, on=['Academy', 'Date'], suffixes=('', '_2')).drop(['Academy', 'Date'], axis=1).rename(columns={"id_2": "SpartaDayID"})
-    app_sparta_day_df = pd.merge(sparta_day_df, how=app_sparta_day_df, on=['Academy', 'Date'], suffixes=('', '_2')).drop(['Academy', 'Date'], axis=1).rename(columns={"id_2": "SpartaDayID"})
 
-    return app_sparta_day_df
+    sparta_day_df.set_index('Academy', drop=True, inplace=True)
+    sparta_day_df.set_index('Date', drop=True, append=True, inplace=True)
+    sparta_day_df.reset_index(inplace=True, drop=True)
+    intermediate_df = pd.concat([app_sparta_day_df, sparta_day_df], axis=1, join='inner')
+    print(intermediate_df.rename(columns={"index": "SpartaDayID"}))
+    return intermediate_df.rename(columns={"index": "SpartaDayID"})
 
 
 def ci_tech_self_score_jt(x):

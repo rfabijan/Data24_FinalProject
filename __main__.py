@@ -16,7 +16,7 @@ if __name__ == "__main__":
 
     formatter = PreLoadFormatter()
 
-    sparta_day_df = ci_app_sparta_day(formatter)
+    sparta_day_df = ci_sparta_day(formatter)
     course_trainer_jt_df = ci_course_trainer_jt(formatter)
     applicants_df = ci_applicants(formatter)
     app_sparta_day_df = ci_app_sparta_day(formatter)
