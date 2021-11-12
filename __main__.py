@@ -8,7 +8,7 @@ if __name__ == "__main__":
 
     formatter = PreLoadFormatter()
 
-    sparta_day_df = ci_app_sparta_day(formatter)
+    sparta_day_df = ci_sparta_day(formatter)
     course_trainer_jt_df = ci_course_trainer_jt(formatter)
     applicants_df = ci_applicants(formatter)
     app_sparta_day_df = ci_app_sparta_day(formatter)
@@ -27,8 +27,8 @@ if __name__ == "__main__":
     insert(formatter.academy_df, "Academy")
     insert(formatter.address_df, "Addresses")
     insert(applicants_df, "Applicants")
-    insert(app_sparta_day_df , "ApplicantSpartaDay")
-    insert(app_strengths_jt_df , "ApplicantStrengths")
+    insert(app_sparta_day_df, "ApplicantSpartaDay")
+    insert(app_strengths_jt_df, "ApplicantStrengths")
     insert(app_weaknesses_jt_df, "ApplicantWeaknesses")
     insert(formatter.core_skills_df, "CoreSkills")
     insert(formatter.course_df, "Course")
