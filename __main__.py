@@ -36,6 +36,7 @@ if __name__ == "__main__":
     database.run_script(conf.SQL_SCRIPT)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     insert(formatter.academy_df, "Academy")
     insert(formatter.address_df, "Addresses")
     insert(applicants_df, "Applicants")
@@ -57,6 +58,8 @@ if __name__ == "__main__":
     insert(formatter.weakness_df, "Weaknesses")
 =======
 >>>>>>> 56a9f5d0749295de337b9fd9d63c73747b558832
+=======
+>>>>>>> 949edce8d29df20144b9100be7b20cfefc10409e
 
     insert_df(formatter.academy_df, "Academy", database.cursor, conf.DB_NAME)
     insert_df(formatter.address_df, "Addresses", database.cursor, conf.DB_NAME)

@@ -234,12 +234,17 @@ def ci_app_sparta_day(x):
     app_sparta_day_df.reset_index(inplace=True, drop=True)
     sparta_day_df = x.sparta_day_df
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> 949edce8d29df20144b9100be7b20cfefc10409e
     sparta_day_df.set_index('Academy', drop=True, inplace=True)
     sparta_day_df.set_index('Date', drop=True, append=True, inplace=True)
     sparta_day_df.reset_index(inplace=True, drop=True)
     intermediate_df = pd.concat([app_sparta_day_df, sparta_day_df], axis=1, join='inner')
     print(intermediate_df.rename(columns={"index": "SpartaDayID"}))
     return intermediate_df.rename(columns={"index": "SpartaDayID"})
+<<<<<<< HEAD
 =======
     # app_sparta_day_df['ApplicantID'] = app_sparta_day_df['ApplicantID'].map(applicants_df.set_index('matchingvalues')['ApplicantID'])
     # app_sparta_day_df = app_sparta_day_df.merge(applicants_df, on=['AcademyID', 'c2'], suffixes=['', '_2']).drop(['c1', 'c2'], axis=1).rename(columns={"id_2": "df2_id"})
@@ -249,6 +254,8 @@ def ci_app_sparta_day(x):
 
     return app_sparta_day_df
 >>>>>>> 56a9f5d0749295de337b9fd9d63c73747b558832
+=======
+>>>>>>> 949edce8d29df20144b9100be7b20cfefc10409e
 
 
 def ci_tech_self_score_jt(x):

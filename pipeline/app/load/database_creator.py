@@ -12,16 +12,23 @@ class DatabaseCreator:
         self.__username = conf.DB_USERNAME
         self.__password = conf.DB_PASSWORD
 <<<<<<< HEAD
+<<<<<<< HEAD
         self.__data24etl_db = pyodbc.connect('DRIVER={SQL Server};SERVER=' + self.__server
                                              + f';DATABASE=' + self.__database
                                              + f';UID=' + self.__username
                                              + f';PWD=' + self.__password, autocommit=True)
 =======
+=======
+
+>>>>>>> 949edce8d29df20144b9100be7b20cfefc10409e
         self.__data24etl_db = pyodbc.connect(f'DRIVER={{SQL Server}};SERVER=' + self.__server
                                              + ';DATABASE=' + self.__database
                                              + ';UID=' + self.__username
                                              + ';PWD=' + self.__password, autocommit=True)
+<<<<<<< HEAD
 >>>>>>> 56a9f5d0749295de337b9fd9d63c73747b558832
+=======
+>>>>>>> 949edce8d29df20144b9100be7b20cfefc10409e
         self.cursor = self.__data24etl_db.cursor()
 
     # This method creates a database
