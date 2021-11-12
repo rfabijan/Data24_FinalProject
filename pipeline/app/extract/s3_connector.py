@@ -9,6 +9,7 @@ class S3ParentClass:
         self.__client = b3.client('s3')
         self.__resources = b3.resource('s3')
         self.__bucket_name = conf.BUCKET_NAME
+        print("Collection successfully established!")
     # returns s3 client info
     @property
     def client(self):
