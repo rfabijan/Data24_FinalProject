@@ -29,7 +29,7 @@ def build_database(cursor):
 
 
 def print_query_number(table, count, total):
-    print(f'Inserting into {table}: {count}/{total} ({round((count/total)*100, 2)}%)')
+    print(f'Inserting into {table}: {count}/{total} ({round((count / total) * 100, 2)}%)')
     return count + 1
 
 
@@ -197,6 +197,33 @@ def insert_into_applicants(df: pd.DataFrame, db_name=DBNAME):
         cursor.execute(query, params)
 
 
+def insert_into_spartans(df: pd.DataFrame, db_name=DBNAME):
+    counter = 0
+    for index, row in df.iterrows():
+        counter = print_query_number('Spartans', counter, len(df))
+
+        query = f"SELECT ApplicantID FROM [{DBNAME}].[dbo].[Applicants] WHERE " \
+                f"FirstName='{row['firstname']}' AND LastName='{row['lastname']}'"
+        applicant_id = cursor.execute(query).fetchone()[0]
+
+        query = f"SELECT CourseID FROM [{DBNAME}].[dbo].[Course] WHERE CourseName='{row['course']}'"
+        course_id = cursor.execute(query).fetchone()[0]
+
+        query = f"INSERT INTO [{DBNAME}].[dbo].[Spartans] " \
+                f"VALUES ({applicant_id}, {course_id})"
+        cursor.execute(query)
+
+
+def insert_into_tracker(df: pd.DataFrame, db_name=DBNAME):
+    counter = 0
+    for index, row in df.iterrows():
+        counter = print_query_number('Spartans', counter, len(df))
+
+        row.dropna(inplace=True)
+        print(row)
+        break
+
+
 if __name__ == "__main__":
     txt_df, json_df, csv_df_acad, csv_df_talent = create_dataframes()
 
@@ -255,23 +282,27 @@ if __name__ == "__main__":
     applicants_df = csv_df_talent.join(json_df.set_index('key'), on='key', lsuffix='_csv', rsuffix='_json')
     applicants_df.drop_duplicates(subset='key', keep="last", inplace=True)
     applicants_df = applicants_df.where(pd.notnull(applicants_df), None)  # Replace NaN with None
-    # applicants_df = applicants_df.where(pd.notnull(applicants_df), '')  # Replace NaN with ''
-    # print(applicants_df['result'])
 
+    # 2.14. Spartans
+    spartans_df = csv_df_acad[["firstname", "lastname", "course"]].drop_duplicates()
 
+    # 2.15. Tracker
+    tracker_df = csv_df_acad
+    print(tracker_df.columns)
+    insert_into_tracker(tracker_df)
 
-
-    # Inserts
-    insert_df(df=academies, tablename="Academy", cursor=cursor, db_name=DBNAME)
-    insert_into_sparta_day(df=sparta_days)
-    insert_into_streams(streams_series)
-    insert_into_invitors(df=invitors_df)
-    insert_into_weaknesses(weaknesses_set)
-    insert_into_strengths(strength_set)
-    insert_into_techskills(tech_skills_set)
-    insert_into_trainers(trainers_df)
-    insert_into_course(course_df)
-    insert_into_course_trainer(course_trainer_df)
-    insert_into_core_skills()
-    insert_into_addresses(address_df)
-    insert_into_applicants(applicants_df)
+    # 3. Inserts
+    # insert_df(df=academies, tablename="Academy", cursor=cursor, db_name=DBNAME)
+    # insert_into_sparta_day(df=sparta_days)
+    # insert_into_streams(streams_series)
+    # insert_into_invitors(df=invitors_df)
+    # insert_into_weaknesses(weaknesses_set)
+    # insert_into_strengths(strength_set)
+    # insert_into_techskills(tech_skills_set)
+    # insert_into_trainers(trainers_df)
+    # insert_into_course(course_df)
+    # insert_into_course_trainer(course_trainer_df)
+    # insert_into_core_skills()
+    # insert_into_addresses(address_df)
+    # insert_into_applicants(applicants_df)
+    # insert_into_spartans(spartans_df)
