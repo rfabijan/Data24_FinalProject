@@ -25,8 +25,8 @@ def extract_query_from_file(file_path):
 
 
 def build_database(cursor):
-    cursor.execute(extract_query_from_file('sql_scripts/db_creator.sql'))
-    cursor.execute(extract_query_from_file('sql_scripts/table_creator.sql'))
+    cursor.execute(extract_query_from_file('pipeline/app/load/sql_scripts/db_creator.sql'))
+    cursor.execute(extract_query_from_file('pipeline/app/load/sql_scripts/table_creator.sql'))
 
 
 def print_query_number(table, count, total):
