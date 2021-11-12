@@ -18,6 +18,9 @@ FROM [Data24ETLTest].[dbo].Academy a LEFT JOIN [Data24ETLTest].[dbo].SpartaDay s
 GROUP BY AcademyName;
 
 --
+CREATE VIEW [SpartaDaysPerMonth] AS
 SELECT MONTH(SpartaDayDate) AS 'Month', COUNT(*) AS 'NumberOfSpartaDays'
 FROM SpartaDay
 GROUP BY MONTH(SpartaDayDate)
+
+SELECT * FROM Applicants

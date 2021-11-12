@@ -13,7 +13,7 @@ from pprint import pprint as pp
 def connect_to_database():
     connection_config = f'DRIVER={{ODBC Driver 17 for SQL Server}};' \
                         f'SERVER=localhost,1433;' \
-                        f'DATABASE=master;' \
+                        f'DATABASE=Data24ETL;' \
                         f'UID=SA;' \
                         f'PWD=Passw0rd2018;'
     return pyodbc.connect(connection_config, autocommit=True)
@@ -49,7 +49,6 @@ if __name__ == "__main__":
     # 1. Establish Database Connection:
     cnxn = connect_to_database()
     cursor = cnxn.cursor()
-
     # 2. Build the database:
     # create_views(cursor)
 
@@ -58,6 +57,6 @@ if __name__ == "__main__":
 
     # 4. Answering Questions:
     # 4.1. Number of Sparta Days at an Academy
-    views = ['SpartaDaysAtAcademies']
+    views = ['SpartaDaysPerMonth']
     views_to_workbook(views=views, workbook_name='AcademyDataDive', con=cnxn)
 

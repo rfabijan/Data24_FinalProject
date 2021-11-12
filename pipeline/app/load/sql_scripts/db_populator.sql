@@ -1,4 +1,4 @@
-USE [Data24ETLTest]
+USE [Data24ETL]
 
 INSERT INTO Streams
 VALUES ('Data'), ('SDET'), ('DevOps'), ('Engineering')

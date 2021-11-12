@@ -3,9 +3,10 @@ import pyodbc
 import pandas as pd
 import pipeline.config_manager as conf
 import ast
+from definitions import PROJECT_ROOT_DIR
 from pprint import pprint as pp
 
-DBNAME = "Data24ETLTest"
+DBNAME = "Data24ETL"
 cursor = None
 
 
@@ -25,8 +26,9 @@ def extract_query_from_file(file_path):
 
 
 def build_database(cursor):
-    cursor.execute(extract_query_from_file('sql_scripts/db_creator.sql'))
-    cursor.execute(extract_query_from_file('sql_scripts/table_creator.sql'))
+    script_path = f'{PROJECT_ROOT_DIR}/pipeline/app/load/sql_scripts'
+    cursor.execute(extract_query_from_file(f'{script_path}/db_creator.sql'))
+    cursor.execute(extract_query_from_file(f'{script_path}/table_creator.sql'))
 
 
 def print_query_number(table, count, total):
@@ -188,13 +190,13 @@ def insert_into_applicants(df: pd.DataFrame, cursor, db_name=DBNAME):
                     f"WHERE FirstName='{row['invitorfirstname']}' AND LastName='{row['invitorlastname']}'"
             invitor_id = cursor.execute(query).fetchone()[0]
 
-        # TODO: Remove
-        row['postcode'] = None
-
-        if row['postcode'] is not None:
-            query = f"SELECT AddressID FROM [{DBNAME}].[dbo].[Addresses] " \
-                    f"WHERE AddressLine='{row['address']}' AND Postcode='{row['postcode']}'"
-            # address_id = cursor.execute(query).fetchone()[0]
+        try:
+            if row['postcode'] is not None:
+                query = f"SELECT AddressID FROM [{DBNAME}].[dbo].[Addresses] " \
+                        f"WHERE AddressLine='{row['address']}' AND Postcode='{row['postcode']}'"
+                address_id = cursor.execute(query).fetchone()[0]
+        except:
+            address_id = None
 
         phone_number = '+' + str(row['phone_number']).split('.')[0]
         result = 0 if row['result'] is None else row['result']
@@ -309,6 +311,10 @@ def database_builder():
     csv_df_acad['key'] = csv_df_acad['firstname'] + csv_df_acad['lastname'] + csv_df_acad['course']
     spartans_df['key'] = spartans_df['firstname'] + spartans_df['lastname'] + spartans_df['course']
 
+    # Limits to make this demo run faster
+    address_df = address_df[:100]
+    applicants_df = applicants_df[:100]
+
     # 3. Inserts
     insert_into_academies(academies, cursor)
     insert_into_sparta_day(sparta_days, cursor)
@@ -323,3 +329,7 @@ def database_builder():
     insert_into_core_skills(cursor)
     insert_into_addresses(address_df, cursor)
     insert_into_applicants(applicants_df, cursor)
+
+
+if __name__ == "__main__":
+    database_builder()

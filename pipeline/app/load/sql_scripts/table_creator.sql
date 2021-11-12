@@ -1,5 +1,5 @@
 -- 1. Use correct database
-USE [Data24ETLTest];
+USE [Data24ETL];
 
 
 

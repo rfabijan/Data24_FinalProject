@@ -5,11 +5,13 @@ from pipeline.app.transform.cleaning_talent import JsonCleaner
 from pipeline.app.transform.cleaning_academy_course import AcademyCleaner
 from pipeline.app.transform.cleaning_talent_applicants import Applicants_Cleaner
 import pandas as pd
+from definitions import PROJECT_ROOT_DIR
 import os
 
 
 def write_dataframe_to_csv(dataframe: pd.DataFrame, csv_name: str):
-    dataframe.to_csv(f'cleaned_csvs/{csv_name}.csv', index=False, header=True)
+    # dataframe.to_csv(f'cleaned_csvs/{csv_name}.csv', index=False, header=True)
+    dataframe.to_csv(f'{PROJECT_ROOT_DIR}/pipeline/app/load/cleaned_csvs/{csv_name}.csv', index=False, header=True)
 
 
 def print_progress(file_type: str, counter: int, total: int, key: str):
@@ -182,15 +184,10 @@ def dataframe_from_file(filepath, dataframe_from_function):
 
 
 def create_dataframes():
-    root = 'cleaned_csvs'
+    root = f'{PROJECT_ROOT_DIR}/pipeline/app/load/cleaned_csvs'
     txt_df = dataframe_from_file(f'{root}/txt_sparta_days.csv', extract_and_clean_all_txts_to_dataframe)
     json_df = dataframe_from_file(f'{root}/json_talents.csv', extract_and_clean_all_jsons_to_dataframe)
     csv_df_acad = dataframe_from_file(f'{root}/csv_academy.csv', extract_and_clean_all_academy_csv_to_dataframe)
     csv_df_talent = dataframe_from_file(f'{root}/csv_talent.csv', extract_and_clean_all_talent_csv_to_dataframe)
 
     return txt_df, json_df, csv_df_acad, csv_df_talent
-
-
-if __name__ == "__main__":
-    # Create dataframe from CSVs if possible, else S3
-    txt_df, json_df, csv_df_acad, csv_df_talent = create_dataframes()
