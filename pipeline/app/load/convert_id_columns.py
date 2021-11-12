@@ -217,6 +217,7 @@ def ci_app_sparta_day(x):
     # app_sparta_day_df['SpartaDayID'] = app_sparta_day_df['SpartaDayID'].map(sparta_day_df.set_index('matchingvalues')['SpartaDayID'])
     # app_sparta_day_df.merge(sparta_day_df, on=['Academy', 'Date'], suffixes=('', '_2')).drop(['Academy', 'Date'], axis=1).rename(columns={"id_2": "SpartaDayID"})
     app_sparta_day_df = pd.merge(sparta_day_df, how=app_sparta_day_df, on=['Academy', 'Date'], suffixes=('', '_2')).drop(['Academy', 'Date'], axis=1).rename(columns={"id_2": "SpartaDayID"})
+
     return app_sparta_day_df
 
 
@@ -265,4 +266,6 @@ def ci_tracker_jt(x):
     core_skills_df = x.core_skills_df
     # tracker_jt_df['SpartanID'] = tracker_jt_df['SpartanID'].map(spartans_df.set_index('matchingvalues')['SpartanID'])
     tracker_jt_df['Core Skill'] = tracker_jt_df['Core Skill'].map(core_skills_df.set_index('Core Skill')['index'])
+
     return tracker_jt_df
+

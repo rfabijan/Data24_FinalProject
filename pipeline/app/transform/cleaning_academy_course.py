@@ -40,6 +40,9 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
 
     # returns cleaned name in a tuple format
     def clean_name(self, name: str) -> tuple:
+        if name is None:
+            return None, None
+
         name = name.title()
         if not name.isalpha():
             self.error_names.add(name)
@@ -52,6 +55,8 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
             return clean_name
         else:
             print(name)
+
+        return None, None  # failsafe
 
     # returns cleaned trainer name in a tuple format
     def clean_trainer(self, trainer_name: str) -> tuple:
@@ -99,7 +104,7 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         csv_dict = {}
         print(f"Starting loading the {len(list(self.keys))} academy CSV files.\n")
 
-        for keys in self.keys[:10]:
+        for keys in self.keys[:3]:
             print(f"Currently loading {keys}...")
             csv_body = self.single_csv(keys)
             for row in range(0, self.len_of_rows(csv_body)):
@@ -122,7 +127,7 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
         original_dict = self.final_academy_csv_dict_appender()
         intermediate_dict = {}
 
-        for first_key in list(original_dict.keys())[:10]:
+        for first_key in list(original_dict.keys()):
             au_key = first_key
             clean_name = original_dict[first_key]["Name"]
             clean_date = original_dict[first_key]["Course Start Date"]
@@ -156,8 +161,9 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
                     if analytic_score is not None and imaginative_score is not None:
                         intermediate_dict[this_row_id] = {
                             "Academy Unique Key": au_key,
-                            "Name": clean_name,
-                            "Date": clean_date,
+                            "First Name": clean_name[0],
+                            "Last Name": clean_name[1],
+                            "Start Date": clean_date,
                             "Trainer First Name": clean_trainer[0],
                             "Trainer Last Name": clean_trainer[1],
                             "Course Name": course_name,
@@ -171,5 +177,6 @@ class AcademyCleaner(extractor.AcademiesCsvExtractor):
 if __name__ == "__main__":
     test = AcademyCleaner()
     test.populate_final_academy_df()
-    print(test.csv_academy_df.columns)
+    pd.set_option('display.max_columns', None)
+    print(test.csv_academy_df)
 #    print(f"and here comes the dataframe (maybe)\n{test.csv_academy_df}")

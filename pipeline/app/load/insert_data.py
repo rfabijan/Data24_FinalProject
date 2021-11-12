@@ -3,6 +3,7 @@ import pipeline.config_manager as conf
 import urllib
 import sqlalchemy
 import pandas as pd
+
 # TODO: Validation on method parameters
 
 driver = "ODBC Driver 17 for SQL Server"
@@ -23,11 +24,55 @@ conn_str = 'mssql+pyodbc:///?odbc_connect={}'.format(params)
 engine = sqlalchemy.create_engine(conn_str, pool_pre_ping=True)
 
 
+# AHMED - Using pyodbc
+import pipeline.config_manager as conf
+connection_config = f'DRIVER={{ODBC Driver 17 for SQL Server}};' \
+                    f'SERVER={conf.DB_SERVER};' \
+                    f'DATABASE=master;' \
+                    f'UID={conf.DB_USERNAME};' \
+                    f'PWD={conf.DB_PASSWORD}'
+db_connection = pyodbc.connect(connection_config, autocommit=True)
+cursor = db_connection.cursor()
+
+
+# Insert an academy dataframe which should be a DF with a single column: AcademyName
+def insert_academy_df(df, tablename, cursor, db_name='Data24ETL'):
+    value = ''
+    for academy in list(df['AcademyName']):
+        value += f"('{academy}') "
+
+    value = value.rstrip()
+    value = value.replace(' ', ', ')
+
+    query = f"""INSERT INTO [{db_name}].[dbo].[{tablename}] VALUES {value};"""
+    print(query)
+    cursor.execute(query)
+
+
+def insert_df(df: pd.DataFrame, tablename, cursor, db_name='Data24ETL'):
+    for index, row in df.iterrows():
+        inner_value = '('
+        for column in row:
+            inner_value += f"'{column}' "
+        inner_value = inner_value.rstrip()
+        inner_value = inner_value.replace(' ', ', ')
+        inner_value += ') '
+
+        query = f"""INSERT INTO [{db_name}].[dbo].[{tablename}] VALUES {inner_value};"""
+        cursor.execute(query)
+
+
+if __name__ == "__main__":
+    df = pd.DataFrame({"AcademyName": ["London", "Birmingham", "Manchester"], "Column2": [1, 2, 8], "Column3": [4, 5, 8]})
+    insert_df(df=df, tablename='Academy', cursor=cursor, db_name='Data24ETL')
+
+
 def insert_data_df(df, tablename, connection, identity_insert_on_sql, identity_insert_off_sql):
     connection.execute(identity_insert_on_sql)  # Allows us to insert ID rows
-    # df.to_sql(tablename, connection, if_exists='append', index=False, index_label=None, method='multi')
-    for each_item in df.index:
-        df.loc[each_item].to_sql(name=each_item, con=connection, if_exists='append', index=False)
+    for row in df:
+        row.to_sql(tablename, connection, if_exists='append', index=False, index_label=None)
+    df.to_sql(tablename, connection, if_exists='append', index=False, index_label=None, method='multi')
+
     connection.execute(identity_insert_off_sql)  # Reverts the ID rows allowance to close the fabric of spacetime
     connection.commit()
 
@@ -36,7 +81,6 @@ def insert(df, tablename):
     """
     This bit connects to the database
     """
-
     server = 'localhost,1433'
     database = conf.DB_NAME
     username = 'SA'
@@ -52,7 +96,6 @@ def insert(df, tablename):
 
     identity_insert_on_sql = f"SET IDENTITY_INSERT {tablename} ON"
     identity_insert_off_sql = f"SET IDENTITY_INSERT {tablename} OFF"
-
 
     data24etl_db = pyodbc.connect('DRIVER={SQL Server};SERVER=' + server + ';DATABASE=' + database + ';UID='
                                   + username + ';PWD=' + password)
@@ -116,3 +159,4 @@ def insert_df(df: pd.DataFrame, tablename, cursor, db_name='Data24ETL'):
 # if __name__ == "__main__":
 #     df = pd.DataFrame({"AcademyName": ["London", "Birmingham"]})
 #     insert_df(df=df, tablename='Academy', cursor=cursor, db_name='Data24ETL')
+

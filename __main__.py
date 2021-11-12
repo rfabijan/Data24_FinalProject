@@ -1,12 +1,9 @@
 import pipeline.config_manager as conf
-from pipeline.app.transform.cleaning_talent import JsonCleaner
-from pipeline.app.transform.cleaning_academy_course import AcademyCleaner
-from pipeline.app.transform.cleaning_talent_applicants import Applicants_Cleaner
-from pipeline.app.transform.cleaning_talent_sparta_day import TxtCleaner
 from pipeline.app.load.database_creator import DatabaseCreator
 from pipeline.app.load.pre_load_formatter import PreLoadFormatter
-from pipeline.app.load.convert_id_columns import *
+
 from pipeline.app.load.insert_data import *
+from pipeline.app.load.convert_id_columns import *
 
 if __name__ == "__main__":
     # print("Connecting to S3...")
@@ -28,13 +25,16 @@ if __name__ == "__main__":
     app_weaknesses_jt_df = ci_app_weaknesses_jt(formatter)
     spartans_df = ci_spartans(formatter)
     tracker_df = ci_tracker_jt(formatter)
+
     print(applicants_df.columns)
+
 
     # Database creation stage
     database = DatabaseCreator()
     database.reset_database()
     database.create_database()
     database.run_script(conf.SQL_SCRIPT)
+
 
     insert_df(formatter.academy_df, "Academy", database.cursor, conf.DB_NAME)
     insert_df(formatter.address_df, "Addresses", database.cursor, conf.DB_NAME)
@@ -64,15 +64,11 @@ if __name__ == "__main__":
     # txt_keys = clean_txt.txt_keys
 
 
+
     # print(clean_json.extract_json_keys)
     # print(clean_academy.keys)
     # print(clean_applicants.keys)
     # print(clean_txt.)
 
-    # Database creation stage
-    # database = DatabaseCreator()
-    # database.reset_database()
-    # database.create_database()
-    # database.run_script(conf.SQL_SCRIPT)
 
 
