@@ -241,7 +241,8 @@ def insert_into_tracker(df: pd.DataFrame, db_name=DBNAME):
         break
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
+def database_builder():
     txt_df, json_df, csv_df_acad, csv_df_talent = create_dataframes()
 
     # 1. Connect to and build the Database schema
@@ -299,8 +300,6 @@ if __name__ == "__main__":
     applicants_df = csv_df_talent.join(json_df.set_index('key'), on='key', lsuffix='_csv', rsuffix='_json')
     applicants_df.drop_duplicates(subset='key', keep="last", inplace=True)
     applicants_df = applicants_df.where(pd.notnull(applicants_df), None)  # Replace NaN with None
-    #TODO: REMOVE
-    # applicants_df = applicants_df[0:1000]
 
     # 2.14. Spartans
     spartans_df = csv_df_acad[["firstname", "lastname", "course"]].drop_duplicates()
