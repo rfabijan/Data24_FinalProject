@@ -11,6 +11,7 @@ class DatabaseCreator:
         self.__database = "master"
         self.__username = conf.DB_USERNAME
         self.__password = conf.DB_PASSWORD
+
         self.__data24etl_db = pyodbc.connect(f'DRIVER={{SQL Server}};SERVER=' + self.__server
                                              + ';DATABASE=' + self.__database
                                              + ';UID=' + self.__username

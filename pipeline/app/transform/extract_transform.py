@@ -18,6 +18,7 @@ def print_progress(file_type: str, counter: int, total: int, key: str):
 
 
 def extract_and_clean_all_txts_to_dataframe(read_limit=None):
+    print("Cleaning of .txt files ...")
     cleaner = TxtCleaner()  # The cleaner has extraction capabilities
     all_txts = list()  # A list of dictionaries
     keys = cleaner.txt_keys
@@ -45,11 +46,12 @@ def extract_and_clean_all_txts_to_dataframe(read_limit=None):
             # Populate the DataFrame/Dictionary/List
             all_txts.append({"Date": date, "Academy": academy, "FirstName": name[0], "LastName": name[1],
                              "Psychometrics": psychometrics, "Presentation": presentation})
-
+    print("CLEANING PROCESS COMPLETED!\n\n")
     return pd.DataFrame(all_txts)
 
 
 def extract_and_clean_all_jsons_to_dataframe(read_limit=None):
+    print("Cleaning of .json files ...")
     cleaner = JsonCleaner()
     all_jsons = list()
     keys = cleaner.extract_json_keys
@@ -81,11 +83,12 @@ def extract_and_clean_all_jsons_to_dataframe(read_limit=None):
         file['course_interest'] = cleaner.clean_json_course_interest(file.get('course_interest'))
 
         all_jsons.append(file)  # Add this file to the complete list
-
+    print("CLEANING OF .jsons PROCESS COMPLETED!\n\n")
     return pd.DataFrame(all_jsons)
 
 
 def extract_and_clean_all_academy_csv_to_dataframe(read_limit=None):
+    print("Cleaning of Academy .csv files ...")
     cleaner = AcademyCleaner()
     all_csvs = pd.DataFrame()
     keys = cleaner.keys
@@ -111,11 +114,12 @@ def extract_and_clean_all_academy_csv_to_dataframe(read_limit=None):
         file['course'] = cleaner.extract_academies_course_name(key)
         file['coursestartdate'] = cleaner.clean_course_start_date(cleaner.extract_academies_date(key))
         all_csvs = all_csvs.append(file)
-
+    print("CLEANING OF Academy .csv PROCESS COMPLETED!\n\n")
     return all_csvs
 
 
 def extract_and_clean_all_talent_csv_to_dataframe(read_limit=None):
+    print("Cleaning of Applicants .csv files ...")
     cleaner = Applicants_Cleaner()
     all_csvs = pd.DataFrame()
     keys = cleaner.applicants_keys
@@ -152,11 +156,12 @@ def extract_and_clean_all_talent_csv_to_dataframe(read_limit=None):
         file['month'] = list(map(clean_month, file.get('month', nones)))
 
         all_csvs = all_csvs.append(file)
-
+    print("CLEANING OF Applicants .csv PROCESS COMPLETED!\n\n")
     return all_csvs
 
 
 def create_dataframes_from_s3():
+    print("Converting to dataframes...")
     txt_df = extract_and_clean_all_txts_to_dataframe()
     write_dataframe_to_csv(txt_df, "txt_sparta_days")
 
@@ -169,6 +174,7 @@ def create_dataframes_from_s3():
     csv_df_talent = extract_and_clean_all_talent_csv_to_dataframe()
     write_dataframe_to_csv(csv_df_talent, "csv_talent")
 
+    print("ALL FILES CONVERSION COMPLETED!\n\n")
     return txt_df, json_df, csv_df_acad, csv_df_talent
 
 
@@ -182,7 +188,7 @@ def dataframe_from_file(filepath, dataframe_from_function):
 
 
 def create_dataframes():
-    root = 'cleaned_csvs'
+    root = 'pipeline/app/load/cleaned_csvs'
     txt_df = dataframe_from_file(f'{root}/txt_sparta_days.csv', extract_and_clean_all_txts_to_dataframe)
     json_df = dataframe_from_file(f'{root}/json_talents.csv', extract_and_clean_all_jsons_to_dataframe)
     csv_df_acad = dataframe_from_file(f'{root}/csv_academy.csv', extract_and_clean_all_academy_csv_to_dataframe)
