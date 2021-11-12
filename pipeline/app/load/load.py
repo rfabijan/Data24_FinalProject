@@ -1,4 +1,4 @@
-from pipeline.ahmed.etl.extract_transform import create_dataframes
+from pipeline.app.transform.extract_transform import create_dataframes, write_dataframe_to_csv
 import pyodbc
 import pandas as pd
 import pipeline.config_manager as conf
@@ -165,14 +165,36 @@ def insert_into_techskills(tech_skills: set, db_name=DBNAME):
 
 def insert_into_applicants(df: pd.DataFrame, db_name=DBNAME):
     counter = 0
-    for applicant in df:
-        counter = print_query_number('Tech Skill', counter, len(df))
+    for index, row in df.iterrows():
+        counter = print_query_number('Applicants', counter, len(df))
 
-        # Find this applicants StreamInterestID:
-        query = f"SELECT StreamID FROM [{DBNAME}].[dbo].[Streams] WHERE CourseName='{row['course']}'"
-        course_id = cursor.execute(query).fetchone()[0]
+        # Foreign Keys
+        stream_id = invitor_id = address_id = None
 
-        pass
+        # Applicant may not have attended Sparta Day, we do not have all the information required
+        if row['course_interest'] is not None:
+            query = f"SELECT StreamID FROM [{DBNAME}].[dbo].[Streams] WHERE StreamName='{row['course_interest']}'"
+            stream_id = cursor.execute(query).fetchone()[0]
+
+        if row['invitorlastname'] is not None:
+            query = f"SELECT InvitorID FROM [{DBNAME}].[dbo].[Invitors] " \
+                    f"WHERE FirstName='{row['invitorfirstname']}' AND LastName='{row['invitorlastname']}'"
+            invitor_id = cursor.execute(query).fetchone()[0]
+
+        if row['postcode'] is not None:
+            query = f"SELECT AddressID FROM [{DBNAME}].[dbo].[Addresses] " \
+                    f"WHERE AddressLine='{row['address']}' AND Postcode='{row['postcode']}'"
+            address_id = cursor.execute(query).fetchone()[0]
+
+        phone_number = '+' + str(row['phone_number']).split('.')[0]
+        result = 0 if row['result'] is None else row['result']
+
+        query = f"INSERT INTO [{DBNAME}].[dbo].[Applicants] VALUES ({', '.join('?' * 15)})"
+        params = [row['key'], stream_id, invitor_id, address_id, row['firstname_csv'], row['lastname_csv'],
+                  row['gender'], row['dob'], row['email'], phone_number, row['uni'], row['degree'], row['geo_flex'],
+                  row['financial_support_self'], result]
+
+        cursor.execute(query, params)
 
 
 if __name__ == "__main__":
@@ -231,22 +253,25 @@ if __name__ == "__main__":
     csv_df_talent['key'] = generate_key_from_df(csv_df_talent, 'month')
     json_df['key'] = generate_key_from_df(json_df, 'date')
     applicants_df = csv_df_talent.join(json_df.set_index('key'), on='key', lsuffix='_csv', rsuffix='_json')
-    print(applicants_df.columns)
-
+    applicants_df.drop_duplicates(subset='key', keep="last", inplace=True)
+    applicants_df = applicants_df.where(pd.notnull(applicants_df), None)  # Replace NaN with None
+    # applicants_df = applicants_df.where(pd.notnull(applicants_df), '')  # Replace NaN with ''
+    # print(applicants_df['result'])
 
 
 
 
     # Inserts
-    # insert_df(df=academies, tablename="Academy", cursor=cursor, db_name=DBNAME)
-    # insert_into_sparta_day(df=sparta_days)
-    # insert_into_streams(streams_series)
-    # insert_into_invitors(df=invitors_df)
-    # insert_into_weaknesses(weaknesses_set)
-    # insert_into_strengths(strength_set)
-    # insert_into_techskills(tech_skills_set)
-    # insert_into_trainers(trainers_df)
-    # insert_into_course(course_df)
-    # insert_into_course_trainer(course_trainer_df)
-    # insert_into_core_skills()
-    # # insert_into_addresses(address_df)
+    insert_df(df=academies, tablename="Academy", cursor=cursor, db_name=DBNAME)
+    insert_into_sparta_day(df=sparta_days)
+    insert_into_streams(streams_series)
+    insert_into_invitors(df=invitors_df)
+    insert_into_weaknesses(weaknesses_set)
+    insert_into_strengths(strength_set)
+    insert_into_techskills(tech_skills_set)
+    insert_into_trainers(trainers_df)
+    insert_into_course(course_df)
+    insert_into_course_trainer(course_trainer_df)
+    insert_into_core_skills()
+    insert_into_addresses(address_df)
+    insert_into_applicants(applicants_df)
