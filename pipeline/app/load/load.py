@@ -6,6 +6,7 @@ import ast
 from pprint import pprint as pp
 
 DBNAME = "Data24ETLTest"
+cursor = None
 
 
 def connect_to_database():
@@ -62,13 +63,13 @@ def insert_df(df: pd.DataFrame, tablename, cursor, db_name='Data24ETLTest'):
         cursor.execute(query)
 
 
-def insert_into_academies(all_academies: pd.Series, db_name=DBNAME):
+def insert_into_academies(all_academies: pd.Series, cursor, db_name=DBNAME):
     for academy in all_academies:
         query = f"INSERT INTO [{DBNAME}].[dbo].[Academy] VALUES ('{academy}');"
         cursor.execute(query)
 
 
-def insert_into_sparta_day(df: pd.DataFrame, db_name=DBNAME):
+def insert_into_sparta_day(df: pd.DataFrame, cursor, db_name=DBNAME):
     # Loop through the dataframe
     for index, row in df.iterrows():
         query = f"SELECT AcademyID FROM [{DBNAME}].[dbo].[Academy] WHERE AcademyName='{row['Academy']}'"
@@ -78,13 +79,13 @@ def insert_into_sparta_day(df: pd.DataFrame, db_name=DBNAME):
         cursor.execute(query)
 
 
-def insert_into_streams(series: pd.Series, db_name=DBNAME):
+def insert_into_streams(series: pd.Series, cursor, db_name=DBNAME):
     for course in series:
         query = f"INSERT INTO [{DBNAME}].[dbo].[Streams] VALUES ('{course}')"
         cursor.execute(query)
 
 
-def insert_into_addresses(df: pd.DataFrame, db_name=DBNAME):
+def insert_into_addresses(df: pd.DataFrame, cursor, db_name=DBNAME):
     counter = 0
     for index, row in df.iterrows():
         counter = print_query_number('Address', counter, len(df))
@@ -93,7 +94,7 @@ def insert_into_addresses(df: pd.DataFrame, db_name=DBNAME):
         cursor.execute(query)
 
 
-def insert_into_invitors(df: pd.DataFrame, db_name=DBNAME):
+def insert_into_invitors(df: pd.DataFrame, cursor, db_name=DBNAME):
     counter = 0
     # Loop through the dataframe
     for index, row in df.iterrows():
@@ -102,7 +103,7 @@ def insert_into_invitors(df: pd.DataFrame, db_name=DBNAME):
         cursor.execute(query)
 
 
-def insert_into_trainers(df: pd.DataFrame, db_name=DBNAME):
+def insert_into_trainers(df: pd.DataFrame, cursor, db_name=DBNAME):
     counter = 0
     # Loop through the dataframe
     for index, row in df.iterrows():
@@ -112,13 +113,13 @@ def insert_into_trainers(df: pd.DataFrame, db_name=DBNAME):
         cursor.execute(query)
 
 
-def insert_into_core_skills(db_name=DBNAME):
+def insert_into_core_skills(cursor, db_name=DBNAME):
     query = f"INSERT INTO [{DBNAME}].[dbo].[CoreSkills] VALUES ('Analytic')," \
             f" ('Independent'),('Determined'),('Professional'),('Studios'),('Imaginative')"
     cursor.execute(query)
 
 
-def insert_into_course(df: pd.DataFrame, db_name=DBNAME):
+def insert_into_course(df: pd.DataFrame, cursor, db_name=DBNAME):
     counter = 0
     # Loop through the dataframe
     for index, row in df.iterrows():
@@ -128,7 +129,7 @@ def insert_into_course(df: pd.DataFrame, db_name=DBNAME):
         cursor.execute(query)
 
 
-def insert_into_course_trainer(df: pd.DataFrame, db_name=DBNAME):
+def insert_into_course_trainer(df: pd.DataFrame, cursor, db_name=DBNAME):
     counter = 0
     # Loop through the dataframe
     for index, row in df.iterrows():
@@ -145,7 +146,7 @@ def insert_into_course_trainer(df: pd.DataFrame, db_name=DBNAME):
         cursor.execute(query)
 
 
-def insert_into_weaknesses(weaknesses: set, db_name=DBNAME):
+def insert_into_weaknesses(weaknesses: set, cursor, db_name=DBNAME):
     counter = 0
     for w in weaknesses:
         counter = print_query_number('Weaknesses', counter, len(weaknesses))
@@ -153,7 +154,7 @@ def insert_into_weaknesses(weaknesses: set, db_name=DBNAME):
         cursor.execute(query)
 
 
-def insert_into_strengths(strengths: set, db_name=DBNAME):
+def insert_into_strengths(strengths: set, cursor, db_name=DBNAME):
     counter = 0
     for s in strengths:
         counter = print_query_number('Strengths', counter, len(strengths))
@@ -161,7 +162,7 @@ def insert_into_strengths(strengths: set, db_name=DBNAME):
         cursor.execute(query)
 
 
-def insert_into_techskills(tech_skills: set, db_name=DBNAME):
+def insert_into_techskills(tech_skills: set, cursor, db_name=DBNAME):
     counter = 0
     for ts in tech_skills:
         counter = print_query_number('Tech Skill', counter, len(tech_skills))
@@ -169,7 +170,7 @@ def insert_into_techskills(tech_skills: set, db_name=DBNAME):
         cursor.execute(query)
 
 
-def insert_into_applicants(df: pd.DataFrame, db_name=DBNAME):
+def insert_into_applicants(df: pd.DataFrame, cursor, db_name=DBNAME):
     counter = 0
     for index, row in df.iterrows():
         counter = print_query_number('Applicants', counter, len(df))
@@ -206,7 +207,7 @@ def insert_into_applicants(df: pd.DataFrame, db_name=DBNAME):
         cursor.execute(query, params)
 
 
-def insert_into_spartans(df: pd.DataFrame, db_name=DBNAME):
+def insert_into_spartans(df: pd.DataFrame, cursor, db_name=DBNAME):
     counter = 0
     applicant_ids = pd.Series()
     for index, row in df.iterrows():
@@ -231,7 +232,7 @@ def insert_into_spartans(df: pd.DataFrame, db_name=DBNAME):
     return df
 
 
-def insert_into_tracker(df: pd.DataFrame, db_name=DBNAME):
+def insert_into_tracker(df: pd.DataFrame, cursor, db_name=DBNAME):
     counter = 0
     for index, row in df.iterrows():
         counter = print_query_number('Spartans', counter, len(df))
@@ -309,16 +310,16 @@ def database_builder():
     spartans_df['key'] = spartans_df['firstname'] + spartans_df['lastname'] + spartans_df['course']
 
     # 3. Inserts
-    insert_into_academies(academies)
-    insert_into_sparta_day(df=sparta_days)
-    insert_into_streams(streams_series)
-    insert_into_invitors(df=invitors_df)
-    insert_into_weaknesses(weaknesses_set)
-    insert_into_strengths(strength_set)
-    insert_into_techskills(tech_skills_set)
-    insert_into_trainers(trainers_df)
-    insert_into_course(course_df)
-    insert_into_course_trainer(course_trainer_df)
-    insert_into_core_skills()
-    insert_into_addresses(address_df)
-    insert_into_applicants(applicants_df)
+    insert_into_academies(academies, cursor)
+    insert_into_sparta_day(sparta_days, cursor)
+    insert_into_streams(streams_series, cursor)
+    insert_into_invitors(invitors_df, cursor)
+    insert_into_weaknesses(weaknesses_set, cursor)
+    insert_into_strengths(strength_set, cursor)
+    insert_into_techskills(tech_skills_set, cursor)
+    insert_into_trainers(trainers_df, cursor)
+    insert_into_course(course_df, cursor)
+    insert_into_course_trainer(course_trainer_df, cursor)
+    insert_into_core_skills(cursor)
+    insert_into_addresses(address_df, cursor)
+    insert_into_applicants(applicants_df, cursor)
