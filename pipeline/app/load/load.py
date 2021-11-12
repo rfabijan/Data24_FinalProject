@@ -62,6 +62,12 @@ def insert_df(df: pd.DataFrame, tablename, cursor, db_name='Data24ETLTest'):
         cursor.execute(query)
 
 
+def insert_into_academies(all_academies: pd.Series, db_name=DBNAME):
+    for academy in all_academies:
+        query = f"INSERT INTO [{DBNAME}].[dbo].[Academy] VALUES ('{academy}');"
+        cursor.execute(query)
+
+
 def insert_into_sparta_day(df: pd.DataFrame, db_name=DBNAME):
     # Loop through the dataframe
     for index, row in df.iterrows():
@@ -244,7 +250,7 @@ if __name__ == "__main__":
     build_database(cursor)
 
     # 2. Start populating tables
-    academies = pd.DataFrame(txt_df['Academy'].unique())
+    academies = txt_df['Academy'].unique()
 
     # 2.2. SpartaDay
     sparta_days = txt_df[['Date', 'Academy']].drop_duplicates()
@@ -304,7 +310,7 @@ if __name__ == "__main__":
     spartans_df['key'] = spartans_df['firstname'] + spartans_df['lastname'] + spartans_df['course']
 
     # 3. Inserts
-    insert_df(df=academies, tablename="Academy", cursor=cursor, db_name=DBNAME)
+    insert_into_academies(academies)
     insert_into_sparta_day(df=sparta_days)
     insert_into_streams(streams_series)
     insert_into_invitors(df=invitors_df)
@@ -315,5 +321,5 @@ if __name__ == "__main__":
     insert_into_course(course_df)
     insert_into_course_trainer(course_trainer_df)
     insert_into_core_skills()
-    # insert_into_addresses(address_df)
+    insert_into_addresses(address_df)
     insert_into_applicants(applicants_df)
